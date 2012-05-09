@@ -26,15 +26,19 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.jfree.util.Log;
+import org.omg.PortableServer.POA;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.Measure;
+import org.sonar.api.resources.InputFile;
+import org.sonar.api.resources.InputFileUtils;
 import org.sonar.api.resources.Project;
 import org.sonar.api.resources.Qualifiers;
 import org.sonar.api.utils.ParsingUtils;
 import org.sonar.plugins.erlang.language.Erlang;
+import org.sonar.plugins.erlang.language.ErlangFile;
 import org.sonar.plugins.erlang.sensor.AbstractErlangSensor;
 
 public final class ErlangEunitSensor extends AbstractErlangSensor {
@@ -50,6 +54,9 @@ public final class ErlangEunitSensor extends AbstractErlangSensor {
 	}
 
 	protected void collect(final Project project, final SensorContext context, File reportsDir) {
+		/**
+		 * TODO Does it make sense to iterate over the test report xmls? it seems to me other plugins do so, but I cannot see how they connect it to the test source... 
+		 */
 		LOG.debug("Parsing eunit results from folder {}", reportsDir);
 
 		GenericExtFilter filter = new GenericExtFilter(".xml");
@@ -70,10 +77,17 @@ public final class ErlangEunitSensor extends AbstractErlangSensor {
 			if(!file.matches(".*_eunit.xml")){
 				continue;
 			}
-			org.sonar.api.resources.File unitTestFileResource = new org.sonar.api.resources.File(file.replaceAll("\\.",
-					"/"));
-			unitTestFileResource.setLanguage(erlang);
-			unitTestFileResource.setQualifier(Qualifiers.UNIT_TEST_FILE);
+			/**
+			 * TODO how can I get specific test resources??? they were added by the ErlangSourceImporterSensor.... or it is not possible?
+			 * like: 
+			 * String resourceKey = project.getEffectiveKey()+":"+eunitTestName;
+			 * org.sonar.api.resources.File unitTestFileResource = new org.sonar.api.resources.File(erlang, resourceKey);
+			 */
+			String eunitTestName = file.replaceAll("(TEST-)(.*?)(\\.xml)", "$2").concat(".erl");
+			
+			//org.sonar.api.resources.File unitTestFileResource = org.sonar.api.resources.File.fromIOFile(new File(project.getFileSystem().getTestDirs().get(0), eunitTestName), project.getFileSystem().getTestDirs());
+			InputFile eunitFile = findEunitFileFOrReport(project.getFileSystem().testFiles(erlang.getKey()),eunitTestName);
+			ErlangFile unitTestFileResource = ErlangFile.fromInputFile(eunitFile, true);
 			LOG.debug("Adding unittest resource: {}", unitTestFileResource.toString());
 
 			String source = "";
@@ -85,8 +99,6 @@ public final class ErlangEunitSensor extends AbstractErlangSensor {
 				LOG.debug(source, e);
 			}
 
-			context.saveSource(unitTestFileResource, source);
-			
 			Report report = EunitReportParser.parse(eunitReport);
 			if (report.getTests() > 0) {
 				double testsCount = report.getTests() - report.getSkipped();
@@ -107,6 +119,15 @@ public final class ErlangEunitSensor extends AbstractErlangSensor {
 
 		}
 
+	}
+
+	private InputFile findEunitFileFOrReport(List<InputFile> testFiles, String eunitTestName) {
+		for (InputFile inputFile : testFiles) {
+			if(inputFile.getFile().getName().contains(eunitTestName)){
+				return inputFile;
+			}
+		}
+		return null;
 	}
 
 	protected String getUnitTestFileName(String className) {

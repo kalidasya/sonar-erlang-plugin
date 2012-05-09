@@ -69,12 +69,12 @@ public class ErlangSourceImporterSensor extends AbstractErlangSensor {
 
       sensorContext.index(resource);
       sensorContext.saveSource(resource, source);
-
+      
       if (LOGGER.isDebugEnabled()) {
         if (isUnitTest) {
-          LOGGER.debug("Added Rebar test file to Sonar: " + inputFile.getFile().getAbsolutePath());
+          LOGGER.debug("Added Erlang test file to Sonar: " + inputFile.getFile().getAbsolutePath());
         } else {
-          LOGGER.debug("Added Rebar source file to Sonar: " + inputFile.getFile().getAbsolutePath());
+          LOGGER.debug("Added Erlang source file to Sonar: " + inputFile.getFile().getAbsolutePath());
         }
       }
     } catch (IOException ioe) {
