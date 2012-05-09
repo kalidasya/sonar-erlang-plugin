@@ -1,0 +1,132 @@
+/*
+ * Sonar Erlang Plugin
+ * Copyright (C) 2012 Tamás Kende
+ * kende.tamas@gmail.com
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
+ */
+package org.sonar.plugins.erlang.dialyzer;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.List;
+
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.sonar.api.batch.SensorContext;
+import org.sonar.api.measures.CoreMetrics;
+import org.sonar.api.profiles.RulesProfile;
+import org.sonar.api.resources.InputFile;
+import org.sonar.api.resources.Project;
+import org.sonar.api.rules.Rule;
+import org.sonar.api.rules.RuleFinder;
+import org.sonar.api.rules.Violation;
+import org.sonar.plugins.erlang.language.Erlang;
+import org.sonar.plugins.erlang.language.ErlangFile;
+import org.sonar.plugins.erlang.sensor.AbstractErlangSensor;
+
+public class DialyzerSensor extends AbstractErlangSensor {
+
+	private DialyzerRuleManager dialyzerRuleManager = new DialyzerRuleManager();
+
+	public DialyzerSensor(Erlang erlang) {
+		super(erlang);
+	}
+
+
+	private static final Logger LOG = LoggerFactory.getLogger(DialyzerSensor.class);
+	private ErlangDialyzer dialyzer = new ErlangDialyzer();
+
+	public void analyse(Project project, SensorContext context) {
+		for (InputFile inputFile : project.getFileSystem().mainFiles(getErlang().getKey())) {
+			try {
+				analyzeFile(inputFile, project, context);
+			} catch (Exception e) {
+				LOG.error("Can not analyze the file " + inputFile.getFileBaseDir() + "\\" + inputFile.getRelativePath(), e);
+			}
+
+		}
+	}
+
+	private void analyzeFile(InputFile inputFile, Project project, SensorContext context) throws IOException {
+		ErlangFile erlangFile = ErlangFile.fromInputFile(inputFile);
+		System.out.println("Erlang file in DS:" + erlangFile.getLongName());
+		Reader reader = null;
+		try {
+
+			reader = new StringReader(FileUtils.readFileToString(inputFile.getFile(), project.getFileSystem()
+					.getSourceCharset().name()));
+
+			LOG.debug("values:" + inputFile.getFile().getPath() + " " + project.getFileSystem().getSourceCharset().name()
+					+ " " + reader + " " + project);
+
+			ErlangDialyzerResult result = dialyzer.dialyzer(project, inputFile.getFile().getPath(), reader, dialyzerRuleManager);
+			LOG.debug("Function Size:" + result.getFunctions().size() + " " + inputFile.getFile().getPath());
+			// capture function count in file
+			List<ErlangFunction> functions = result.getFunctions();
+			context.saveMeasure(erlangFile, CoreMetrics.FUNCTIONS, (double) functions.size());
+
+			List<Issue> issues = result.getIssues();
+			LOG.debug("Issue Size:" + result.getIssues().size() + " " + inputFile.getFile().getPath());
+			for (Issue issue : issues) {
+				/**
+				 * TODO: add some rule checking here
+				 */
+				Rule rule = dialyzerRuleManager.getRuleByKey(issue.ruleId);
+				Violation violation = Violation.create(rule, erlangFile);
+				violation.setLineId(issue.line);
+				violation.setMessage(issue.descr);
+				context.saveViolation(violation);
+			}
+
+			/*
+			 * // process issues found by JSLint List<Issue> issues =
+			 * result.getIssues(); for (Issue issue : issues) {
+			 * 
+			 * LOG.debug("Dialyzer warning message {}", issue.getRaw());
+			 * 
+			 * Rule rule =
+			 * ruleFinder.findByKey(DialyzerRuleRepository.REPOSITORY_KEY,
+			 * dialyzerRuleManager.getRuleIdByMessage(issue.getRaw()));
+			 * 
+			 * Violation violation = Violation.create(rule, resource);
+			 * 
+			 * violation.setLineId(issue.getLine());
+			 * violation.setMessage(issue.getReason());
+			 * 
+			 * context.saveViolation(violation); }
+			 */
+			/*
+			 * // add special violation for unused names List<JSIdentifier> unused
+			 * = result.getUnused(); for (JSIdentifier unusedName : unused) {
+			 * Violation violation = Violation.create(ruleFinder.findByKey
+			 * (DialyzerRuleRepository.REPOSITORY_KEY,
+			 * DialyzerRuleManager.UNUSED_NAMES_KEY), resource);
+			 * 
+			 * violation.setLineId(unusedName.getLine()); violation.setMessage("'"
+			 * + unusedName.getName() + "' is unused");
+			 * 
+			 * sensorContext.saveViolation(violation); }
+			 */
+		} finally {
+			IOUtils.closeQuietly(reader);
+		}
+	}
+
+}
