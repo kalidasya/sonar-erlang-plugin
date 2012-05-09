@@ -23,7 +23,8 @@ import org.sonar.api.resources.AbstractLanguage;
 
 public class Erlang extends AbstractLanguage {
 	public static final Erlang INSTANCE = new Erlang();
-	private static final String dialyzerOutputFileUri = ".eunit/dialyzer.log";
+	private static final String eunitFolder = ".eunit/";
+	private static final String dialyzerOutputFileUri = eunitFolder+"/dialyzer.log";
 	public static final String LANG_KEY = "erl";
 	
 	public Erlang() {
@@ -37,6 +38,10 @@ public class Erlang extends AbstractLanguage {
 
 	public String getDialyzerUri() {
 		return dialyzerOutputFileUri;
+	}
+	
+	public String getEunitFolder() {
+		return eunitFolder;
 	}
 	
 	
