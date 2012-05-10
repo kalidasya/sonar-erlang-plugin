@@ -32,8 +32,8 @@ import org.sonar.plugins.erlang.dialyzer.ErlangDefaultProfile;
 import org.sonar.plugins.erlang.language.Erlang;
 import org.sonar.plugins.erlang.sensor.BaseMetricsSensor;
 import org.sonar.plugins.erlang.sensor.ErlangSourceImporterSensor;
-import org.sonar.plugins.erlang.tests.cover.ErlangCoverageSensor;
-import org.sonar.plugins.erlang.tests.eunit.ErlangEunitSensor;
+import org.sonar.plugins.erlang.testmetrics.cover.ErlangCoverageSensor;
+import org.sonar.plugins.erlang.testmetrics.eunit.ErlangEunitSensor;
 
 public class ErlangPlugin extends SonarPlugin{
 

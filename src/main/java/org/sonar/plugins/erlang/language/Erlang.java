@@ -26,13 +26,14 @@ public class Erlang extends AbstractLanguage {
 	private static final String eunitFolder = ".eunit/";
 	private static final String dialyzerOutputFileUri = eunitFolder+"/dialyzer.log";
 	public static final String LANG_KEY = "erl";
+	public static final String EXTENSION = ".erl";
 	
 	public Erlang() {
 	    super(LANG_KEY, "Erlang");
 	  }
 	
 	public String[] getFileSuffixes() {
-		 return new String[] { "erl" };
+		 return new String[] { EXTENSION };
 	}
 
 

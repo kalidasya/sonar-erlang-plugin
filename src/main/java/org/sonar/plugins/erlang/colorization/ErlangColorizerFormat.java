@@ -34,9 +34,8 @@ import org.sonar.colorizer.Tokenizer;
 import org.sonar.plugins.erlang.language.Erlang;
 
 /**
- * This class extends Sonar for code colorization of Scala source.
+ * This class extends Sonar for code colorization of Erlang source.
  *
- * @author Felix Müller
  * @since 0.1
  */
 public class ErlangColorizerFormat extends CodeColorizerFormat {

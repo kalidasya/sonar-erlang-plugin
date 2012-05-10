@@ -17,21 +17,32 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package org.sonar.plugins.erlang.tests.utils;
+package org.sonar.plugins.erlang.testmetrics.eunit;
 
-import java.util.List;
+public class TestFailure {
 
-import org.sonar.api.resources.InputFile;
-
-public class TestSensorUtils {
-
-	public static InputFile findFileForReport(List<InputFile> files, String name) {
-		for (InputFile inputFile : files) {
-			if(inputFile.getFile().getName().contains(name)){
-				return inputFile;
-			}
-		}
-		return null;
+	String reason;
+	String type;
+	public TestFailure(String reason, String type) {
+		super();
+		this.reason = reason;
+		this.type = type;
 	}
-
+	public String getReason() {
+		return reason;
+	}
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	public TestFailure() {
+		super();
+	}
+	
+	
 }

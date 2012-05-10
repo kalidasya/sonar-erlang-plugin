@@ -17,20 +17,23 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package org.sonar.plugins.erlang.tests.utils;
+package org.sonar.plugins.erlang.testmetrics.utils;
 
-import java.io.File;
-import java.io.FilenameFilter;
+import java.util.List;
 
-public class GenericExtFilter implements FilenameFilter {
+import org.jfree.util.Log;
+import org.sonar.api.resources.InputFile;
 
-	private String ext;
+public class TestSensorUtils {
 
-	public GenericExtFilter(String ext) {
-		this.ext = ext;
+	public static InputFile findFileForReport(List<InputFile> files, String name) {
+		for (InputFile inputFile : files) {
+			if(inputFile.getFile().getName().equals(name)){
+				return inputFile;
+			}
+		}
+		Log.error("Referenced resource file not found: " + name);
+		return null;
 	}
 
-	public boolean accept(File dir, String name) {
-		return (name.endsWith(ext));
-	}
 }

@@ -25,9 +25,8 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * This class implements the computation of basic line metrics for a
- * {@link ScalaFile}.
+ * {@link ErlangaFile}.
  * 
- * @author Felix Müller
  * @since 0.1
  */
 public class LinesAnalyzer {

@@ -19,27 +19,49 @@
  */
 package org.sonar.plugins.erlang.cpd;
 
+import java.util.List;
+
 import net.sourceforge.pmd.cpd.AnyTokenizer;
 import net.sourceforge.pmd.cpd.Tokenizer;
 
 import org.sonar.api.batch.AbstractCpdMapping;
+import org.sonar.api.resources.InputFile;
+import org.sonar.api.resources.InputFileUtils;
 import org.sonar.api.resources.Language;
+import org.sonar.api.resources.ProjectFileSystem;
+import org.sonar.api.resources.Resource;
 import org.sonar.plugins.erlang.language.Erlang;
+import org.sonar.plugins.erlang.language.ErlangFile;
+import org.sonar.plugins.erlang.testmetrics.utils.TestSensorUtils;
 
 public class ErlangCpdMapping extends AbstractCpdMapping {
 
-	 private Erlang erlang;
+	private Erlang erlang;
 
-	  public ErlangCpdMapping(Erlang erlang) {
-	    this.erlang = erlang;
-	  }
+	public ErlangCpdMapping(Erlang erlang) {
+		this.erlang = erlang;
+	}
 
-	  public Tokenizer getTokenizer() {
-	    return new AnyTokenizer();
-	  }
+	public Tokenizer getTokenizer() {
+		return new AnyTokenizer();
+	}
 
-	  public Language getLanguage() {
-	    return erlang;
-	  }
+	public Language getLanguage() {
+		return erlang;
+	}
+
+	/**
+	 * TODO Need to implement this, bevause the SonarBridgeEngine file will call a
+	 * mapping.createResource and it returns with wrong keys and package names
+	 * Now it is using the test util class which should be changed
+	 * 
+	 * @param file
+	 * @param sourceDirs
+	 * @return
+	 */
+	@Override
+	public Resource createResource(java.io.File file, List<java.io.File> sourceDirs) {
+		return ErlangFile.fromInputFile(InputFileUtils.create(file, file.getName()), file.getName().contains("eunit"));
+	}
 
 }

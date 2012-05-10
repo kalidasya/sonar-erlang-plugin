@@ -28,9 +28,8 @@ import org.sonar.api.resources.Scopes;
 import org.sonar.api.utils.WildcardPattern;
 
 /**
- * This class implements a Scala source file for Sonar.
+ * This class implements a Erlang source file for Sonar.
  *
- * @author Felix Müller
  * @since 0.1
  */
 public class ErlangFile extends Resource<ErlangPackage> {
@@ -71,7 +70,7 @@ public class ErlangFile extends Resource<ErlangPackage> {
 
   @Override
   public String getDescription() {
-    return null;
+    return "";
   }
 
   @Override
@@ -123,7 +122,6 @@ public class ErlangFile extends Resource<ErlangPackage> {
     if (inputFile == null || inputFile.getFile() == null || inputFile.getRelativePath() == null) {
       return null;
     }
-
     final String packageName = "package";
     final String className = resolveClassName(inputFile);
     return new ErlangFile(packageName, className, isUnitTest);

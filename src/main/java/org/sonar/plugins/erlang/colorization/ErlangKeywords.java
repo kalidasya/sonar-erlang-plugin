@@ -25,9 +25,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * This is a helper class for collecting every Scala keyword.
+ * This is a helper class for collecting every Erlang keyword.
  * 
- * @author Felix Müller
  * @since 0.1
  */
 public final class ErlangKeywords {

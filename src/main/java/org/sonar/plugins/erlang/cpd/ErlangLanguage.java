@@ -17,32 +17,13 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package org.sonar.plugins.erlang.tests.eunit;
+package org.sonar.plugins.erlang.cpd;
 
-public class TestFailure {
+import net.sourceforge.pmd.cpd.AbstractLanguage;
+import net.sourceforge.pmd.cpd.AnyTokenizer;
 
-	String reason;
-	String type;
-	public TestFailure(String reason, String type) {
-		super();
-		this.reason = reason;
-		this.type = type;
+public class ErlangLanguage extends AbstractLanguage {
+	public ErlangLanguage() {
+		super(new AnyTokenizer(), ".erl");
 	}
-	public String getReason() {
-		return reason;
-	}
-	public void setReason(String reason) {
-		this.reason = reason;
-	}
-	public String getType() {
-		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
-	}
-	public TestFailure() {
-		super();
-	}
-	
-	
 }

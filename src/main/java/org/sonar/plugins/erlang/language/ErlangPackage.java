@@ -35,7 +35,7 @@ import org.sonar.api.utils.WildcardPattern;
 public class ErlangPackage extends Resource {
 
   public static final String DEFAULT_PACKAGE_NAME = "[default]";
-
+  
   public ErlangPackage() {
     this(null);
   }
@@ -52,12 +52,12 @@ public class ErlangPackage extends Resource {
 
   @Override
   public String getLongName() {
-    return null;
+    return getKey();
   }
 
   @Override
   public String getDescription() {
-    return null;
+    return "";
   }
 
   @Override
