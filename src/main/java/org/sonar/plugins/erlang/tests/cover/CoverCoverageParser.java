@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,9 +60,11 @@ public final class CoverCoverageParser {
    	} 
    	if(isCodeStarted){
    		if(line.matches(".*?\\|.*")){
-   			String[] lineData = line.split("|");
-   			String executionCount = lineData[0].trim().replaceAll("(.*?)([0-9]+)(\\.\\..*?)", "$2");
-   			fileCoverage.addLine(lineNumber, Integer.valueOf(executionCount).intValue());
+   			String[] lineData = line.split("\\|", 2);
+   			if(!StringUtils.isBlank(lineData[0].trim())){
+   				String executionCount = lineData[0].trim().replaceAll("(.*?)([0-9]+)(\\.\\..*?)", "$2");
+      			fileCoverage.addLine(lineNumber, Integer.valueOf(executionCount).intValue());
+   			}
    			lineNumber++;
    		}
    	}
