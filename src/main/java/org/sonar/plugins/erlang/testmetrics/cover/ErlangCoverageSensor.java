@@ -98,8 +98,7 @@ public final class ErlangCoverageSensor extends AbstractErlangSensor {
 			sensorContext.saveMeasure(sourceResource, CoreMetrics.LINES_TO_COVER, (double) coveredFile.getLinesToCover());
 			sensorContext.saveMeasure(sourceResource, CoreMetrics.UNCOVERED_LINES,
 					(double) coveredFile.getUncoveredLines());
-		} 
-
+		}
 	}
 
 	protected CoverFileCoverage getFileCoverage(InputFile input, List<CoverFileCoverage> coverages) {
