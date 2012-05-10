@@ -21,6 +21,12 @@ package org.sonar.plugins.erlang.cpd;
 
 import net.sourceforge.pmd.cpd.AbstractLanguage;
 
+/**
+ * The erlang language file not used at the moment, needs better tokenizer settings, but I have no idea how it works and how can we make it better.
+ * So now it is disabled (the _ in its name means it won't be recognized by the CPD plugin
+ * @author OliolARTh
+ *
+ */
 public class Erlang_Language extends AbstractLanguage {
 	public Erlang_Language() {
 		super(new Erlang_Tokenizer(), ".erl");

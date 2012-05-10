@@ -19,11 +19,13 @@
  */
 package org.sonar.plugins.erlang.cpd;
 
+import org.sonar.plugins.erlang.ErlangPlugin;
+
 import net.sourceforge.pmd.cpd.AbstractLanguage;
 import net.sourceforge.pmd.cpd.AnyTokenizer;
 
 public class ErlangLanguage extends AbstractLanguage {
 	public ErlangLanguage() {
-		super(new AnyTokenizer(), ".erl");
+		super(new AnyTokenizer(), ErlangPlugin.EXTENSION); //TODO 
 	}
 }

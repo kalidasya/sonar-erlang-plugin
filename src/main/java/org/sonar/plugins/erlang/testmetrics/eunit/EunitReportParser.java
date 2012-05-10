@@ -38,13 +38,10 @@ public class EunitReportParser {
 			saxParser = factory.newSAXParser();
 			saxParser.parse(unitTestFile, a);
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SAXException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		Report report = new Report();

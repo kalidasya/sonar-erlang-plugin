@@ -27,7 +27,7 @@ import org.sonar.api.resources.Scopes;
 import org.sonar.api.utils.WildcardPattern;
 
 /**
- * This class implements a logical Rebar package.
+ * This class implements a logical Erlang package.
  *
  * @since 0.1
  */

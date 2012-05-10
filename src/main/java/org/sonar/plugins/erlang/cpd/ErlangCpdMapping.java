@@ -31,6 +31,10 @@ import org.sonar.api.resources.Resource;
 import org.sonar.plugins.erlang.language.Erlang;
 import org.sonar.plugins.erlang.language.ErlangFile;
 
+/**
+ * The erlang CPD mapping for sonar, now it use AnyTokenizer 
+ *
+ */
 public class ErlangCpdMapping extends AbstractCpdMapping {
 
 	private Erlang erlang;

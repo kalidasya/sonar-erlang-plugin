@@ -34,7 +34,7 @@ import org.sonar.plugins.erlang.language.Erlang;
 import org.sonar.plugins.erlang.language.ErlangFile;
 
 /**
- * This Sensor imports all Rebar files into Sonar.
+ * This Sensor imports all Erlang files into Sonar.
  *
  * @author Tamás Kende
  * @since 0.1
@@ -44,8 +44,8 @@ public class ErlangSourceImporterSensor extends AbstractErlangSensor {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ErlangSourceImporterSensor.class);
 
-  public ErlangSourceImporterSensor(Erlang rebar) {
-    super(rebar);
+  public ErlangSourceImporterSensor(Erlang erlang) {
+    super(erlang);
   }
 
   public void analyse(Project project, SensorContext sensorContext) {

@@ -27,6 +27,7 @@ import org.sonar.api.web.CodeColorizerFormat;
 import org.sonar.colorizer.KeywordsTokenizer;
 import org.sonar.colorizer.LiteralTokenizer;
 import org.sonar.colorizer.Tokenizer;
+import org.sonar.plugins.erlang.ErlangPlugin;
 import org.sonar.plugins.erlang.language.Erlang;
 
 /**
@@ -44,7 +45,7 @@ public class ErlangColorizerFormat extends CodeColorizerFormat {
       new ErlangdocTokenizer("<span class=\"j\">", END_SPAN_TAG));
 
   public ErlangColorizerFormat() {
-    super(Erlang.INSTANCE.getKey());
+    super(ErlangPlugin.LANG_KEY);
   }
 
   @Override

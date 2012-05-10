@@ -17,7 +17,7 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package org.sonar.plugins.erlang.testmetrics.cover;
+package org.sonar.plugins.erlang.sensor;
 
 import java.io.File;
 import java.util.List;
@@ -30,9 +30,11 @@ import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.PropertiesBuilder;
 import org.sonar.api.resources.InputFile;
 import org.sonar.api.resources.Project;
+import org.sonar.plugins.erlang.ErlangPlugin;
 import org.sonar.plugins.erlang.language.Erlang;
 import org.sonar.plugins.erlang.language.ErlangFile;
-import org.sonar.plugins.erlang.sensor.AbstractErlangSensor;
+import org.sonar.plugins.erlang.testmetrics.cover.CoverCoverageParser;
+import org.sonar.plugins.erlang.testmetrics.cover.CoverFileCoverage;
 import org.sonar.plugins.erlang.testmetrics.utils.GenericExtFilter;
 import org.sonar.plugins.erlang.testmetrics.utils.TestSensorUtils;
 
@@ -62,7 +64,7 @@ public final class ErlangCoverageSensor extends AbstractErlangSensor {
 		}
 
 		for (String file : list) {
-			if (!file.matches(".*\\.COVER.html") || file.contains("_eunit")) {
+			if (!file.matches(".*\\.COVER.html") || file.contains("_eunit")) { //TODO move cover filename strings to elsewhere
 				continue;
 			}
 			String sourceName = file.replaceAll("(.*?)(\\.COVER\\.html)", "$1");
@@ -78,7 +80,7 @@ public final class ErlangCoverageSensor extends AbstractErlangSensor {
 	protected void analyseCoveredFile(Project project, SensorContext sensorContext, CoverFileCoverage coveredFile,
 			String sourceName) {
 		InputFile sourceFile = TestSensorUtils.findFileForReport(project.getFileSystem().mainFiles(erlang.getKey()),
-				sourceName.concat(Erlang.EXTENSION));
+				sourceName.concat(ErlangPlugin.EXTENSION));
 		ErlangFile sourceResource = ErlangFile.fromInputFile(sourceFile, true);
 
 		PropertiesBuilder<Integer, Integer> lineHitsData = new PropertiesBuilder<Integer, Integer>(

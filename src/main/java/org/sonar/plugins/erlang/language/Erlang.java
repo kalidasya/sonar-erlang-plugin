@@ -19,31 +19,38 @@
  */
 package org.sonar.plugins.erlang.language;
 
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.lang.StringUtils;
 import org.sonar.api.resources.AbstractLanguage;
+import org.sonar.plugins.erlang.ErlangPlugin;
 
 public class Erlang extends AbstractLanguage {
 	public static final Erlang INSTANCE = new Erlang();
-	private static final String eunitFolder = ".eunit/";
-	private static final String dialyzerOutputFileUri = eunitFolder+"/dialyzer.log";
-	public static final String LANG_KEY = "erl";
-	public static final String EXTENSION = ".erl";
-	
-	public Erlang() {
-	    super(LANG_KEY, "Erlang");
-	  }
-	
-	public String[] getFileSuffixes() {
-		 return new String[] { EXTENSION };
-	}
+	private Configuration configuration;
 
+	public Erlang(){
+		super(ErlangPlugin.LANG_KEY, ErlangPlugin.NAME);
+	}
+	
+	public Erlang(Configuration configuration) {
+		super(ErlangPlugin.LANG_KEY, ErlangPlugin.NAME);
+		this.configuration = configuration;
+	}
 
 	public String getDialyzerUri() {
-		return dialyzerOutputFileUri;
+		return ErlangPlugin.DIALYZER_DEFAULT_FILENAME;
 	}
-	
+
 	public String getEunitFolder() {
-		return eunitFolder;
+		return ErlangPlugin.EUNIT_DEFAULT_FOLDER;
 	}
-	
-	
+
+	public String[] getFileSuffixes() {
+		String[] suffixes = configuration.getStringArray(ErlangPlugin.FILE_SUFFIXES_KEY);
+		if (suffixes == null || suffixes.length == 0) {
+			suffixes = StringUtils.split(ErlangPlugin.FILE_SUFFIXES_DEFVALUE, ",");
+		}
+		return suffixes;
+	}
+
 }

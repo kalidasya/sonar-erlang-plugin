@@ -24,7 +24,7 @@ import org.sonar.colorizer.InlineDocTokenizer;
 public class ErlangdocTokenizer extends InlineDocTokenizer {
 
 	public ErlangdocTokenizer(String tagBefore, String tagAfter) {
-	    super("%%", tagBefore, tagAfter);
+	    super("%", tagBefore, tagAfter);
 	  }
 
 	  public ErlangdocTokenizer() {

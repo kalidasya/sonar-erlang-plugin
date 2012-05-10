@@ -27,7 +27,8 @@ import org.slf4j.LoggerFactory;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RuleRepository;
 import org.sonar.api.rules.XMLRuleParser;
-import org.sonar.plugins.erlang.language.Erlang;
+import org.sonar.plugins.erlang.ErlangPlugin;
+import org.sonar.plugins.erlang.sensor.DialyzerSensor;
 
 public class DialyzerRuleRepository extends RuleRepository {
 	private static final Logger LOG = LoggerFactory.getLogger(DialyzerSensor.class);
@@ -37,13 +38,13 @@ public class DialyzerRuleRepository extends RuleRepository {
 	public static final String RULES_FILE = "/org/sonar/plugins/erlang/dialyzer/rules.xml";
 
 	public DialyzerRuleRepository() {
-		super(REPOSITORY_KEY, Erlang.LANG_KEY);
+		super(REPOSITORY_KEY, ErlangPlugin.LANG_KEY);
 		setName(REPOSITORY_NAME);
 		this.parser = new XMLRuleParser();
 	}
 
 	public DialyzerRuleRepository(XMLRuleParser parser) {
-		super(REPOSITORY_KEY, Erlang.LANG_KEY);
+		super(REPOSITORY_KEY, ErlangPlugin.LANG_KEY);
 		setName(REPOSITORY_NAME);
 		
 		this.parser = parser;

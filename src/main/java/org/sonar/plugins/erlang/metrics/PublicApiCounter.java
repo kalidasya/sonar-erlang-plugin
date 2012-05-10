@@ -24,8 +24,10 @@ import java.util.regex.Pattern;
 
 public class PublicApiCounter {
 
+	private static final String ERLANG_EXPORT_REGEX = "(.*-export\\(\\[)(.*?)(\\]\\).*)";
+
 	public static double countPublicApi(String source) {
-		Matcher m = Pattern.compile("(.*-export\\(\\[)(.*?)(\\]\\).*)", Pattern.DOTALL + Pattern.MULTILINE).matcher(
+		Matcher m = Pattern.compile(ERLANG_EXPORT_REGEX, Pattern.DOTALL + Pattern.MULTILINE).matcher(
 				source);
 		if (m.matches()) {
 			String exportedMethods = m.replaceAll("$2");

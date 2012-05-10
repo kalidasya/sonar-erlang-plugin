@@ -27,6 +27,10 @@ import net.sourceforge.pmd.cpd.Tokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Unfinished and unused implementation of the erlang tokenizer. There are many solutions but without knowledge now we use {@link} AnyTokenizer class 
+ *
+ */
 public class Erlang_Tokenizer  extends AbstractTokenizer implements Tokenizer {
 
   private static final Logger LOG = LoggerFactory.getLogger(Erlang_Tokenizer.class);

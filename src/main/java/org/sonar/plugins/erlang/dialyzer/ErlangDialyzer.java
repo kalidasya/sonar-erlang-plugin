@@ -33,6 +33,9 @@ import org.sonar.api.resources.Project;
 import org.sonar.plugins.erlang.language.Erlang;
 
 public class ErlangDialyzer {
+	private static final String DIALYZER_VIOLATION_ROW_REGEX = "(.*?)(:[0-9]+:)(.*)";
+	private static final String FUNCTION_ENDS_REGEX = ".*\\.$";
+	private static final String FUNCTION_START_REGEX = "^[a-z]+[a-z0-9_@]+ *\\(.*?\\) *->";
 	private static final Logger LOG = LoggerFactory.getLogger(ErlangDialyzer.class);
 
 	public ErlangDialyzerResult dialyzer(Project project, String systemId, Reader reader, DialyzerRuleManager dialyzerRuleManager) throws IOException {
@@ -53,7 +56,7 @@ public class ErlangDialyzer {
 		boolean functionOpened = false;
 		ErlangFunction latest = null;
 		while ((strLine = breader.readLine()) != null) {
-			if (strLine.trim().matches("^[a-z]+[a-z0-9_@]+ *\\(.*?\\) *->") && !functionOpened) {
+			if (strLine.trim().matches(FUNCTION_START_REGEX) && !functionOpened) {
 				result.getFunctions().add(new ErlangFunction());
 				latest = result.getFunctions().get(result.getFunctions().size() - 1);
 				latest.addLine(strLine);
@@ -62,7 +65,7 @@ public class ErlangDialyzer {
 				if (functionOpened) {
 					latest.addLine(strLine);
 				}
-				if (strLine.trim().matches(".*\\.$") && functionOpened) {
+				if (strLine.trim().matches(FUNCTION_ENDS_REGEX) && functionOpened) {
 					latest = null;
 					functionOpened = false;
 				}
@@ -71,8 +74,8 @@ public class ErlangDialyzer {
 
 		breader = new BufferedReader(dialyzerOutput);
 		while ((strLine = breader.readLine()) != null) {
-			if (strLine.matches("(.*?)(:[0-9]+:)(.*)")) {
-				String functionName = strLine.trim().replaceAll("(.*?)(:[0-9]+:)(.*)", "$1");
+			if (strLine.matches(DIALYZER_VIOLATION_ROW_REGEX)) {
+				String functionName = strLine.trim().replaceAll(DIALYZER_VIOLATION_ROW_REGEX, "$1");
 				if (systemId.contains(functionName)) {
 					String[] res = strLine.split(":");
 					Issue i = new Issue(res[0],Integer.valueOf(res[1]), dialyzerRuleManager.getRuleIdByMessage(res[2].trim()), res[2].trim());

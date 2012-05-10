@@ -112,11 +112,11 @@ public class ErlangFile extends Resource<ErlangPackage> {
   }
 
   /**
-   * Creates a {@link RebarFile} from a file in the source directories.
+   * Creates a {@link ErlangFile} from a file in the source directories.
    *
    * @param inputFile the file object with relative path
    * @param isUnitTest whether it is a unit test file or a source file
-   * @return the {@link RebarFile} created if exists, null otherwise
+   * @return the {@link ErlangFile} created if exists, null otherwise
    */
   public static ErlangFile fromInputFile(InputFile inputFile, boolean isUnitTest) {
     if (inputFile == null || inputFile.getFile() == null || inputFile.getRelativePath() == null) {

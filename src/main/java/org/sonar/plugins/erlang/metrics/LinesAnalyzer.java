@@ -57,15 +57,16 @@ public class LinesAnalyzer {
 
 	/**
 	 * Only count commented lines which has some text after the comment prefix
+	 * so we don't count those line which were created for formatting reason like:
+	 * %%-------------------------------------
+	 * %%=====================================
 	 * 
 	 * @return
 	 */
 	public int countCommentedLines() {
 		int numberOfComments = 0;
 		for (String line : lines) {
-			// System.out.println(line);
 			if (line.matches("%+ *[^-=]+")) {
-				// System.out.println("::::::::"+line);
 				numberOfComments++;
 			}
 		}
