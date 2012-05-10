@@ -17,7 +17,7 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package org.sonar.plugins.erlang.tests;
+package org.sonar.plugins.erlang.tests.eunit;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -40,6 +40,8 @@ import org.sonar.api.utils.ParsingUtils;
 import org.sonar.plugins.erlang.language.Erlang;
 import org.sonar.plugins.erlang.language.ErlangFile;
 import org.sonar.plugins.erlang.sensor.AbstractErlangSensor;
+import org.sonar.plugins.erlang.tests.utils.GenericExtFilter;
+import org.sonar.plugins.erlang.tests.utils.TestSensorUtils;
 
 public final class ErlangEunitSensor extends AbstractErlangSensor {
 
@@ -86,7 +88,7 @@ public final class ErlangEunitSensor extends AbstractErlangSensor {
 			String eunitTestName = file.replaceAll("(TEST-)(.*?)(\\.xml)", "$2").concat(".erl");
 			
 			//org.sonar.api.resources.File unitTestFileResource = org.sonar.api.resources.File.fromIOFile(new File(project.getFileSystem().getTestDirs().get(0), eunitTestName), project.getFileSystem().getTestDirs());
-			InputFile eunitFile = findEunitFileFOrReport(project.getFileSystem().testFiles(erlang.getKey()),eunitTestName);
+			InputFile eunitFile = TestSensorUtils.findFileForReport(project.getFileSystem().testFiles(erlang.getKey()),eunitTestName);
 			ErlangFile unitTestFileResource = ErlangFile.fromInputFile(eunitFile, true);
 			LOG.debug("Adding unittest resource: {}", unitTestFileResource.toString());
 
@@ -121,15 +123,6 @@ public final class ErlangEunitSensor extends AbstractErlangSensor {
 
 	}
 
-	private InputFile findEunitFileFOrReport(List<InputFile> testFiles, String eunitTestName) {
-		for (InputFile inputFile : testFiles) {
-			if(inputFile.getFile().getName().contains(eunitTestName)){
-				return inputFile;
-			}
-		}
-		return null;
-	}
-
 	protected String getUnitTestFileName(String className) {
 		String fileName = className.substring(className.indexOf('.') + 1);
 		fileName = fileName.replace('.', '/');
@@ -152,18 +145,5 @@ public final class ErlangEunitSensor extends AbstractErlangSensor {
 	@Override
 	public String toString() {
 		return getClass().getSimpleName();
-	}
-
-	public class GenericExtFilter implements FilenameFilter {
-
-		private String ext;
-
-		public GenericExtFilter(String ext) {
-			this.ext = ext;
-		}
-
-		public boolean accept(File dir, String name) {
-			return (name.endsWith(ext));
-		}
 	}
 }
