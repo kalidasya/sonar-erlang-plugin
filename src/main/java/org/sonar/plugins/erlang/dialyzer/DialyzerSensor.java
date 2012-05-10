@@ -24,18 +24,15 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.List;
 
-import org.apache.commons.configuration.Configuration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.measures.CoreMetrics;
-import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.InputFile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
-import org.sonar.api.rules.RuleFinder;
 import org.sonar.api.rules.Violation;
 import org.sonar.plugins.erlang.language.Erlang;
 import org.sonar.plugins.erlang.language.ErlangFile;
@@ -88,42 +85,13 @@ public class DialyzerSensor extends AbstractErlangSensor {
 				/**
 				 * TODO: add some rule checking here
 				 */
-				Rule rule = dialyzerRuleManager.getRuleByKey(issue.ruleId);
+				Rule rule =  Rule.create(DialyzerRuleRepository.REPOSITORY_NAME, issue.ruleId);
 				Violation violation = Violation.create(rule, erlangFile);
 				violation.setLineId(issue.line);
 				violation.setMessage(issue.descr);
 				context.saveViolation(violation);
 			}
 
-			/*
-			 * // process issues found by JSLint List<Issue> issues =
-			 * result.getIssues(); for (Issue issue : issues) {
-			 * 
-			 * LOG.debug("Dialyzer warning message {}", issue.getRaw());
-			 * 
-			 * Rule rule =
-			 * ruleFinder.findByKey(DialyzerRuleRepository.REPOSITORY_KEY,
-			 * dialyzerRuleManager.getRuleIdByMessage(issue.getRaw()));
-			 * 
-			 * Violation violation = Violation.create(rule, resource);
-			 * 
-			 * violation.setLineId(issue.getLine());
-			 * violation.setMessage(issue.getReason());
-			 * 
-			 * context.saveViolation(violation); }
-			 */
-			/*
-			 * // add special violation for unused names List<JSIdentifier> unused
-			 * = result.getUnused(); for (JSIdentifier unusedName : unused) {
-			 * Violation violation = Violation.create(ruleFinder.findByKey
-			 * (DialyzerRuleRepository.REPOSITORY_KEY,
-			 * DialyzerRuleManager.UNUSED_NAMES_KEY), resource);
-			 * 
-			 * violation.setLineId(unusedName.getLine()); violation.setMessage("'"
-			 * + unusedName.getName() + "' is unused");
-			 * 
-			 * sensorContext.saveViolation(violation); }
-			 */
 		} finally {
 			IOUtils.closeQuietly(reader);
 		}

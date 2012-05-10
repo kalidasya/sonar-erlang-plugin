@@ -25,14 +25,11 @@ import net.sourceforge.pmd.cpd.AnyTokenizer;
 import net.sourceforge.pmd.cpd.Tokenizer;
 
 import org.sonar.api.batch.AbstractCpdMapping;
-import org.sonar.api.resources.InputFile;
 import org.sonar.api.resources.InputFileUtils;
 import org.sonar.api.resources.Language;
-import org.sonar.api.resources.ProjectFileSystem;
 import org.sonar.api.resources.Resource;
 import org.sonar.plugins.erlang.language.Erlang;
 import org.sonar.plugins.erlang.language.ErlangFile;
-import org.sonar.plugins.erlang.testmetrics.utils.TestSensorUtils;
 
 public class ErlangCpdMapping extends AbstractCpdMapping {
 
@@ -51,7 +48,7 @@ public class ErlangCpdMapping extends AbstractCpdMapping {
 	}
 
 	/**
-	 * TODO Need to implement this, bevause the SonarBridgeEngine file will call a
+	 * TODO Need to implement this, because the SonarBridgeEngine file will call a
 	 * mapping.createResource and it returns with wrong keys and package names
 	 * Now it is using the test util class which should be changed
 	 * 

@@ -24,13 +24,12 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonar.api.BatchExtension;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RuleRepository;
 import org.sonar.api.rules.XMLRuleParser;
 import org.sonar.plugins.erlang.language.Erlang;
 
-public class DialyzerRuleRepository extends RuleRepository implements BatchExtension {
+public class DialyzerRuleRepository extends RuleRepository {
 	private static final Logger LOG = LoggerFactory.getLogger(DialyzerSensor.class);
 	private XMLRuleParser parser;
 	public static final String REPOSITORY_NAME = "Erlang";
@@ -50,13 +49,6 @@ public class DialyzerRuleRepository extends RuleRepository implements BatchExten
 		this.parser = parser;
 	}
 
-	/*public DialyzerRuleRepository(Erlang erlang, DialyzerRuleManager dialyzerRuleManager) {
-		super(REPOSITORY_KEY, erlang.getKey());
-		setName(REPOSITORY_NAME);
-		LOG.warn("Constructor called, fields: erlang="+erlang+" dialyzerRuleManager="+dialyzerRuleManager);
-		this.dialyzerRuleManager = dialyzerRuleManager;
-	}*/
-
 	@Override
 	  public List<Rule> createRules() {
 	    List<Rule> rules = parser.parse(getClass().getResourceAsStream(RULES_FILE));
@@ -65,30 +57,5 @@ public class DialyzerRuleRepository extends RuleRepository implements BatchExten
 	    }
 	    return rules;
 	  }
-	
-/*
-	@Override
-	public List<Rule> createRules() {
 
-		List<Rule> rulesList = new ArrayList<Rule>();
-
-		for (DialyzerRule dialyzerRule : dialyzerRuleManager.getDialyzerRules()) {
-			Rule rule = Rule.create(REPOSITORY_KEY, dialyzerRule.getRule().getKey(), dialyzerRule.getRule().getName());
-
-			rule.setDescription(dialyzerRule.getRule().getDescription());
-			rule.setSeverity(dialyzerRule.getRule().getSeverity());
-
-			for (RuleParam ruleParam : dialyzerRule.getRule().getParams()) {
-				RuleParam param = rule.createParameter();
-				param.setKey(ruleParam.getKey());
-				param.setDefaultValue(ruleParam.getDefaultValue());
-				param.setDescription(ruleParam.getDescription());
-				param.setType(ruleParam.getType());
-			}
-
-			rulesList.add(rule);
-		}
-
-		return rulesList;
-	}*/
 }

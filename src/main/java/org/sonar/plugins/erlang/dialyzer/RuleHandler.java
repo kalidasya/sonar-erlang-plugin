@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.dom4j.Node;
 import org.sonar.api.rules.RulePriority;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;

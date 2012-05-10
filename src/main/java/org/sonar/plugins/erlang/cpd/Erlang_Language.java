@@ -20,7 +20,6 @@
 package org.sonar.plugins.erlang.cpd;
 
 import net.sourceforge.pmd.cpd.AbstractLanguage;
-import net.sourceforge.pmd.cpd.AnyTokenizer;
 
 public class Erlang_Language extends AbstractLanguage {
 	public Erlang_Language() {

@@ -24,10 +24,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.sonar.api.web.CodeColorizerFormat;
-import org.sonar.colorizer.CDocTokenizer;
-import org.sonar.colorizer.CppDocTokenizer;
-import org.sonar.colorizer.JavaAnnotationTokenizer;
-import org.sonar.colorizer.JavadocTokenizer;
 import org.sonar.colorizer.KeywordsTokenizer;
 import org.sonar.colorizer.LiteralTokenizer;
 import org.sonar.colorizer.Tokenizer;

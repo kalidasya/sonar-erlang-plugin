@@ -53,20 +53,16 @@ public class ErlangDialyzer {
 		boolean functionOpened = false;
 		ErlangFunction latest = null;
 		while ((strLine = breader.readLine()) != null) {
-		//	LOG.debug("while started" + strLine);
 			if (strLine.trim().matches("^[a-z]+[a-z0-9_@]+ *\\(.*?\\) *->") && !functionOpened) {
-		//		LOG.debug("function found" + strLine);
 				result.getFunctions().add(new ErlangFunction());
 				latest = result.getFunctions().get(result.getFunctions().size() - 1);
 				latest.addLine(strLine);
 				functionOpened = true;
 			} else {
 				if (functionOpened) {
-		//			LOG.debug("function open" + strLine);
 					latest.addLine(strLine);
 				}
 				if (strLine.trim().matches(".*\\.$") && functionOpened) {
-		//			LOG.debug("function closed");
 					latest = null;
 					functionOpened = false;
 				}

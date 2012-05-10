@@ -23,7 +23,6 @@ package org.sonar.plugins.erlang.dialyzer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jfree.util.Log;
 import org.sonar.api.BatchExtension;
 import org.sonar.api.ServerExtension;
 import org.sonar.api.rules.Rule;
