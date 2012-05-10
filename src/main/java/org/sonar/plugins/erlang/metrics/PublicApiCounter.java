@@ -27,6 +27,9 @@ public class PublicApiCounter {
 	private static final String ERLANG_EXPORT_REGEX = "(.*-export\\(\\[)(.*?)(\\]\\).*)";
 
 	public static double countPublicApi(String source) {
+		/**
+		 * TODO handle the export_all function
+		 */
 		Matcher m = Pattern.compile(ERLANG_EXPORT_REGEX, Pattern.DOTALL + Pattern.MULTILINE).matcher(
 				source);
 		if (m.matches()) {

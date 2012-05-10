@@ -31,3 +31,6 @@ MISSING FEATURES to reach milestone 2:
 * publish it to the sonar dev community
 * refactor/optimize/clear
 * find other areas of improving
+** implement export_all handling
+** implement internal method counter
+** anonym method counter
