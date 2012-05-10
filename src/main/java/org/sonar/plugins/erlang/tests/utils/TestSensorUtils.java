@@ -21,16 +21,18 @@ package org.sonar.plugins.erlang.tests.utils;
 
 import java.util.List;
 
+import org.jfree.util.Log;
 import org.sonar.api.resources.InputFile;
 
 public class TestSensorUtils {
 
 	public static InputFile findFileForReport(List<InputFile> files, String name) {
 		for (InputFile inputFile : files) {
-			if(inputFile.getFile().getName().contains(name)){
+			if(inputFile.getFile().getName().equals(name)){
 				return inputFile;
 			}
 		}
+		Log.error("Referenced resource file not found: " + name);
 		return null;
 	}
 
