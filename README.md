@@ -16,16 +16,18 @@ The current metrics in nutshell:
 * colorization
 * code coverage
 * basic erlang profile based on dialyzer 
-
+* dialyzer rules are processed
 
 BUGS:
-* all rules during the analyse marked as "Rule is not activated" because the profile.getActiveRule(violation.getRule()); returns with null --> I really need some help to solve this
 * on the components view there are "[root]" and "package" components the "package contains the information, the root is empty, but it seems it is related to the violations --> temporary fix done, it needs to be reviewed
 
 PROBLEMS:
 * now the RuleHandler use a SAXParser because I cannot make that SMHierarchicCursor to work.. after getting the name and I tried to get the descendant text and it always thrown an exception that a child cursor is open...
 
-MISSING FEATURES to reach milestone 1:
-* rules working
+MISSING FEATURES to reach milestone 2:
 * comments
 * some... how they call it? tests?
+* comment well
+* publish it to the sonar dev community
+* refactor/optimize/clear
+* find other areas of improving
