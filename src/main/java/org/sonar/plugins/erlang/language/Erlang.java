@@ -45,12 +45,20 @@ public class Erlang extends AbstractLanguage {
 		return ErlangPlugin.EUNIT_DEFAULT_FOLDER;
 	}
 
+	public void setConfiguration(Configuration configuration) {
+	    this.configuration = configuration;
+	  }
+	
 	public String[] getFileSuffixes() {
 		String[] suffixes = configuration.getStringArray(ErlangPlugin.FILE_SUFFIXES_KEY);
 		if (suffixes == null || suffixes.length == 0) {
 			suffixes = StringUtils.split(ErlangPlugin.FILE_SUFFIXES_DEFVALUE, ",");
 		}
 		return suffixes;
+	}
+
+	public Configuration getConfiguration() {
+		return configuration;
 	}
 
 }

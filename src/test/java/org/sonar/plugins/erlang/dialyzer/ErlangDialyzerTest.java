@@ -63,5 +63,8 @@ public class ErlangDialyzerTest {
 	@Test
 	public void checkDialyzer() {
 		assertThat(result.getFunctions().size(), Matchers.equalTo(7));
+		assertThat(result.getIssues().size(), Matchers.equalTo(1));
+		assertThat(result.getIssues().get(0).ruleId, Matchers.equalTo("D042"));
+		assertThat(result.getIssues().get(0).line, Matchers.equalTo(2));
 	}
 }

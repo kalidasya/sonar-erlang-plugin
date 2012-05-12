@@ -97,9 +97,9 @@ public class BaseMetricsSensor extends AbstractErlangSensor {
 
   private void addLineMetrics(SensorContext sensorContext, ErlangFile erlangFile, LinesAnalyzer linesAnalyzer) {
     sensorContext.saveMeasure(erlangFile, CoreMetrics.LINES, (double) linesAnalyzer.countLines());
-    sensorContext.saveMeasure(erlangFile, CoreMetrics.NCLOC, (double) linesAnalyzer.countLinesOfCode());
+    sensorContext.saveMeasure(erlangFile, CoreMetrics.NCLOC, (double) linesAnalyzer.getLinesOfCode());
     sensorContext.saveMeasure(erlangFile, CoreMetrics.COMMENT_LINES,
-            (double) linesAnalyzer.countCommentedLines());
+            (double) linesAnalyzer.getNumberOfComments());
   }
 
   private void addCodeMetrics(SensorContext sensorContext, ErlangFile erlangFile, String source) {

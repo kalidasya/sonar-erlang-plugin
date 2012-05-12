@@ -24,20 +24,19 @@ import java.util.regex.Pattern;
 
 public class PublicApiCounter {
 
-	private static final String ERLANG_EXPORT_REGEX = "(.*-export\\(\\[)(.*?)(\\]\\).*)";
+	private static final String ERLANG_EXPORT_REGEX = "(-export\\(\\[)(.*?)(\\]\\))\\.";
 
 	public static double countPublicApi(String source) {
 		/**
 		 * TODO handle the export_all function
 		 */
-		Matcher m = Pattern.compile(ERLANG_EXPORT_REGEX, Pattern.DOTALL + Pattern.MULTILINE).matcher(
-				source);
-		if (m.matches()) {
-			String exportedMethods = m.replaceAll("$2");
+		Matcher m = Pattern.compile(ERLANG_EXPORT_REGEX, Pattern.DOTALL + Pattern.MULTILINE).matcher(source);
+		int publicMethods = 0;
+		while (m.find()) {
+			String exportedMethods = m.group(2);
 			System.out.println(exportedMethods + " " + exportedMethods.split(",").length);
-			return exportedMethods.split(",").length;
+			publicMethods += exportedMethods.split(",").length;
 		}
-		return 0;
+		return publicMethods;
 	}
-
 }

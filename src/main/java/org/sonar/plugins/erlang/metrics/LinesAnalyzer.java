@@ -30,23 +30,41 @@ import org.apache.commons.lang.StringUtils;
  * @since 0.1
  */
 public class LinesAnalyzer {
+	
 
 	private final List<String> lines;
+	private int numberOfComments;
+	private int numberOfBlankLines;
+	private int numberOfDecoratorLines;
+	
+	public int getNumberOfComments() {
+		return numberOfComments;
+	}
+
+	public int getNumberOfBlankLines() {
+		return numberOfBlankLines;
+	}
+
+	public int getNumberOfDecoratorLines() {
+		return numberOfDecoratorLines;
+	}
 
 	public LinesAnalyzer(List<String> lines) {
 		this.lines = lines;
+		this.countCommentedLines();
+		this.countBlankLines();
 	}
 
 	public int countLines() {
 		return lines.size();
 	}
 
-	public int countLinesOfCode() {
-		return countLines() - countBlankLines() - countCommentedLines();
+	public int getLinesOfCode() {
+		return countLines() - numberOfBlankLines - numberOfComments - numberOfDecoratorLines;
 	}
 
 	private int countBlankLines() {
-		int numberOfBlankLines = 0;
+		numberOfBlankLines = 0;
 		for (String line : lines) {
 			if (StringUtils.isBlank(line)) {
 				numberOfBlankLines++;
@@ -63,11 +81,14 @@ public class LinesAnalyzer {
 	 * 
 	 * @return
 	 */
-	public int countCommentedLines() {
-		int numberOfComments = 0;
+	private int countCommentedLines() {
+		numberOfComments = 0;
 		for (String line : lines) {
-			if (line.matches("%+ *[^-=]+")) {
+			if (line.trim().matches("%+ *[^-=]+")) {
 				numberOfComments++;
+			}
+			if(line.trim().matches("%+ *[-=]+")){
+				numberOfDecoratorLines++;
 			}
 		}
 		return numberOfComments;
