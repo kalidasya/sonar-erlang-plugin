@@ -1,7 +1,7 @@
 /*
- * Sonar JavaScript Plugin
- * Copyright (C) 2011 Eriks Nukis
- * dev@sonar.codehaus.org
+ * Sonar Erlang Plugin
+ * Copyright (C) 2012 Tamás Kende
+ * kende.tamas@gmail.com
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,6 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-
 package org.sonar.plugins.erlang.cpd;
 
 import static org.junit.Assert.assertEquals;

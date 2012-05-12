@@ -28,7 +28,6 @@ import org.sonar.colorizer.KeywordsTokenizer;
 import org.sonar.colorizer.LiteralTokenizer;
 import org.sonar.colorizer.Tokenizer;
 import org.sonar.plugins.erlang.ErlangPlugin;
-import org.sonar.plugins.erlang.language.Erlang;
 
 /**
  * This class extends Sonar for code colorization of Erlang source.

@@ -36,7 +36,7 @@ public class ErlangDialyzer {
 	private static final String DIALYZER_VIOLATION_ROW_REGEX = "(.*?)(:[0-9]+:)(.*)";
 	private static final String FUNCTION_ENDS_REGEX = ".*\\.$";
 	private static final String FUNCTION_START_REGEX = "^[a-z]+[a-z0-9_@]+ *\\(.*?\\) *->";
-	private static final Logger LOG = LoggerFactory.getLogger(ErlangDialyzerTest.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ErlangDialyzer.class);
 
 	public ErlangDialyzerResult dialyzer(Project project, String systemId, Reader reader, DialyzerRuleManager dialyzerRuleManager) throws IOException {
 		ErlangDialyzerResult result = new ErlangDialyzerResult();

@@ -86,7 +86,7 @@ public final class ErlangCoverageSensor extends AbstractErlangSensor {
 		PropertiesBuilder<Integer, Integer> lineHitsData = new PropertiesBuilder<Integer, Integer>(
 				CoreMetrics.COVERAGE_LINE_HITS_DATA);
 
-		if (coveredFile.getCoveredLines() > 0) {
+		if (coveredFile.getLineCoverageData().size() > 0) {
 			Map<Integer, Integer> hits = coveredFile.getLineCoverageData();
 			for (Map.Entry<Integer, Integer> entry : hits.entrySet()) {
 				lineHitsData.add(entry.getKey(), entry.getValue());

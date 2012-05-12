@@ -28,40 +28,39 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
- 
+
 public final class CoverCoverageParser {
 
-  private static final String COVERAGE_DATA_REGEX = "(.*?)([0-9]+)(\\.\\..*?)";
-private final static Logger LOG = LoggerFactory.getLogger(CoverCoverageParser.class);
+	private static final String COVERAGE_DATA_REGEX = "(.*?)([0-9]+)(\\.\\..*?)";
+	private final static Logger LOG = LoggerFactory.getLogger(CoverCoverageParser.class);
 
-  public CoverFileCoverage parseFile(File file, String basedir, String sourceName) {
-    List<String> lines = new LinkedList<String>();
-    try {
-      lines = FileUtils.readLines(file);
-    } catch (IOException e) {
-      LOG.debug("Cound not read content from file: " + file.getName());
-    }
+	public CoverFileCoverage parseFile(File file, String basedir, String sourceName) {
+		List<String> lines = new LinkedList<String>();
+		try {
+			lines = FileUtils.readLines(file);
+		} catch (IOException e) {
+			LOG.debug("Cound not read content from file: " + file.getName());
+		}
 
-
-    CoverFileCoverage fileCoverage = new CoverFileCoverage();
-    boolean isCodeStarted = false;
-    int lineNumber = 1;
-    for (String line : lines) {
-   	if(line.trim().matches("^\\*+$")){
-   		isCodeStarted = true;
-   		continue;
-   	} 
-   	if(isCodeStarted){
-   		if(line.matches(".*?\\|.*")){
-   			String[] lineData = line.split("\\|", 2);
-   			if(!StringUtils.isBlank(lineData[0].trim())){
-   				String executionCount = lineData[0].trim().replaceAll(COVERAGE_DATA_REGEX, "$2");
-      			fileCoverage.addLine(lineNumber, Integer.valueOf(executionCount).intValue());
-   			}
-   			lineNumber++;
-   		}
-   	}
-    }
-    return fileCoverage;
-  }
+		CoverFileCoverage fileCoverage = new CoverFileCoverage();
+		boolean isCodeStarted = false;
+		int lineNumber = 1;
+		for (String line : lines) {
+			if (line.trim().matches("^\\*+$")) {
+				isCodeStarted = true;
+				continue;
+			}
+			if (isCodeStarted) {
+				if (line.matches(".*?\\|.*")) {
+					String[] lineData = line.split("\\|", 2);
+					if (!StringUtils.isBlank(lineData[0].trim())) {
+						String executionCount = lineData[0].trim().replaceAll(COVERAGE_DATA_REGEX, "$2");
+						fileCoverage.addLine(lineNumber, Integer.valueOf(executionCount).intValue());
+					}
+					lineNumber++;
+				}
+			}
+		}
+		return fileCoverage;
+	}
 }
