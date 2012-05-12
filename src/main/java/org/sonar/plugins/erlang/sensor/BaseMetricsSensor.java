@@ -88,6 +88,9 @@ public class BaseMetricsSensor extends AbstractErlangSensor {
         LOGGER.error("Could not read the file: " + inputFile.getFile().getAbsolutePath(), ioe);
       }
     }
+    if(project.getModules().size()>0){
+    	sensorContext.saveMeasure(CoreMetrics.PROJECTS, (double) project.getModules().size());
+    }
 
 //    sensorContext.saveMeasure(complexityOfClasses.getMeasure());
  //   sensorContext.saveMeasure(complexityOfFunctions.getMeasure());

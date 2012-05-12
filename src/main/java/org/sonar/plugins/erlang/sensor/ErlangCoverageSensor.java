@@ -20,13 +20,16 @@
 package org.sonar.plugins.erlang.sensor;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.measures.CoreMetrics;
+import org.sonar.api.measures.Measure;
 import org.sonar.api.measures.PropertiesBuilder;
 import org.sonar.api.resources.InputFile;
 import org.sonar.api.resources.Project;
@@ -53,6 +56,10 @@ public final class ErlangCoverageSensor extends AbstractErlangSensor {
 
 		if (reportsDir.isDirectory() == false) {
 			LOG.warn("Folder does not exist {}", reportsDir);
+			/**
+			 * Make 0 coverage to those source files what are missing from the list
+			 */
+			setZeroCoverageIfNoFilesArePresented(project, sensorContext, new ArrayList());
 			return;
 		}
 
@@ -62,19 +69,46 @@ public final class ErlangCoverageSensor extends AbstractErlangSensor {
 			LOG.warn("no files end with : ", reportsDir);
 			return;
 		}
-
+		List<String> coveredFiles = new ArrayList<String>();
 		for (String file : list) {
-			if (!file.matches(".*\\.COVER.html") || file.contains("_eunit")) { //TODO move cover filename strings to elsewhere
+			/*
+			 * TODO move cover filename  strings to elsewhere
+			 */
+			if (!file.matches(".*\\.COVER.html") || file.contains("_eunit")) { 
 				continue;
 			}
 			String sourceName = file.replaceAll("(.*?)(\\.COVER\\.html)", "$1");
+			coveredFiles.add(sourceName.concat(ErlangPlugin.EXTENSION));
 			CoverCoverageParser parser = new CoverCoverageParser();
 			CoverFileCoverage fileCoverage = parser.parseFile(new File(reportsDir, file), project.getFileSystem()
 					.getSourceDirs().get(0).getName(), sourceName);
 			LOG.debug("Analysing coverage file: " + file + " for coverage result of " + sourceName);
 			analyseCoveredFile(project, sensorContext, fileCoverage, sourceName);
 		}
+		/**
+		 * Make 0 coverage to those source files what are missing from the list
+		 */
+		setZeroCoverageIfNoFilesArePresented(project, sensorContext, coveredFiles);
 
+	}
+
+	private void setZeroCoverageIfNoFilesArePresented(Project project, SensorContext sensorContext,
+			List<String> coveredFiles) {
+		for (InputFile source : project.getFileSystem().mainFiles(erlang.getKey())) {
+			if (!coveredFiles.contains(source.getFile().getName())) {
+				ErlangFile sourceResource = ErlangFile.fromInputFile(source, true);
+				PropertiesBuilder<Integer, Integer> lineHitsData = new PropertiesBuilder<Integer, Integer>(
+						CoreMetrics.COVERAGE_LINE_HITS_DATA);
+				for (int x = 1; x < sensorContext.getMeasure(sourceResource, CoreMetrics.LINES).getIntValue(); x++) {
+					lineHitsData.add(x, 0);
+				}
+				// use non comment lines of code for coverage calculation
+				Measure ncloc = sensorContext.getMeasure(sourceResource, CoreMetrics.NCLOC);
+				sensorContext.saveMeasure(sourceResource, lineHitsData.build());
+				sensorContext.saveMeasure(sourceResource, CoreMetrics.LINES_TO_COVER, ncloc.getValue());
+				sensorContext.saveMeasure(sourceResource, CoreMetrics.UNCOVERED_LINES, ncloc.getValue());
+			}
+		}
 	}
 
 	protected void analyseCoveredFile(Project project, SensorContext sensorContext, CoverFileCoverage coveredFile,
@@ -96,7 +130,8 @@ public final class ErlangCoverageSensor extends AbstractErlangSensor {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			sensorContext.saveMeasure(sourceResource, CoreMetrics.LINES_TO_COVER, (double) coveredFile.getLinesToCover());
+			sensorContext.saveMeasure(sourceResource, CoreMetrics.LINES_TO_COVER,
+					(double) coveredFile.getLinesToCover());
 			sensorContext.saveMeasure(sourceResource, CoreMetrics.UNCOVERED_LINES,
 					(double) coveredFile.getUncoveredLines());
 		}

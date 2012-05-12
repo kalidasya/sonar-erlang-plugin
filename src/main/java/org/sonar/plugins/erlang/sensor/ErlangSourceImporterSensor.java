@@ -72,9 +72,9 @@ public class ErlangSourceImporterSensor extends AbstractErlangSensor {
       
       if (LOGGER.isDebugEnabled()) {
         if (isUnitTest) {
-          LOGGER.debug("Added Erlang test file to Sonar: " + inputFile.getFile().getAbsolutePath());
+          LOGGER.debug("Add Erlang test file to Sonar: " + inputFile.getFile().getAbsolutePath());
         } else {
-          LOGGER.debug("Added Erlang source file to Sonar: " + inputFile.getFile().getAbsolutePath());
+          LOGGER.debug("Add Erlang source file to Sonar: " + inputFile.getFile().getAbsolutePath());
         }
       }
     } catch (IOException ioe) {
