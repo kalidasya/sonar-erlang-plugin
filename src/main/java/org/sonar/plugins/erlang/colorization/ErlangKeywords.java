@@ -42,4 +42,8 @@ public final class ErlangKeywords {
 	public static Set<String> getAllKeywords() {
 		return Collections.unmodifiableSet(KEYWORDS);
 	}
+
+	public static Set<String> get() {
+		return Collections.unmodifiableSet(KEYWORDS);
+	}
 }

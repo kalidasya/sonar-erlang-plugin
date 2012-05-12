@@ -1,0 +1,27 @@
+<html>
+<head><title>.eunit/erlcount_sup.COVER.html</title></head><body bgcolor=white text=black>
+<pre>
+File generated from /home/tkende/dev/projects/erlcount-1.0/.eunit/erlcount_sup.erl by COVER 2012-05-12 at 16:44:42
+
+****************************************************************************
+
+        |  -module(erlcount_sup).
+        |  -behaviour(supervisor).
+        |  -export([start_link/0, init/1]).
+        |  
+        |  start_link() -&gt;
+<font color=red>     0..|      supervisor:start_link(?MODULE, []).</font>
+        |  
+        |  init([]) -&gt;
+<font color=red>     0..|      MaxRestart = 5,</font>
+<font color=red>     0..|      MaxTime = 100,</font>
+<font color=red>     0..|      {ok, {{one_for_one, MaxRestart, MaxTime},</font>
+        |       [{dispatch,
+        |         {erlcount_dispatch, start_link, []},
+        |          transient,
+        |          60000,
+        |          worker,
+        |          [erlcount_dispatch]}]}}.
+</pre>
+</body>
+</html>

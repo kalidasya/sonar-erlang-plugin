@@ -34,7 +34,7 @@ public class DialyzerRuleManager implements ServerExtension, BatchExtension {
 	public static final String OTHER_RULES_KEY = "OTHER_RULES";
 	public static final String UNUSED_NAMES_KEY = "UNUSED_NAMES";
 	public static final String CYCLOMATIC_COMPLEXITY_KEY = "CYCLOMATIC_COMPLEXITY";
-	private static final String RULES_FILE_LOCATION = "/org/sonar/plugins/erlang/dialyzer/rules.xml"; 
+	public static final String RULES_FILE_LOCATION = "/org/sonar/plugins/erlang/dialyzer/rules.xml"; 
 
 	public DialyzerRuleManager() {
 		this(RULES_FILE_LOCATION);
@@ -53,6 +53,15 @@ public class DialyzerRuleManager implements ServerExtension, BatchExtension {
 		return null;
 	}
 
+	public DialyzerRule getDializerRuleByKey(String key){
+		for (DialyzerRule rule : rules) {
+			if (rule.getRule().getKey().equals(key)) {
+				return rule;
+			}
+		}
+		return null;
+	}
+	
 	public String getRuleIdByMessage(String message) {
 		for (DialyzerRule rule : rules) {
 			if (rule.hasMessage(message)) {
