@@ -24,7 +24,7 @@ public class RuleHandlerTest {
 		ruleHandler = new RuleHandler();
 		try {
 			saxParser = factory.newSAXParser();
-			saxParser.parse(DialyzerRuleManager.class.getResourceAsStream(DialyzerRuleManager.RULES_FILE_LOCATION), ruleHandler);
+			saxParser.parse(RuleHandlerTest.class.getResourceAsStream(DialyzerRuleManager.RULES_FILE_LOCATION), ruleHandler);
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		} catch (SAXException e) {
