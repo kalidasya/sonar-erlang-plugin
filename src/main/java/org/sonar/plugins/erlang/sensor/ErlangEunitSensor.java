@@ -35,7 +35,7 @@ import org.sonar.api.utils.ParsingUtils;
 import org.sonar.plugins.erlang.ErlangPlugin;
 import org.sonar.plugins.erlang.language.Erlang;
 import org.sonar.plugins.erlang.language.ErlangFile;
-import org.sonar.plugins.erlang.testmetrics.eunit.EunitReportParserTest;
+import org.sonar.plugins.erlang.testmetrics.eunit.EunitReportParser;
 import org.sonar.plugins.erlang.testmetrics.eunit.Report;
 import org.sonar.plugins.erlang.testmetrics.utils.GenericExtFilter;
 import org.sonar.plugins.erlang.testmetrics.utils.TestSensorUtils;
@@ -94,7 +94,7 @@ public final class ErlangEunitSensor extends AbstractErlangSensor {
 				LOG.debug(source, e);
 			}
 
-			Report report = EunitReportParserTest.parse(eunitReport);
+			Report report = EunitReportParser.parse(eunitReport);
 			if (report.getTests() > 0) {
 				double testsCount = report.getTests() - report.getSkipped();
 				context.saveMeasure(unitTestFileResource, CoreMetrics.SKIPPED_TESTS, report.getSkipped());
