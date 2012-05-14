@@ -31,6 +31,7 @@ import org.sonar.plugins.erlang.cpd.ErlangCpdMapping;
 import org.sonar.plugins.erlang.dialyzer.DialyzerRuleRepository;
 import org.sonar.plugins.erlang.dialyzer.ErlangDefaultProfile;
 import org.sonar.plugins.erlang.language.Erlang;
+import org.sonar.plugins.erlang.metrics.ErlangProjectBuilder;
 import org.sonar.plugins.erlang.sensor.BaseMetricsSensor;
 import org.sonar.plugins.erlang.sensor.DialyzerSensor;
 import org.sonar.plugins.erlang.sensor.ErlangCoverageSensor;
@@ -77,7 +78,8 @@ public class ErlangPlugin extends SonarPlugin {
 		extensions.add(ErlangCpdMapping.class);
 		extensions.add(ErlangEunitSensor.class);
 		extensions.add(ErlangCoverageSensor.class);
-		extensions.add(ErlangLibrarySensor.class);
+//		extensions.add(ErlangLibrarySensor.class);
+		extensions.add(ErlangProjectBuilder.class);
 		return extensions;
 	}
 
