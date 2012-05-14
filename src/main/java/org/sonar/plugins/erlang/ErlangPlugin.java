@@ -35,6 +35,7 @@ import org.sonar.plugins.erlang.sensor.BaseMetricsSensor;
 import org.sonar.plugins.erlang.sensor.DialyzerSensor;
 import org.sonar.plugins.erlang.sensor.ErlangCoverageSensor;
 import org.sonar.plugins.erlang.sensor.ErlangEunitSensor;
+import org.sonar.plugins.erlang.sensor.ErlangLibrarySensor;
 import org.sonar.plugins.erlang.sensor.ErlangSourceImporterSensor;
 
 @Properties({
@@ -57,6 +58,7 @@ public class ErlangPlugin extends SonarPlugin {
 	public static final String EXTENSION = "."+LANG_KEY;
 	public static final String FILE_SUFFIXES_KEY = "sonar.erlang.file.suffixes";
 	public static final String FILE_SUFFIXES_DEFVALUE = LANG_KEY;
+	public static final String REBAR_CONFIG_URL = "rebar.config";
 
 	/**
 	 * Main entry point, here are all the extensions what this plugin can execute...
@@ -75,6 +77,7 @@ public class ErlangPlugin extends SonarPlugin {
 		extensions.add(ErlangCpdMapping.class);
 		extensions.add(ErlangEunitSensor.class);
 		extensions.add(ErlangCoverageSensor.class);
+		extensions.add(ErlangLibrarySensor.class);
 		return extensions;
 	}
 

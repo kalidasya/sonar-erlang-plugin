@@ -60,7 +60,6 @@ public class BaseMetricsSensor extends AbstractErlangSensor {
 
 //    MetricDistribution complexityOfClasses = null;
 //    MetricDistribution complexityOfFunctions = null;
-
     for (InputFile inputFile : fileSystem.mainFiles(getErlang().getKey())) {
       final ErlangFile erlangFile = ErlangFile.fromInputFile(inputFile);
       System.out.println("Erlang file in BMS:" +erlangFile.getLongName());

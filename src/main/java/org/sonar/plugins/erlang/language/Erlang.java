@@ -61,4 +61,8 @@ public class Erlang extends AbstractLanguage {
 		return configuration;
 	}
 
+	public String getRebarConfigUrl() {
+		return ErlangPlugin.REBAR_CONFIG_URL;
+	}
+
 }
