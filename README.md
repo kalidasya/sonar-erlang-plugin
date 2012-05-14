@@ -30,3 +30,5 @@ MISSING FEATURES to reach milestone 2:
 	* implement export_all handling
 	* implement internal method counter
 	* anonym method counter
+	* used libraries?
+	* inner dependencies?? -> does it make sense?

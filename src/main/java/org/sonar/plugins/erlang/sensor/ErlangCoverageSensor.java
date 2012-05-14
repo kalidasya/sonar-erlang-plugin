@@ -72,18 +72,25 @@ public final class ErlangCoverageSensor extends AbstractErlangSensor {
 		List<String> coveredFiles = new ArrayList<String>();
 		for (String file : list) {
 			/*
-			 * TODO move cover filename  strings to elsewhere
+			 * TODO move cover filename strings to elsewhere
 			 */
-			if (!file.matches(".*\\.COVER.html") || file.contains("_eunit")) { 
+			if (!file.matches(".*\\.COVER.html") || file.contains("_eunit")) {
 				continue;
 			}
 			String sourceName = file.replaceAll("(.*?)(\\.COVER\\.html)", "$1");
-			coveredFiles.add(sourceName.concat(ErlangPlugin.EXTENSION));
-			CoverCoverageParser parser = new CoverCoverageParser();
-			CoverFileCoverage fileCoverage = parser.parseFile(new File(reportsDir, file), project.getFileSystem()
-					.getSourceDirs().get(0).getName(), sourceName);
-			LOG.debug("Analysing coverage file: " + file + " for coverage result of " + sourceName);
-			analyseCoveredFile(project, sensorContext, fileCoverage, sourceName);
+			/*
+			 * The Path could contain other source files (the sources of the dependencies) what will have 
+			 * code coverage so we have to exclude everything which is not in the source folder of the project
+			 */
+			if (TestSensorUtils.findFileForReport(project.getFileSystem().mainFiles(erlang.getKey()),
+					sourceName.concat(ErlangPlugin.EXTENSION)) != null) {
+				coveredFiles.add(sourceName.concat(ErlangPlugin.EXTENSION));
+				CoverCoverageParser parser = new CoverCoverageParser();
+				CoverFileCoverage fileCoverage = parser.parseFile(new File(reportsDir, file), project.getFileSystem()
+						.getSourceDirs().get(0).getName(), sourceName);
+				LOG.debug("Analysing coverage file: " + file + " for coverage result of " + sourceName);
+				analyseCoveredFile(project, sensorContext, fileCoverage, sourceName);
+			}
 		}
 		/**
 		 * Make 0 coverage to those source files what are missing from the list
@@ -130,8 +137,7 @@ public final class ErlangCoverageSensor extends AbstractErlangSensor {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			sensorContext.saveMeasure(sourceResource, CoreMetrics.LINES_TO_COVER,
-					(double) coveredFile.getLinesToCover());
+			sensorContext.saveMeasure(sourceResource, CoreMetrics.LINES_TO_COVER, (double) coveredFile.getLinesToCover());
 			sensorContext.saveMeasure(sourceResource, CoreMetrics.UNCOVERED_LINES,
 					(double) coveredFile.getUncoveredLines());
 		}
