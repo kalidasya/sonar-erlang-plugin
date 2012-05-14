@@ -27,26 +27,49 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.bootstrap.ProjectBuilder;
 import org.sonar.api.batch.bootstrap.ProjectDefinition;
 import org.sonar.api.batch.bootstrap.ProjectReactor;
 import org.sonar.plugins.erlang.language.Erlang;
+import org.sonar.plugins.erlang.sensor.ErlangLibrarySensor;
 
 public class ErlangProjectBuilder extends ProjectBuilder{
 
-	private Configuration configuration;
+	private final static Logger LOG = LoggerFactory.getLogger(ErlangLibrarySensor.class);
 
-
-	public ErlangProjectBuilder(ProjectReactor reactor,  Configuration configuration) {
+	public ErlangProjectBuilder(ProjectReactor reactor) {
 		super(reactor);
-		this.configuration = configuration;
 	}
 
 
 	@Override
 	protected void build(ProjectReactor reactor) {
 		ProjectDefinition projectDefinition = reactor.getRoot();
-		projectDefinition.getProperties()
+		File rebarConfig = new File(projectDefinition.getBaseDir()+File.separator+"rebar.config");
+		projectDefinition.addLibrary("");
+		try {
+			String rebarConfigContent = FileUtils.readFileToString(rebarConfig, "UTF-8");
+			Matcher m = Pattern.compile("\\{deps, ?\\[.*?\\]\\}\\.", Pattern.DOTALL + Pattern.MULTILINE).matcher(
+					rebarConfigContent);
+			Pattern p2 = Pattern.compile("\\{[^\\[]+?\\}", Pattern.DOTALL + Pattern.MULTILINE);
+			while (m.find()) {
+				String exportedMethods = rebarConfigContent.substring(m.start(), m.end() - 1);
+				Matcher deps = p2.matcher(exportedMethods);
+				while(deps.find()){
+					String dep = exportedMethods.substring(deps.start(),deps.end());
+					String name = dep.replaceFirst("(^\\{)([A-Za-z_]*?)(\\,.*)", "$2");
+					String version = dep.replaceFirst("(.*tag.*?\\\")(.*?)(\\\".*)", "$2");
+					projectDefinition.addLibrary(name+"-"+version);
+				}
+			}
+		} catch (FileNotFoundException e) {
+			LOG.error("Cannot open file: " + rebarConfig.getAbsolutePath() + e);
+		} catch (IOException e) {
+			LOG.error("Cannot open file: " + rebarConfig.getAbsolutePath() + e);
+		} 
+		projectDefinition.getProperties();
 	}
 
 }
