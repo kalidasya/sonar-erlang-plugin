@@ -22,28 +22,31 @@ package org.sonar.plugins.erlang.sensor;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonar.api.BatchComponent;
-import org.sonar.api.batch.Sensor;
 import org.sonar.api.batch.SensorContext;
-import org.sonar.api.batch.SonarIndex;
-import org.sonar.api.batch.bootstrap.ProjectDefinition;
+import org.sonar.api.database.DatabaseSession;
+import org.sonar.api.database.model.ResourceModel;
+import org.sonar.api.database.model.Snapshot;
 import org.sonar.api.resources.Project;
+import org.sonar.api.resources.Qualifiers;
+import org.sonar.api.resources.Resource;
+import org.sonar.api.resources.Scopes;
+import org.sonar.plugins.erlang.ErlangPlugin;
 import org.sonar.plugins.erlang.language.Erlang;
 
-public class ErlangLibrarySensor2 implements Sensor {
+public class ErlangLibrarySensor2 extends AbstractErlangSensor{
+	DatabaseSession session;
 
-	private SonarIndex index;
-
-	public ErlangLibrarySensor2(SonarIndex index) {
-		this.index = index;
+	public ErlangLibrarySensor2(Erlang erlang, DatabaseSession session) {
+		super(erlang);
+		this.session= session;
 	}
-
 	private final static Logger LOG = LoggerFactory.getLogger(ErlangLibrarySensor2.class);
 
 	@Override
@@ -63,6 +66,37 @@ public class ErlangLibrarySensor2 implements Sensor {
 					String dep = exportedMethods.substring(deps.start(), deps.end());
 					String name = dep.replaceFirst("(^\\{)([A-Za-z_]*?)(\\,.*)", "$2");
 					String version = dep.replaceFirst("(.*tag.*?\\\")(.*?)(\\\".*)", "$2");
+					String[] parts = dep.split(",");
+					String key = parts[3].replaceFirst("(.*:)(.*?)(\\\")", "$2").replaceAll("[\\\\/]", ":").replaceAll("\\.git", "");
+				/*	Library lib = new Library(name,version);
+					lib.setName(name);
+					lib.setEffectiveKey(key);
+					context.index(lib);
+					Project depProject = new Project(key);
+					depProject.setLanguage(erlang);
+					depProject.setName(name);
+					depProject = session.save(depProject);
+					*/
+					ResourceModel depP = new ResourceModel(Scopes.PROJECT, key, Qualifiers.LIBRARY, null, name);
+					depP.setLanguageKey(ErlangPlugin.LANG_KEY);
+					List res = session.createQuery("select id from ResourceModel WHERE KEE ='"+key+"'").getResultList();
+					if(res.size()==0){
+						depP = session.save(depP);
+					} else {
+						depP.setId((Integer) res.get(0));
+					}
+					Snapshot snapshot = new Snapshot();
+					snapshot.setParentId(null);
+					snapshot.setRootId(null);
+					snapshot.setVersion(version);
+					snapshot.setQualifier(Qualifiers.LIBRARY);
+					snapshot.setScope(Scopes.PROJECT);
+					snapshot.setCreatedAt(project.getAnalysisDate());
+					snapshot.setBuildDate(project.getAnalysisDate());
+					snapshot.setDepth(0);
+					snapshot.setRootProjectId(project.getId());
+					snapshot.setResourceId(depP.getId());
+					snapshot.save(session);
 					//projectDefinition.addLibrary(name + "-" + version);
 				}
 			}
@@ -71,11 +105,7 @@ public class ErlangLibrarySensor2 implements Sensor {
 		} catch (IOException e) {
 			LOG.error("Cannot open file: " + rebarConfigUrl + e);
 		}
+		
+		LOG.debug("Libraries added: "+context);
 	}
-
-	@Override
-	public boolean shouldExecuteOnProject(Project project) {
-		return true;
-	}
-
 }

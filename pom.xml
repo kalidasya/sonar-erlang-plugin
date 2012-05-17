@@ -30,6 +30,7 @@
    </organization>
    <properties>
       <sonar.version>3.0</sonar.version>
+      <sonar.runtimeVersion>3.0</sonar.runtimeVersion>
       <sonar.pluginKey>erl</sonar.pluginKey>
       <sonar.pluginName>Erlang</sonar.pluginName>
       <sonar.pluginClass>org.sonar.plugins.erlang.ErlangPlugin</sonar.pluginClass>
@@ -115,6 +116,12 @@
                </execution>
             </executions>
          </plugin>
+         <plugin>
+            <groupId>org.codehaus.sonar</groupId>
+            <artifactId>sonar-dev-maven-plugin</artifactId>
+            
+         </plugin>
+         
       </plugins>
    </build>
    <dependencies>

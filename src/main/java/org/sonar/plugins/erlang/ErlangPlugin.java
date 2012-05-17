@@ -37,6 +37,7 @@ import org.sonar.plugins.erlang.sensor.DialyzerSensor;
 import org.sonar.plugins.erlang.sensor.ErlangCoverageSensor;
 import org.sonar.plugins.erlang.sensor.ErlangEunitSensor;
 import org.sonar.plugins.erlang.sensor.ErlangLibrarySensor;
+import org.sonar.plugins.erlang.sensor.ErlangLibrarySensor2;
 import org.sonar.plugins.erlang.sensor.ErlangSourceImporterSensor;
 
 @Properties({
@@ -78,8 +79,8 @@ public class ErlangPlugin extends SonarPlugin {
 		extensions.add(ErlangCpdMapping.class);
 		extensions.add(ErlangEunitSensor.class);
 		extensions.add(ErlangCoverageSensor.class);
-//		extensions.add(ErlangLibrarySensor.class);
-		extensions.add(ErlangProjectBuilder.class);
+		extensions.add(ErlangLibrarySensor2.class);
+//		extensions.add(ErlangProjectBuilder.class);
 		return extensions;
 	}
 
