@@ -37,9 +37,20 @@ import org.sonar.api.resources.Resource;
 import org.sonar.plugins.erlang.language.Erlang;
 
 public class ErlangLibrarySensor extends AbstractErlangSensor {
+	private static final Pattern depsDirPattern = Pattern.compile("\\{deps_dir, ?\\[.*?\\]\\}\\.", Pattern.DOTALL
+			+ Pattern.MULTILINE);
 	private static final Pattern allDepPattern = Pattern.compile("\\{deps, ?\\[.*?\\]\\}\\.", Pattern.DOTALL
 			+ Pattern.MULTILINE);
 	private static final Pattern oneDepPattern = Pattern.compile("\\{[^\\[]+?\\}", Pattern.DOTALL + Pattern.MULTILINE);
+	private static final Pattern depNamePattern = Pattern.compile("(^\\{)([A-Za-z_]*?)(\\,.*)", Pattern.DOTALL
+			+ Pattern.MULTILINE);
+	private static final Pattern depVersionInTagPattern = Pattern.compile("(.*tag.*?\\\")(.*?)(\\\".*)", Pattern.DOTALL
+			+ Pattern.MULTILINE);
+	private static final Pattern depVersionInBranchPattern = Pattern.compile("(.*branch.*?\\\")(.*?)(\\\".*)",
+			Pattern.DOTALL + Pattern.MULTILINE);
+	private static final Pattern depsGetDirPattern = Pattern.compile("(\\{deps_dir, ?\\[\\\")(.*?)(\\\"\\]\\}\\.)",
+			Pattern.DOTALL + Pattern.MULTILINE);
+	
 	DatabaseSession session;
 
 	public ErlangLibrarySensor(Erlang erlang, DatabaseSession session) {
@@ -68,10 +79,10 @@ public class ErlangLibrarySensor extends AbstractErlangSensor {
 				Matcher deps = oneDepPattern.matcher(exportedMethods);
 				while (deps.find()) {
 					String dep = exportedMethods.substring(deps.start(), deps.end());
-					String name = dep.replaceFirst("(^\\{)([A-Za-z_]*?)(\\,.*)", "$2");
-					String version = dep.replaceFirst("(.*tag.*?\\\")(.*?)(\\\".*)", "$2");
+					String name = depNamePattern.matcher(dep).replaceFirst("$2");
+					String version = depVersionInTagPattern.matcher(dep).replaceFirst("$2");
 					if (version.length() == dep.length()) {
-						version = dep.replaceFirst("(.*branch.*?\\\")(.*?)(\\\".*)", "$2");
+						version = depVersionInBranchPattern.matcher(dep).replaceFirst("$2");
 					}
 					String[] parts = dep.split(",");
 					String key = parts[3].replaceFirst("(.*:)(.*?)(\\\")", "$2").replaceAll("[\\\\/]", ":")
@@ -102,15 +113,12 @@ public class ErlangLibrarySensor extends AbstractErlangSensor {
 
 	private String getDepsDir(String rebarConfigContent) {
 		// find lib dir: {lib_dirs,["deps"]}. or deps_dir?
-		Matcher libDirMatcher = Pattern.compile("\\{deps_dir, ?\\[.*?\\]\\}\\.", Pattern.DOTALL + Pattern.MULTILINE)
-				.matcher(rebarConfigContent);
-		String libDir = "deps";
-		if (libDirMatcher.matches()) {
-			libDirMatcher.find();
-			libDir = rebarConfigContent.substring(libDirMatcher.start(), libDirMatcher.end() - 1).replaceAll(
-					"(\\{deps_dir, ?\\[\\\")(.*?)(\\\"\\]\\}\\.)", "$2"); // or
-																			// lib_dirs???
+		Matcher depsDirMatcher = depsDirPattern.matcher(rebarConfigContent);
+		String depDir = "deps";
+		if (depsDirMatcher.matches()) {
+			depsDirMatcher.find();
+			depDir =  depsGetDirPattern.matcher(rebarConfigContent.substring(depsDirMatcher.start(), depsDirMatcher.end() - 1)).replaceAll("$2"); 
 		}
-		return libDir;
+		return depDir;
 	}
 }
