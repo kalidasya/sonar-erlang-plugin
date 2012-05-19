@@ -28,19 +28,20 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonar.api.BatchComponent;
 import org.sonar.api.batch.SensorContext;
-import org.sonar.api.batch.bootstrap.ProjectDefinition;
+import org.sonar.api.database.DatabaseSession;
+import org.sonar.api.design.Dependency;
+import org.sonar.api.resources.Library;
 import org.sonar.api.resources.Project;
+import org.sonar.api.resources.Resource;
 import org.sonar.plugins.erlang.language.Erlang;
 
-public class ErlangLibrarySensor extends AbstractErlangSensor implements BatchComponent {
+public class ErlangLibrarySensor extends AbstractErlangSensor {
+	DatabaseSession session;
 
-	private ProjectDefinition projectDefinition;
-
-	public ErlangLibrarySensor(Erlang erlang, ProjectDefinition projectDefinition) {
+	public ErlangLibrarySensor(Erlang erlang, DatabaseSession session) {
 		super(erlang);
-		this.projectDefinition = projectDefinition;
+		this.session = session;
 	}
 
 	private final static Logger LOG = LoggerFactory.getLogger(ErlangLibrarySensor.class);
@@ -58,18 +59,33 @@ public class ErlangLibrarySensor extends AbstractErlangSensor implements BatchCo
 			while (m.find()) {
 				String exportedMethods = rebarConfigContent.substring(m.start(), m.end() - 1);
 				Matcher deps = p2.matcher(exportedMethods);
-				while(deps.find()){
-					String dep = exportedMethods.substring(deps.start(),deps.end());
+				while (deps.find()) {
+					String dep = exportedMethods.substring(deps.start(), deps.end());
 					String name = dep.replaceFirst("(^\\{)([A-Za-z_]*?)(\\,.*)", "$2");
 					String version = dep.replaceFirst("(.*tag.*?\\\")(.*?)(\\\".*)", "$2");
-					projectDefinition.addLibrary(name+"-"+version);
+					String[] parts = dep.split(",");
+					String key = parts[3].replaceFirst("(.*:)(.*?)(\\\")", "$2").replaceAll("[\\\\/]", ":")
+							.replaceAll("\\.git", "");
+					Project dependencyProject = new Project(key);
+					dependencyProject.setLanguage(erlang);
+					Resource to = context.getResource(dependencyProject);
+					if (to == null ) {
+						Library lib = new Library(dependencyProject.getKey(), version);
+						context.index(lib);
+						to = context.getResource(lib);
+					}
+					Dependency dependency = new Dependency(project, to);
+					dependency.setUsage("compile");
+					dependency.setWeight(1);
+					context.saveDependency(dependency);
+
 				}
 			}
 		} catch (FileNotFoundException e) {
 			LOG.error("Cannot open file: " + rebarConfigUrl + e);
 		} catch (IOException e) {
 			LOG.error("Cannot open file: " + rebarConfigUrl + e);
-		} 
+		}
+		LOG.debug("Libraries added: " + context);
 	}
-
 }
