@@ -37,6 +37,9 @@ import org.sonar.api.resources.Resource;
 import org.sonar.plugins.erlang.language.Erlang;
 
 public class ErlangLibrarySensor extends AbstractErlangSensor {
+	private static final Pattern allDepPattern = Pattern.compile("\\{deps, ?\\[.*?\\]\\}\\.", Pattern.DOTALL
+			+ Pattern.MULTILINE);
+	private static final Pattern oneDepPattern = Pattern.compile("\\{[^\\[]+?\\}", Pattern.DOTALL + Pattern.MULTILINE);
 	DatabaseSession session;
 
 	public ErlangLibrarySensor(Erlang erlang, DatabaseSession session) {
@@ -48,37 +51,45 @@ public class ErlangLibrarySensor extends AbstractErlangSensor {
 
 	@Override
 	public void analyse(Project project, SensorContext context) {
-		String rebarConfigUrl = ((Erlang) project.getLanguage()).getRebarConfigUrl();
-		File rebarConfigFile = new File(project.getFileSystem().getBasedir(), rebarConfigUrl);
+		analyzeRebarConfigFile(project, context, project.getFileSystem().getBasedir(), null);
+	}
+
+	private void analyzeRebarConfigFile(Resource projectResource, SensorContext context, File rebarConfigUrl,
+			Dependency parentDep) {
+		File rebarConfigFile = new File(rebarConfigUrl, erlang.getRebarConfigUrl());
 		try {
-			String rebarConfigContent = FileUtils.readFileToString(rebarConfigFile, project.getFileSystem()
-					.getSourceCharset().name());
-			Matcher m = Pattern.compile("\\{deps, ?\\[.*?\\]\\}\\.", Pattern.DOTALL + Pattern.MULTILINE).matcher(
-					rebarConfigContent);
-			Pattern p2 = Pattern.compile("\\{[^\\[]+?\\}", Pattern.DOTALL + Pattern.MULTILINE);
-			while (m.find()) {
-				String exportedMethods = rebarConfigContent.substring(m.start(), m.end() - 1);
-				Matcher deps = p2.matcher(exportedMethods);
+			String rebarConfigContent = FileUtils.readFileToString(rebarConfigFile, "UTF-8");
+
+			String depsDir = getDepsDir(rebarConfigContent);
+			Matcher allDepMatcher = allDepPattern.matcher(rebarConfigContent);
+
+			while (allDepMatcher.find()) {
+				String exportedMethods = rebarConfigContent.substring(allDepMatcher.start(), allDepMatcher.end() - 1);
+				Matcher deps = oneDepPattern.matcher(exportedMethods);
 				while (deps.find()) {
 					String dep = exportedMethods.substring(deps.start(), deps.end());
 					String name = dep.replaceFirst("(^\\{)([A-Za-z_]*?)(\\,.*)", "$2");
 					String version = dep.replaceFirst("(.*tag.*?\\\")(.*?)(\\\".*)", "$2");
+					if (version.length() == dep.length()) {
+						version = dep.replaceFirst("(.*branch.*?\\\")(.*?)(\\\".*)", "$2");
+					}
 					String[] parts = dep.split(",");
 					String key = parts[3].replaceFirst("(.*:)(.*?)(\\\")", "$2").replaceAll("[\\\\/]", ":")
 							.replaceAll("\\.git", "");
-					Project dependencyProject = new Project(key);
-					dependencyProject.setLanguage(erlang);
+					Library dependencyProject = new Library(key, version);
 					Resource to = context.getResource(dependencyProject);
-					if (to == null ) {
+					if (to == null) {
 						Library lib = new Library(dependencyProject.getKey(), version);
 						context.index(lib);
 						to = context.getResource(lib);
 					}
-					Dependency dependency = new Dependency(project, to);
+					Dependency dependency = new Dependency(projectResource, to);
 					dependency.setUsage("compile");
 					dependency.setWeight(1);
 					context.saveDependency(dependency);
-
+					File depRebarConfig = new File(rebarConfigUrl.getPath().concat(File.separator + depsDir)
+							.concat(File.separator + name));
+					analyzeRebarConfigFile(to, context, depRebarConfig, dependency);
 				}
 			}
 		} catch (FileNotFoundException e) {
@@ -87,5 +98,19 @@ public class ErlangLibrarySensor extends AbstractErlangSensor {
 			LOG.error("Cannot open file: " + rebarConfigUrl + e);
 		}
 		LOG.debug("Libraries added: " + context);
+	}
+
+	private String getDepsDir(String rebarConfigContent) {
+		// find lib dir: {lib_dirs,["deps"]}. or deps_dir?
+		Matcher libDirMatcher = Pattern.compile("\\{deps_dir, ?\\[.*?\\]\\}\\.", Pattern.DOTALL + Pattern.MULTILINE)
+				.matcher(rebarConfigContent);
+		String libDir = "deps";
+		if (libDirMatcher.matches()) {
+			libDirMatcher.find();
+			libDir = rebarConfigContent.substring(libDirMatcher.start(), libDirMatcher.end() - 1).replaceAll(
+					"(\\{deps_dir, ?\\[\\\")(.*?)(\\\"\\]\\}\\.)", "$2"); // or
+																			// lib_dirs???
+		}
+		return libDir;
 	}
 }
