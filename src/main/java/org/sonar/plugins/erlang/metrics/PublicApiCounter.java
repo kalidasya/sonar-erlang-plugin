@@ -19,24 +19,68 @@
  */
 package org.sonar.plugins.erlang.metrics;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.collections.ListUtils;
+import org.sonar.plugins.erlang.utils.StringUtils;
+
 public class PublicApiCounter {
 
-	private static final String ERLANG_EXPORT_REGEX = "(-export\\(\\[)(.*?)(\\]\\))\\.";
+	private static final Pattern exportPattern = Pattern.compile("(-export\\(\\[)(.*?)(\\]\\))\\.", Pattern.DOTALL
+			+ Pattern.MULTILINE);
 
-	public static double countPublicApi(String source) {
+	public static List<Double> countPublicApi(String source) throws IOException {
 		/**
 		 * TODO handle the export_all function
 		 */
-		Matcher m = Pattern.compile(ERLANG_EXPORT_REGEX, Pattern.DOTALL + Pattern.MULTILINE).matcher(source);
-		int publicMethods = 0;
+		Matcher m = exportPattern.matcher(source);
+		List<Double> ret = new ArrayList<Double>();
+		int numOfPublicMethods = 0;
+		int numOfUndocPublicMethods = 0;
 		while (m.find()) {
 			String exportedMethods = m.group(2);
-			System.out.println(exportedMethods + " " + exportedMethods.split(",").length);
-			publicMethods += exportedMethods.split(",").length;
+			String[] publicMethods = exportedMethods.split(",");
+			numOfPublicMethods += publicMethods.length;
+			for (String method : publicMethods) {
+				String methodName = method.split("\\/")[0].trim();
+				Integer numOfVariables = Integer.valueOf(method.split("\\/")[1]);
+				StringBuilder regEx = new StringBuilder(methodName + "\\(.*?");
+				for (int i = 1; i < numOfVariables; i++) {
+					regEx.append(",.*?");
+				}
+				regEx.append("\\).*");
+				Matcher findMethodMatcher = Pattern.compile(regEx.toString(), Pattern.DOTALL + Pattern.MULTILINE)
+						.matcher(source);
+				findMethodMatcher.find();
+				String beforeMethod = source.substring(0, findMethodMatcher.start());
+				List<String> linesBefore = StringUtils.convertStringToListOfLines(beforeMethod);
+				boolean isComment = true;
+				for (ListIterator<String> iterator = linesBefore.listIterator(linesBefore.size()); iterator
+						.hasPrevious();) {
+					String line = iterator.previous();
+					if (StringUtils.isBlank(line) || LinesAnalyzer.isDecoratorPatter.matcher(line).matches()) {
+						continue;
+					}
+					if (LinesAnalyzer.isCommentPatter.matcher(line).matches()) {
+						break;
+					}
+					isComment = false;
+					break;
+				}
+				if(!isComment){
+					numOfUndocPublicMethods++;
+				}
+			}
+
 		}
-		return publicMethods;
+		ret.add((double) numOfPublicMethods);
+		ret.add((double) numOfUndocPublicMethods);
+		return ret;
 	}
+
 }

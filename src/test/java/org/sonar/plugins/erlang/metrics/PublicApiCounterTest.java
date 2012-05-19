@@ -24,6 +24,7 @@ import static org.junit.Assert.assertThat;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.Matchers;
@@ -43,8 +44,10 @@ public class PublicApiCounterTest {
 	}
 	
 	@Test
-	public void checkLinesAnalyzer(){
-		assertThat(PublicApiCounter.countPublicApi(source), Matchers.equalTo(7D));
+	public void checkLinesAnalyzer() throws IOException{
+		List<Double> result = PublicApiCounter.countPublicApi(source);
+		assertThat(result.get(0), Matchers.equalTo(7D));
+		assertThat(result.get(1), Matchers.equalTo(3D));
 	}
 	
 }

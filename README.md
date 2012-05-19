@@ -16,6 +16,9 @@ The current metrics in nutshell:
 * colorization
 * code coverage
 * based on dialyzer output rule violations are marked
+* based on rebar.config all dependencies are published on the libraries page (recursive)
+* count undocumented public apis (exported APIs which has no text comment before)
+
 
 BUGS:
 * on the components view there are "[root]" and "package" components the "package contains the information, the root is empty, but it seems it is related to the violations --> temporary fix done, it needs to be reviewed
@@ -30,5 +33,5 @@ MISSING FEATURES to reach milestone 2:
 	* implement export_all handling
 	* implement internal method counter
 	* anonym method counter
-	* used libraries?
-	* inner dependencies?? -> does it make sense?
+	* complexity calulation
+	

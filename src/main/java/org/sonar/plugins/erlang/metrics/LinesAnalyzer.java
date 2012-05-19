@@ -20,6 +20,7 @@
 package org.sonar.plugins.erlang.metrics;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -30,6 +31,8 @@ import org.apache.commons.lang.StringUtils;
  * @since 0.1
  */
 public class LinesAnalyzer {
+	public static final Pattern isCommentPatter = Pattern.compile("%+ *[^-=]+");
+	public static final Pattern isDecoratorPatter = Pattern.compile("%+ *[-=]+");
 	
 
 	private final List<String> lines;
@@ -84,10 +87,10 @@ public class LinesAnalyzer {
 	private int countCommentedLines() {
 		numberOfComments = 0;
 		for (String line : lines) {
-			if (line.trim().matches("%+ *[^-=]+")) {
+			if (isCommentPatter.matcher(line.trim()).matches()) {
 				numberOfComments++;
 			}
-			if(line.trim().matches("%+ *[-=]+")){
+			if(isDecoratorPatter.matcher(line.trim()).matches()){
 				numberOfDecoratorLines++;
 			}
 		}

@@ -54,4 +54,9 @@ public final class StringUtils {
     }
     return lines;
   }
+  
+  public static boolean isBlank(String string){
+	  return org.apache.commons.lang.StringUtils.isBlank(string);
+  }
+  
 }
