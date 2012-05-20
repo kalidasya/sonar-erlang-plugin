@@ -26,6 +26,7 @@ import java.util.ListIterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.sonar.plugins.erlang.language.ErlangFunction;
 import org.sonar.plugins.erlang.utils.StringUtils;
 
 public class PublicApiCounter {
@@ -33,53 +34,87 @@ public class PublicApiCounter {
 	private static final Pattern exportPattern = Pattern.compile("(-export\\(\\[)(.*?)(\\]\\))\\.", Pattern.DOTALL
 			+ Pattern.MULTILINE);
 
-	public static List<Double> countPublicApi(String source) throws IOException {
+	/**
+	 * Return with a list of doubles first value is the number of public APIs the second is the number of undocumented APIs
+	 * @param source
+	 * @param linesnAlyzer
+	 * @return
+	 * @throws IOException
+	 */
+	public static List<Double> countPublicApi(String source, ErlangSourceByLineAnalyzer linesnAlyzer)
+			throws IOException {
+		int numOfPublicMethods = 0;
+		int numOfUndocPublicMethods = 0;
+		List<Double> ret = new ArrayList<Double>();
 		/**
 		 * TODO handle the export_all function
 		 */
-		Matcher m = exportPattern.matcher(source);
-		List<Double> ret = new ArrayList<Double>();
-		int numOfPublicMethods = 0;
-		int numOfUndocPublicMethods = 0;
-		while (m.find()) {
-			String exportedMethods = m.group(2);
-			String[] publicMethods = exportedMethods.split(",");
-			numOfPublicMethods += publicMethods.length;
-			for (String method : publicMethods) {
-				String methodName = method.split("\\/")[0].trim();
-				Integer numOfVariables = Integer.valueOf(method.split("\\/")[1]);
-				StringBuilder regEx = new StringBuilder(methodName + "\\(.*?");
-				for (int i = 1; i < numOfVariables; i++) {
-					regEx.append(",.*?");
-				}
-				regEx.append("\\).*");
-				Matcher findMethodMatcher = Pattern.compile(regEx.toString(), Pattern.DOTALL + Pattern.MULTILINE)
-						.matcher(source);
-				findMethodMatcher.find();
-				String beforeMethod = source.substring(0, findMethodMatcher.start());
-				List<String> linesBefore = StringUtils.convertStringToListOfLines(beforeMethod);
-				boolean isComment = true;
-				for (ListIterator<String> iterator = linesBefore.listIterator(linesBefore.size()); iterator
-						.hasPrevious();) {
-					String line = iterator.previous();
-					if (StringUtils.isBlank(line) || ErlangSourceByLineAnalyzer.isDecoratorPatter.matcher(line).matches()) {
-						continue;
-					}
-					if (ErlangSourceByLineAnalyzer.isCommentPatter.matcher(line).matches()) {
-						break;
-					}
-					isComment = false;
-					break;
-				}
-				if(!isComment){
-					numOfUndocPublicMethods++;
-				}
-			}
 
+		if (source.contains("-export_all(")) {
+			for (ErlangFunction function : linesnAlyzer.getFunctions()) {
+				int start = source.indexOf(function.getFirstLine());
+				numOfUndocPublicMethods = increaseIfNecessary(source, numOfUndocPublicMethods, start);
+				numOfPublicMethods++;
+			}
+		} else {
+			Matcher m = exportPattern.matcher(source);
+			while (m.find()) {
+				String exportedMethods = m.group(2);
+				String[] publicMethods = exportedMethods.split(",");
+				numOfPublicMethods += publicMethods.length;
+				for (String method : publicMethods) {
+					String methodName = method.split("\\/")[0].trim();
+					Integer numOfVariables = Integer.valueOf(method.split("\\/")[1]);
+					StringBuilder regEx = new StringBuilder(methodName + "\\(.*?");
+					for (int i = 1; i < numOfVariables; i++) {
+						regEx.append(",.*?");
+					}
+					regEx.append("\\).*");
+					Matcher findMethodMatcher = Pattern.compile(regEx.toString(), Pattern.DOTALL + Pattern.MULTILINE)
+							.matcher(source);
+					findMethodMatcher.find();
+					int start = findMethodMatcher.start();
+					numOfUndocPublicMethods = increaseIfNecessary(source, numOfUndocPublicMethods, start);
+				}
+
+			}
 		}
 		ret.add((double) numOfPublicMethods);
 		ret.add((double) numOfUndocPublicMethods);
 		return ret;
+	}
+
+	private static int increaseIfNecessary(String source, int numOfUndocPublicMethods, int start) throws IOException {
+		List<String> linesBefore = getSourceBefore(source, start);
+		boolean isComment = isDocumented(linesBefore);
+		if (!isComment) {
+			numOfUndocPublicMethods++;
+		}
+		return numOfUndocPublicMethods;
+	}
+
+	private static List<String> getSourceBefore(String source, int start) throws IOException {
+		String beforeMethod = source.substring(0, start);
+		List<String> linesBefore = StringUtils.convertStringToListOfLines(beforeMethod);
+		return linesBefore;
+	}
+
+	private static boolean isDocumented(List<String> linesBefore) {
+		boolean isComment = true;
+		for (ListIterator<String> iterator = linesBefore.listIterator(linesBefore.size()); iterator
+				.hasPrevious();) {
+			String line = iterator.previous();
+			if (StringUtils.isBlank(line)
+					|| ErlangSourceByLineAnalyzer.isDecoratorPatter.matcher(line).matches()) {
+				continue;
+			}
+			if (ErlangSourceByLineAnalyzer.isCommentPatter.matcher(line).matches()) {
+				break;
+			}
+			isComment = false;
+			break;
+		}
+		return isComment;
 	}
 
 }

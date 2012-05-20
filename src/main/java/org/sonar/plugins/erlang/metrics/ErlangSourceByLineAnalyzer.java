@@ -127,4 +127,8 @@ public class ErlangSourceByLineAnalyzer {
 	public double getNumberOfFunctions() {
 		return functions.size();
 	}
+	
+	public List<ErlangFunction> getFunctions() {
+		return functions;
+	}
 }

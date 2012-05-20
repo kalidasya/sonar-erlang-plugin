@@ -30,23 +30,34 @@ import org.apache.commons.io.FileUtils;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
+import org.sonar.plugins.erlang.utils.StringUtils;
 
 public class PublicApiCounterTest {
 
 	private String source;
+	private String source2;
+	private ErlangSourceByLineAnalyzer sbla;
 
 	@Before
 	public void setup() throws IOException, URISyntaxException{
 		File fileToAnalyse =  new File(getClass().getResource("/org/sonar/plugins/erlang/erlcount/src/erlcount_counter.erl")
 				.toURI());
 		source = FileUtils.readFileToString(fileToAnalyse, "UTF-8");
+		fileToAnalyse =  new File(getClass().getResource("/org/sonar/plugins/erlang/erlcount/src/erlcount_sup.erl")
+				.toURI());
+		source2 = FileUtils.readFileToString(fileToAnalyse, "UTF-8");
+		sbla = new ErlangSourceByLineAnalyzer(StringUtils.convertStringToListOfLines(source2));
 	}
 	
 	@Test
 	public void checkLinesAnalyzer() throws IOException{
-		List<Double> result = PublicApiCounter.countPublicApi(source);
+		List<Double> result = PublicApiCounter.countPublicApi(source, null);
 		assertThat(result.get(0), Matchers.equalTo(7D));
 		assertThat(result.get(1), Matchers.equalTo(3D));
+		
+		result = PublicApiCounter.countPublicApi(source2, sbla);
+		assertThat(result.get(0), Matchers.equalTo(2D));
+		assertThat(result.get(1), Matchers.equalTo(0D));
 	}
 	
 }

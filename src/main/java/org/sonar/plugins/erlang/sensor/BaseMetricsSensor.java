@@ -77,7 +77,7 @@ public class BaseMetricsSensor extends AbstractErlangSensor {
 
 				addLineMetrics(sensorContext, erlangFile, linesAnalyzer);
 				addCodeMetrics(sensorContext, erlangFile, linesAnalyzer);
-				addPublicApiMetrics(sensorContext, erlangFile, source);
+				addPublicApiMetrics(sensorContext, erlangFile, source, linesAnalyzer);
 
 				// complexityOfClasses =
 				// sumUpMetricDistributions(complexityOfClasses,
@@ -117,9 +117,9 @@ public class BaseMetricsSensor extends AbstractErlangSensor {
 		// (double) ComplexityCalculator.measureComplexity(source));
 	}
 
-	private void addPublicApiMetrics(SensorContext sensorContext, ErlangFile erlangFile, String source)
+	private void addPublicApiMetrics(SensorContext sensorContext, ErlangFile erlangFile, String source, ErlangSourceByLineAnalyzer linesnAlyzer)
 			throws IOException {
-		List<Double> publicApiCounter = PublicApiCounter.countPublicApi(source);
+		List<Double> publicApiCounter = PublicApiCounter.countPublicApi(source, linesnAlyzer);
 		Double publicApi = publicApiCounter.get(0);
 		sensorContext.saveMeasure(erlangFile, CoreMetrics.PUBLIC_API, publicApi);
 		Double undocApi = publicApiCounter.get(1);

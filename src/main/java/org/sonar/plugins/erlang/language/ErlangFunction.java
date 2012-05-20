@@ -24,9 +24,17 @@ import java.util.List;
 
 public class ErlangFunction {
 
-	List<String> functionLines = new ArrayList<String>();
+	private final List<String> functionLines = new ArrayList<String>();
 	
 	public void addLine(String line){
 		functionLines.add(line);
+	}
+	
+	public String getFirstLine(){
+		return functionLines.get(0);
+	}
+	
+	public List<String> getLines(){
+		return functionLines;
 	}
 }
