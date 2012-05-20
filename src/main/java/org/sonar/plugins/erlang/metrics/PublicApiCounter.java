@@ -26,7 +26,6 @@ import java.util.ListIterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.collections.ListUtils;
 import org.sonar.plugins.erlang.utils.StringUtils;
 
 public class PublicApiCounter {
@@ -63,10 +62,10 @@ public class PublicApiCounter {
 				for (ListIterator<String> iterator = linesBefore.listIterator(linesBefore.size()); iterator
 						.hasPrevious();) {
 					String line = iterator.previous();
-					if (StringUtils.isBlank(line) || LinesAnalyzer.isDecoratorPatter.matcher(line).matches()) {
+					if (StringUtils.isBlank(line) || ErlangSourceByLineAnalyzer.isDecoratorPatter.matcher(line).matches()) {
 						continue;
 					}
-					if (LinesAnalyzer.isCommentPatter.matcher(line).matches()) {
+					if (ErlangSourceByLineAnalyzer.isCommentPatter.matcher(line).matches()) {
 						break;
 					}
 					isComment = false;

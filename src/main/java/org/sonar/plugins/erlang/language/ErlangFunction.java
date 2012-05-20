@@ -17,36 +17,16 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package org.sonar.plugins.erlang.metrics;
+package org.sonar.plugins.erlang.language;
 
-import static org.junit.Assert.assertThat;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
-import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
+public class ErlangFunction {
 
-public class PublicApiCounterTest {
-
-	private String source;
-
-	@Before
-	public void setup() throws IOException, URISyntaxException{
-		File fileToAnalyse =  new File(getClass().getResource("/org/sonar/plugins/erlang/erlcount/src/erlcount_counter.erl")
-				.toURI());
-		source = FileUtils.readFileToString(fileToAnalyse, "UTF-8");
-	}
+	List<String> functionLines = new ArrayList<String>();
 	
-	@Test
-	public void checkLinesAnalyzer() throws IOException{
-		List<Double> result = PublicApiCounter.countPublicApi(source);
-		assertThat(result.get(0), Matchers.equalTo(7D));
-		assertThat(result.get(1), Matchers.equalTo(3D));
+	public void addLine(String line){
+		functionLines.add(line);
 	}
-	
 }

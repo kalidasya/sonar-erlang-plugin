@@ -29,7 +29,6 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.SensorContext;
-import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.resources.InputFile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
@@ -38,7 +37,6 @@ import org.sonar.plugins.erlang.dialyzer.DialyzerRuleManager;
 import org.sonar.plugins.erlang.dialyzer.DialyzerRuleRepository;
 import org.sonar.plugins.erlang.dialyzer.ErlangDialyzer;
 import org.sonar.plugins.erlang.dialyzer.ErlangDialyzerResult;
-import org.sonar.plugins.erlang.dialyzer.ErlangFunction;
 import org.sonar.plugins.erlang.dialyzer.Issue;
 import org.sonar.plugins.erlang.language.Erlang;
 import org.sonar.plugins.erlang.language.ErlangFile;
@@ -79,10 +77,6 @@ public class DialyzerSensor extends AbstractErlangSensor {
 					+ " " + reader + " " + project);
 
 			ErlangDialyzerResult result = dialyzer.dialyzer(project, inputFile.getFile().getPath(), reader, dialyzerRuleManager);
-			LOG.debug("Function Size:" + result.getFunctions().size() + " " + inputFile.getFile().getPath());
-			// capture function count in file
-			List<ErlangFunction> functions = result.getFunctions();
-			context.saveMeasure(erlangFile, CoreMetrics.FUNCTIONS, (double) functions.size());
 
 			List<Issue> issues = result.getIssues();
 			LOG.debug("Issue Size:" + result.getIssues().size() + " " + inputFile.getFile().getPath());

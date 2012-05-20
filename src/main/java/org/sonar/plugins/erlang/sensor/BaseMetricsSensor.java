@@ -35,7 +35,7 @@ import org.sonar.api.resources.ProjectFileSystem;
 import org.sonar.plugins.erlang.language.Erlang;
 import org.sonar.plugins.erlang.language.ErlangFile;
 import org.sonar.plugins.erlang.language.ErlangPackage;
-import org.sonar.plugins.erlang.metrics.LinesAnalyzer;
+import org.sonar.plugins.erlang.metrics.ErlangSourceByLineAnalyzer;
 import org.sonar.plugins.erlang.metrics.PublicApiCounter;
 import org.sonar.plugins.erlang.utils.StringUtils;
 
@@ -72,10 +72,11 @@ public class BaseMetricsSensor extends AbstractErlangSensor {
 				// final List<Comment> comments = new
 				// Lexer().getComments(source);
 
-				final LinesAnalyzer linesAnalyzer = new LinesAnalyzer(lines);
+				final ErlangSourceByLineAnalyzer linesAnalyzer = new ErlangSourceByLineAnalyzer(lines);
+				// final LinesAnalyzer linesAnalyzer = new LinesAnalyzer(lines);
 
 				addLineMetrics(sensorContext, erlangFile, linesAnalyzer);
-				addCodeMetrics(sensorContext, erlangFile, source);
+				addCodeMetrics(sensorContext, erlangFile, linesAnalyzer);
 				addPublicApiMetrics(sensorContext, erlangFile, source);
 
 				// complexityOfClasses =
@@ -100,30 +101,30 @@ public class BaseMetricsSensor extends AbstractErlangSensor {
 		computePackagesMetric(sensorContext, packages);
 	}
 
-	private void addLineMetrics(SensorContext sensorContext, ErlangFile erlangFile, LinesAnalyzer linesAnalyzer) {
+	private void addLineMetrics(SensorContext sensorContext, ErlangFile erlangFile, ErlangSourceByLineAnalyzer linesAnalyzer) {
 		sensorContext.saveMeasure(erlangFile, CoreMetrics.LINES, (double) linesAnalyzer.countLines());
 		sensorContext.saveMeasure(erlangFile, CoreMetrics.NCLOC, (double) linesAnalyzer.getLinesOfCode());
 		sensorContext.saveMeasure(erlangFile, CoreMetrics.COMMENT_LINES, (double) linesAnalyzer.getNumberOfComments());
 	}
 
-	private void addCodeMetrics(SensorContext sensorContext, ErlangFile erlangFile, String source) {
-		// sensorContext.saveMeasure(erlangFile, CoreMetrics.CLASSES,
-		// (double) TypeCounter.countTypes(source));
+	private void addCodeMetrics(SensorContext sensorContext, ErlangFile erlangFile, ErlangSourceByLineAnalyzer linesAnalyzer) {
+		sensorContext.saveMeasure(erlangFile, CoreMetrics.CLASSES, 1D);
 		// sensorContext.saveMeasure(erlangFile, CoreMetrics.STATEMENTS,
 		// (double) StatementCounter.countStatements(source));
-		// sensorContext.saveMeasure(erlangFile, CoreMetrics.FUNCTIONS,
-		// (double) FunctionCounter.countFunctions(source));
+
+		sensorContext.saveMeasure(erlangFile, CoreMetrics.FUNCTIONS, linesAnalyzer.getNumberOfFunctions());
 		// sensorContext.saveMeasure(erlangFile, CoreMetrics.COMPLEXITY,
 		// (double) ComplexityCalculator.measureComplexity(source));
 	}
 
-	private void addPublicApiMetrics(SensorContext sensorContext, ErlangFile erlangFile, String source) throws IOException {
+	private void addPublicApiMetrics(SensorContext sensorContext, ErlangFile erlangFile, String source)
+			throws IOException {
 		List<Double> publicApiCounter = PublicApiCounter.countPublicApi(source);
 		Double publicApi = publicApiCounter.get(0);
 		sensorContext.saveMeasure(erlangFile, CoreMetrics.PUBLIC_API, publicApi);
 		Double undocApi = publicApiCounter.get(1);
 		sensorContext.saveMeasure(erlangFile, CoreMetrics.PUBLIC_UNDOCUMENTED_API, undocApi);
-		double density = (publicApi-undocApi) * 100d / publicApi;
+		double density = (publicApi - undocApi) * 100d / publicApi;
 		sensorContext.saveMeasure(erlangFile, CoreMetrics.PUBLIC_DOCUMENTED_API_DENSITY, density);
 	}
 

@@ -19,6 +19,9 @@
  */
 package org.sonar.plugins.erlang.language;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.sonar.api.resources.InputFile;
 import org.sonar.api.resources.Language;
@@ -38,6 +41,7 @@ public class ErlangFile extends Resource<ErlangPackage> {
   private final String filename;
   private final String longName;
   private final ErlangPackage parent;
+  List<ErlangFunction> functions = new ArrayList<ErlangFunction>(); 
 
   public ErlangFile(String packageKey, String className, boolean isUnitTest) {
     super();
@@ -93,7 +97,11 @@ public class ErlangFile extends Resource<ErlangPackage> {
     return parent;
   }
 
-  @Override
+  public String getFilename() {
+	return filename;
+}
+
+@Override
   public boolean matchFilePattern(String antPattern) {
     final String patternWithoutFileSuffix = StringUtils.substringBeforeLast(antPattern, ".");
     final WildcardPattern matcher = WildcardPattern.create(patternWithoutFileSuffix, ".");

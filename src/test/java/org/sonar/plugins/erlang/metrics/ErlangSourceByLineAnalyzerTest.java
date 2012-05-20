@@ -19,6 +19,8 @@
  */
 package org.sonar.plugins.erlang.metrics;
 
+import static org.junit.Assert.assertThat;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -29,11 +31,11 @@ import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.sonar.plugins.erlang.utils.StringUtils;
-import static org.junit.Assert.assertThat;
 
-public class LinesAnalyzerTest {
-
-	private LinesAnalyzer la;
+public class ErlangSourceByLineAnalyzerTest {
+	
+	
+	private ErlangSourceByLineAnalyzer la;
 
 	@Before
 	public void setup() throws IOException, URISyntaxException{
@@ -41,14 +43,14 @@ public class LinesAnalyzerTest {
 				.toURI());
 		String source = FileUtils.readFileToString(fileToAnalyse, "UTF-8");
 		List<String> lines = StringUtils.convertStringToListOfLines(source);
-		la = new LinesAnalyzer(lines);
+		la = new ErlangSourceByLineAnalyzer(lines);
 	}
 	
 	@Test
 	public void checkLinesAnalyzer(){
+		assertThat(la.getNumberOfFunctions(), Matchers.equalTo(2D));
 		assertThat(la.getNumberOfComments(), Matchers.equalTo(3));
 		assertThat(la.countLines(), Matchers.equalTo(22));
 		assertThat(la.getLinesOfCode(), Matchers.equalTo(15));
 	}
-	
 }

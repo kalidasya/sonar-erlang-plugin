@@ -31,7 +31,6 @@ import org.sonar.plugins.erlang.ErlangPlugin;
 import org.sonar.plugins.erlang.sensor.DialyzerSensor;
 
 public class DialyzerRuleRepository extends RuleRepository {
-	private static final Logger LOG = LoggerFactory.getLogger(DialyzerSensor.class);
 	private XMLRuleParser parser;
 	public static final String REPOSITORY_NAME = "Erlang";
 	public static final String REPOSITORY_KEY = "Erlang";

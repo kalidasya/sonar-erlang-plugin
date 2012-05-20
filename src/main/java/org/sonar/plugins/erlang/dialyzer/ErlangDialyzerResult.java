@@ -23,12 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ErlangDialyzerResult {
-	List<ErlangFunction> functions = new ArrayList<ErlangFunction>(); 
+	
 	List<Issue> issues = new ArrayList<Issue>();
-	public List<ErlangFunction> getFunctions() {
-		return functions;
-	}
-
+	
 	public List<Issue> getIssues() {
 		return issues;
 	}

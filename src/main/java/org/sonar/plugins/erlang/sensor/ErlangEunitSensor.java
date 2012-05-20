@@ -21,7 +21,6 @@ package org.sonar.plugins.erlang.sensor;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -116,25 +115,7 @@ public final class ErlangEunitSensor extends AbstractErlangSensor {
 
 	}
 
-	protected String getUnitTestFileName(String className) {
-		String fileName = className.substring(className.indexOf('.') + 1);
-		fileName = fileName.replace('.', '/');
-		fileName = fileName + ".js";
-		return fileName;
-	}
-
-	protected File getUnitTestFile(List<File> testDirectories, String name) {
-		File unitTestFile = new File("");
-		for (File dir : testDirectories) {
-			unitTestFile = new File(dir, name);
-
-			if (unitTestFile.exists()) {
-				break;
-			}
-		}
-		return unitTestFile;
-	}
-
+	
 	@Override
 	public String toString() {
 		return getClass().getSimpleName();

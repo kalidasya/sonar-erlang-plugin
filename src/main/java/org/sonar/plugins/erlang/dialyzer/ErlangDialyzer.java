@@ -27,16 +27,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.sonar.api.resources.Project;
 import org.sonar.plugins.erlang.language.Erlang;
 
 public class ErlangDialyzer {
 	private static final String DIALYZER_VIOLATION_ROW_REGEX = "(.*?)(:[0-9]+:)(.*)";
-	private static final String FUNCTION_ENDS_REGEX = ".*\\.$";
-	private static final String FUNCTION_START_REGEX = "^[a-z]+[a-z0-9_@]+ *\\(.*?\\) *->";
-	private static final Logger LOG = LoggerFactory.getLogger(ErlangDialyzer.class);
 
 	public ErlangDialyzerResult dialyzer(Project project, String systemId, Reader reader, DialyzerRuleManager dialyzerRuleManager) throws IOException {
 		ErlangDialyzerResult result = new ErlangDialyzerResult();
@@ -48,31 +43,9 @@ public class ErlangDialyzer {
 		FileInputStream fstream = new FileInputStream(file);
 		DataInputStream in = new DataInputStream(fstream);
 		BufferedReader dialyzerOutput = new BufferedReader(new InputStreamReader(in));
-		/**
-		 * Find methods
-		 */
-		BufferedReader breader = new BufferedReader(reader);
+		BufferedReader breader = new BufferedReader(dialyzerOutput);
+		
 		String strLine;
-		boolean functionOpened = false;
-		ErlangFunction latest = null;
-		while ((strLine = breader.readLine()) != null) {
-			if (strLine.trim().matches(FUNCTION_START_REGEX) && !functionOpened) {
-				result.getFunctions().add(new ErlangFunction());
-				latest = result.getFunctions().get(result.getFunctions().size() - 1);
-				latest.addLine(strLine);
-				functionOpened = true;
-			} else {
-				if (functionOpened) {
-					latest.addLine(strLine);
-				}
-				if (strLine.trim().matches(FUNCTION_ENDS_REGEX) && functionOpened) {
-					latest = null;
-					functionOpened = false;
-				}
-			}
-		}
-
-		breader = new BufferedReader(dialyzerOutput);
 		while ((strLine = breader.readLine()) != null) {
 			if (strLine.matches(DIALYZER_VIOLATION_ROW_REGEX)) {
 				String functionName = strLine.trim().replaceAll(DIALYZER_VIOLATION_ROW_REGEX, "$1");
