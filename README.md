@@ -17,7 +17,8 @@ The current metrics in nutshell:
 * code coverage
 * based on dialyzer output rule violations are marked
 * based on rebar.config all dependencies are published on the libraries page (recursive)
-* count undocumented public apis (exported APIs which has no text comment before)
+* count undocumented public apis (exported APIs which has no text comment before) included published by export_all()
+* number of statements (number of statements = (covered+uncovered lines))
 
 
 BUGS:
@@ -30,8 +31,6 @@ MISSING FEATURES to reach milestone 2:
 * publish it to the sonar dev community
 * refactor/optimize/clear
 * find other areas of improving
-	* implement export_all handling
-	* implement internal method counter
 	* anonym method counter
 	* complexity calulation
 	
