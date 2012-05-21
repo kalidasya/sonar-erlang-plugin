@@ -23,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -33,28 +34,34 @@ import org.sonar.plugins.erlang.language.Erlang;
 public class ErlangDialyzer {
 	private static final String DIALYZER_VIOLATION_ROW_REGEX = "(.*?)(:[0-9]+:)(.*)";
 
-	public ErlangDialyzerResult dialyzer(Project project, String systemId, Reader reader, DialyzerRuleManager dialyzerRuleManager) throws IOException {
+	public ErlangDialyzerResult dialyzer(Project project, String systemId, Reader reader, DialyzerRuleManager dialyzerRuleManager) {
 		ErlangDialyzerResult result = new ErlangDialyzerResult();
 		/**
 		 * Read dialyzer results
 		 */
-		String dialyzerUri = ((Erlang) project.getLanguage()).getDialyzerUri();
-		File file = new File(project.getFileSystem().getBasedir(), dialyzerUri);
-		FileInputStream fstream = new FileInputStream(file);
-		DataInputStream in = new DataInputStream(fstream);
-		BufferedReader dialyzerOutput = new BufferedReader(new InputStreamReader(in));
-		BufferedReader breader = new BufferedReader(dialyzerOutput);
-		
-		String strLine;
-		while ((strLine = breader.readLine()) != null) {
-			if (strLine.matches(DIALYZER_VIOLATION_ROW_REGEX)) {
-				String functionName = strLine.trim().replaceAll(DIALYZER_VIOLATION_ROW_REGEX, "$1");
-				if (systemId.contains(functionName)) {
-					String[] res = strLine.split(":");
-					Issue i = new Issue(res[0],Integer.valueOf(res[1]), dialyzerRuleManager.getRuleIdByMessage(res[2].trim()), res[2].trim());
-					result.getIssues().add(i);
+		try {
+			String dialyzerUri = ((Erlang) project.getLanguage()).getDialyzerUri();
+			File file = new File(project.getFileSystem().getBasedir(), dialyzerUri);
+			FileInputStream fstream = new FileInputStream(file);
+			DataInputStream in = new DataInputStream(fstream);
+			BufferedReader dialyzerOutput = new BufferedReader(new InputStreamReader(in));
+			BufferedReader breader = new BufferedReader(dialyzerOutput);
+			
+			String strLine;
+			while ((strLine = breader.readLine()) != null) {
+				if (strLine.matches(DIALYZER_VIOLATION_ROW_REGEX)) {
+					String functionName = strLine.trim().replaceAll(DIALYZER_VIOLATION_ROW_REGEX, "$1");
+					if (systemId.contains(functionName)) {
+						String[] res = strLine.split(":");
+						Issue i = new Issue(res[0],Integer.valueOf(res[1]), dialyzerRuleManager.getRuleIdByMessage(res[2].trim()), res[2].trim());
+						result.getIssues().add(i);
+					}
 				}
 			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 		return result;

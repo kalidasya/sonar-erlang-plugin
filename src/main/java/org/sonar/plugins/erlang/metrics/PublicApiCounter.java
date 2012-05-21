@@ -26,23 +26,26 @@ import java.util.ListIterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonar.plugins.erlang.language.ErlangFunction;
 import org.sonar.plugins.erlang.utils.StringUtils;
 
 public class PublicApiCounter {
-
+	private static final Logger LOG = LoggerFactory.getLogger(PublicApiCounter.class);
 	private static final Pattern exportPattern = Pattern.compile("(-export\\(\\[)(.*?)(\\]\\))\\.", Pattern.DOTALL
 			+ Pattern.MULTILINE);
 
 	/**
-	 * Return with a list of doubles first value is the number of public APIs the second is the number of undocumented APIs
+	 * Return with a list of doubles first value is the number of public APIs the
+	 * second is the number of undocumented APIs
+	 * 
 	 * @param source
 	 * @param linesnAlyzer
 	 * @return
 	 * @throws IOException
 	 */
-	public static List<Double> countPublicApi(String source, ErlangSourceByLineAnalyzer linesnAlyzer)
-			throws IOException {
+	public static List<Double> countPublicApi(String source, ErlangSourceByLineAnalyzer linesnAlyzer) throws IOException {
 		int numOfPublicMethods = 0;
 		int numOfUndocPublicMethods = 0;
 		List<Double> ret = new ArrayList<Double>();
@@ -63,8 +66,9 @@ public class PublicApiCounter {
 				String[] publicMethods = exportedMethods.split(",");
 				numOfPublicMethods += publicMethods.length;
 				for (String method : publicMethods) {
+					LOG.debug("Processing: " + method);
 					String methodName = method.split("\\/")[0].trim();
-					Integer numOfVariables = Integer.valueOf(method.split("\\/")[1]);
+					Integer numOfVariables = Integer.valueOf(method.split("\\/")[1].trim());
 					StringBuilder regEx = new StringBuilder(methodName + "\\(.*?");
 					for (int i = 1; i < numOfVariables; i++) {
 						regEx.append(",.*?");
@@ -101,11 +105,9 @@ public class PublicApiCounter {
 
 	private static boolean isDocumented(List<String> linesBefore) {
 		boolean isComment = true;
-		for (ListIterator<String> iterator = linesBefore.listIterator(linesBefore.size()); iterator
-				.hasPrevious();) {
+		for (ListIterator<String> iterator = linesBefore.listIterator(linesBefore.size()); iterator.hasPrevious();) {
 			String line = iterator.previous();
-			if (StringUtils.isBlank(line)
-					|| ErlangSourceByLineAnalyzer.isDecoratorPatter.matcher(line).matches()) {
+			if (StringUtils.isBlank(line) || ErlangSourceByLineAnalyzer.isDecoratorPatter.matcher(line).matches()) {
 				continue;
 			}
 			if (ErlangSourceByLineAnalyzer.isCommentPatter.matcher(line).matches()) {
