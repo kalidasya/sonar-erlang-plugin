@@ -50,6 +50,11 @@ public class TestReportHandler extends DefaultHandler {
 			testFailure.setType(attributes.getValue("type"));
 			tmpTestCase.setFailure(testFailure);
 			tmpTestFailure = testFailure;
+		} else if ("error".equals(elementName)) {
+			TestFailure testFailure = new TestFailure();
+			testFailure.setType(attributes.getValue("type"));
+			tmpTestCase.setFailure(testFailure);
+			tmpTestFailure = testFailure;
 		}
 		
 		tmpValue = "";
@@ -58,6 +63,8 @@ public class TestReportHandler extends DefaultHandler {
 	@Override
 	public void endElement(String s, String s1, String element) throws SAXException {
 		if (StringUtils.equalsIgnoreCase("failure", element)) {
+			tmpTestFailure.setReason(StringUtils.trim(tmpValue));
+		} else if (StringUtils.equalsIgnoreCase("error", element)) {
 			tmpTestFailure.setReason(StringUtils.trim(tmpValue));
 		}
 	}
