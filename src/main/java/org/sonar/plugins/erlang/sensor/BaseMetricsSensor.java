@@ -101,13 +101,15 @@ public class BaseMetricsSensor extends AbstractErlangSensor {
 		computePackagesMetric(sensorContext, packages);
 	}
 
-	private void addLineMetrics(SensorContext sensorContext, ErlangFile erlangFile, ErlangSourceByLineAnalyzer linesAnalyzer) {
+	private void addLineMetrics(SensorContext sensorContext, ErlangFile erlangFile,
+			ErlangSourceByLineAnalyzer linesAnalyzer) {
 		sensorContext.saveMeasure(erlangFile, CoreMetrics.LINES, (double) linesAnalyzer.countLines());
 		sensorContext.saveMeasure(erlangFile, CoreMetrics.NCLOC, (double) linesAnalyzer.getLinesOfCode());
 		sensorContext.saveMeasure(erlangFile, CoreMetrics.COMMENT_LINES, (double) linesAnalyzer.getNumberOfComments());
 	}
 
-	private void addCodeMetrics(SensorContext sensorContext, ErlangFile erlangFile, ErlangSourceByLineAnalyzer linesAnalyzer) {
+	private void addCodeMetrics(SensorContext sensorContext, ErlangFile erlangFile,
+			ErlangSourceByLineAnalyzer linesAnalyzer) {
 		sensorContext.saveMeasure(erlangFile, CoreMetrics.CLASSES, 1D);
 		// sensorContext.saveMeasure(erlangFile, CoreMetrics.STATEMENTS,
 		// (double) StatementCounter.countStatements(source));
@@ -117,14 +119,17 @@ public class BaseMetricsSensor extends AbstractErlangSensor {
 		// (double) ComplexityCalculator.measureComplexity(source));
 	}
 
-	private void addPublicApiMetrics(SensorContext sensorContext, ErlangFile erlangFile, String source, ErlangSourceByLineAnalyzer linesnAlyzer)
-			throws IOException {
+	private void addPublicApiMetrics(SensorContext sensorContext, ErlangFile erlangFile, String source,
+			ErlangSourceByLineAnalyzer linesnAlyzer) throws IOException {
 		List<Double> publicApiCounter = PublicApiCounter.countPublicApi(source, linesnAlyzer);
 		Double publicApi = publicApiCounter.get(0);
 		sensorContext.saveMeasure(erlangFile, CoreMetrics.PUBLIC_API, publicApi);
 		Double undocApi = publicApiCounter.get(1);
 		sensorContext.saveMeasure(erlangFile, CoreMetrics.PUBLIC_UNDOCUMENTED_API, undocApi);
-		double density = (publicApi - undocApi) * 100d / publicApi;
+		double density = 0D;
+		if (publicApi > 0) {
+			density = (publicApi - undocApi) * 100d / publicApi;
+		}
 		sensorContext.saveMeasure(erlangFile, CoreMetrics.PUBLIC_DOCUMENTED_API_DENSITY, density);
 	}
 

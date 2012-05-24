@@ -82,14 +82,14 @@ public final class ErlangEunitSensor extends AbstractErlangSensor {
 			
 			InputFile eunitFile = TestSensorUtils.findFileForReport(project.getFileSystem().testFiles(erlang.getKey()),eunitTestName);
 			ErlangFile unitTestFileResource = ErlangFile.fromInputFile(eunitFile, true);
-			LOG.debug("Adding unittest resource: {}", unitTestFileResource.toString());
+			LOG.debug("Adding unittest resource: {}", eunitTestName.toString());
 
 			String source = "";
 			File eunitReport = new File(reportsDir, file);
 			try {
 				source = FileUtils.readFileToString(eunitReport, project.getFileSystem().getSourceCharset().name());
 			} catch (IOException e) {
-				source = "Could not find source for JsTestDriver unit test: " + file + " in any of test directories";
+				source = "Could not find source for Erlang unit test: " + file + " in any of test directories";
 				LOG.debug(source, e);
 			}
 

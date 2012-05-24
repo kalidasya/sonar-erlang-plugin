@@ -75,10 +75,10 @@ public class ErlangLibrarySensor extends AbstractErlangSensor {
 			Matcher allDepMatcher = allDepPattern.matcher(rebarConfigContent);
 
 			while (allDepMatcher.find()) {
-				String exportedMethods = rebarConfigContent.substring(allDepMatcher.start(), allDepMatcher.end() - 1);
-				Matcher deps = oneDepPattern.matcher(exportedMethods);
+				String dependencies = rebarConfigContent.substring(allDepMatcher.start(), allDepMatcher.end() - 1).replaceAll("[\\n\\r\\t ]","");
+				Matcher deps = oneDepPattern.matcher(dependencies.trim());
 				while (deps.find()) {
-					String dep = exportedMethods.substring(deps.start(), deps.end());
+					String dep = dependencies.substring(deps.start(), deps.end());
 					String name = depNamePattern.matcher(dep).replaceFirst("$2");
 					String version = depVersionInTagPattern.matcher(dep).replaceFirst("$2");
 					if (version.length() == dep.length()) {
