@@ -92,12 +92,12 @@ public class TestCase {
 	private String getStatus() {
 		if(isErrorOrFailure()){
 			if(isError()){
-				return "ERROR";
+				return "error";
 			} else {
-				return "FAILED";
+				return "failure";
 			}
 		}
-		return "PASSED";
+		return "ok";
 	}
 
 	private boolean isError() {
