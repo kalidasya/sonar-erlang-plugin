@@ -35,7 +35,8 @@ public class PublicApiCounter {
 	private static final Logger LOG = LoggerFactory.getLogger(PublicApiCounter.class);
 	private static final Pattern exportPattern = Pattern.compile("(-export\\(\\[)(.*?)(\\]\\))\\.", Pattern.DOTALL
 			+ Pattern.MULTILINE);
-
+	private static final Pattern specPattern = Pattern.compile("^-spec.*");
+	
 	/**
 	 * Return with a list of doubles first value is the number of public APIs the
 	 * second is the number of undocumented APIs
@@ -104,19 +105,17 @@ public class PublicApiCounter {
 	}
 
 	private static boolean isDocumented(List<String> linesBefore) {
-		boolean isComment = true;
 		for (ListIterator<String> iterator = linesBefore.listIterator(linesBefore.size()); iterator.hasPrevious();) {
 			String line = iterator.previous();
-			if (StringUtils.isBlank(line) || ErlangSourceByLineAnalyzer.isDecoratorPatter.matcher(line).matches()) {
+			if (StringUtils.isBlank(line) || ErlangSourceByLineAnalyzer.isDecoratorPatter.matcher(line).matches() || specPattern.matcher(line).matches()) {
 				continue;
 			}
 			if (ErlangSourceByLineAnalyzer.isCommentPatter.matcher(line).matches()) {
-				break;
+				return true;
 			}
-			isComment = false;
-			break;
+			return false;
 		}
-		return isComment;
+		return false;
 	}
 
 }

@@ -20,3 +20,12 @@ init([]) ->
         60000,
         worker,
         [erlcount_dispatch]}]}}.
+        
+%% Specification defined, but it is also commented
+-spec start_link(X) -> Y.
+start_link([]) ->
+    supervisor:start_link(?MODULE, []).
+
+-spec start_link(X,Z) -> Y.
+start_link([], []) ->
+    supervisor:start_link(?MODULE, []).    

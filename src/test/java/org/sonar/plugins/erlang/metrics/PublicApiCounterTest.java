@@ -56,8 +56,8 @@ public class PublicApiCounterTest {
 		assertThat(result.get(1), Matchers.equalTo(3D));
 		
 		result = PublicApiCounter.countPublicApi(source2, sbla);
-		assertThat(result.get(0), Matchers.equalTo(2D));
-		assertThat(result.get(1), Matchers.equalTo(0D));
+		assertThat(result.get(0), Matchers.equalTo(4D));
+		assertThat(result.get(1), Matchers.equalTo(1D));
 	}
 	
 }
