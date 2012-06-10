@@ -42,7 +42,7 @@ public class ErlangLibrarySensor extends AbstractErlangSensor {
 	private static final Pattern allDepPattern = Pattern.compile("\\{deps, ?\\[.*?\\]\\}\\.", Pattern.DOTALL
 			+ Pattern.MULTILINE);
 	private static final Pattern oneDepPattern = Pattern.compile("\\{[^\\[]+?\\}", Pattern.DOTALL + Pattern.MULTILINE);
-	private static final Pattern depNamePattern = Pattern.compile("(^\\{)([A-Za-z_]*?)(\\,.*)", Pattern.DOTALL
+	private static final Pattern depNamePattern = Pattern.compile("(^\\{)([A-Za-z_0-9]*?)(\\,.*)", Pattern.DOTALL
 			+ Pattern.MULTILINE);
 	private static final Pattern depVersionInTagPattern = Pattern.compile("(.*tag.*?\\\")(.*?)(\\\".*)", Pattern.DOTALL
 			+ Pattern.MULTILINE);
