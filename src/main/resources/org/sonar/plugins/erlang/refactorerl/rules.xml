@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copied from dialyzer.erl -->
+<rules>
+   <rule>
+      <key>R001</key>
+      <name><![CDATA[mcCabe]]></name>
+      <configKey>mcCabe</configKey>
+      <description>
+      <![CDATA[McCabe cyclomatic complexity metric. Available for modules and functions. 
+      We define it based on the control flow graph of the functions with the number of 
+      different execution paths of a function, namely the number of different outputs of 
+      the function. ]]>
+      </description>
+      <param key="maximum" type="i" defaultValue="10">
+         <description><![CDATA[The maximum cyclomatic complexity threshold. Default is 10.]]></description>
+      </param>
+   </rule>
+</rules>

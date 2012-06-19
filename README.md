@@ -19,6 +19,7 @@ The current metrics in nutshell:
 * based on rebar.config all dependencies are published on the libraries page (recursive)
 * count undocumented public apis (exported APIs which has no text comment before) included published by export_all()
 * number of statements (number of statements = (covered+uncovered lines))
+* fix -spec issue in undocumented public API counter, but multiline -spec still not supported
 
 
 BUGS:
@@ -30,7 +31,10 @@ PROBLEMS:
 MISSING FEATURES to reach milestone 2:
 * publish it to the sonar dev community
 * refactor/optimize/clear
-* find other areas of improving
+
+
+Areas of improvement:
 	* anonym method counter
-	* complexity calulation
+	* use RefarctorErl for other metrics
+	* create new quantitative rules based on RefactorErl stuff
 	
