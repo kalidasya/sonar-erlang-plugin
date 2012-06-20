@@ -35,6 +35,8 @@ public class PublicApiCounter {
 	private static final Logger LOG = LoggerFactory.getLogger(PublicApiCounter.class);
 	private static final Pattern exportPattern = Pattern.compile("(-export\\(\\[)(.*?)(\\]\\))\\.", Pattern.DOTALL
 			+ Pattern.MULTILINE);
+	private static final Pattern exportAllPattern = Pattern.compile("-compile\\(.*?export_all.*?\\)\\.", Pattern.DOTALL
+			+ Pattern.MULTILINE);
 	private static final Pattern specPattern = Pattern.compile("^-spec.*");
 	
 	/**
@@ -54,7 +56,7 @@ public class PublicApiCounter {
 		 * TODO handle the export_all function
 		 */
 
-		if (source.contains("-export_all(")) {
+		if (exportAllPattern.matcher(source).find()) {
 			for (ErlangFunction function : linesnAlyzer.getFunctions()) {
 				int start = source.indexOf(function.getFirstLine());
 				numOfUndocPublicMethods = increaseIfNecessary(source, numOfUndocPublicMethods, start);

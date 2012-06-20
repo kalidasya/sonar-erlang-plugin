@@ -19,11 +19,16 @@
  */
 package org.sonar.plugins.erlang.testmetrics.eunit;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class TestSuite {
 
+	public static final String ISO8601_DATETIME_PATTERN
+   = "yyyy-MM-dd'T'HH:mm:ss";
+	
 	Integer tests;
 	Integer failures;
 	Integer errors;
@@ -100,11 +105,21 @@ public class TestSuite {
 	
 	public String toXml() {
 	    StringBuilder sb = new StringBuilder(256);
-	    sb.append("<tests-details>");
+	    sb.append("<testsuites><testsuite");
+	    sb.append(" name=\""+getName()+"\"");
+	    sb.append(" timestamp=\""+new SimpleDateFormat(ISO8601_DATETIME_PATTERN).format(new Date())+"\"");
+	    sb.append(" hostname=\"localhost\"");
+	    sb.append(" tests=\""+getTests()+"\"");
+	    sb.append(" failures=\""+getFailures()+"\"");
+	    sb.append(" errors=\""+getErrors()+"\"");
+	    sb.append(" time=\""+getTime()+"\"");
+	    sb.append(" package=\"\"");
+	    sb.append(" id=\"0\"");
+	    sb.append("><properties />");
 	    for (TestCase result : testCases) {
 	      result.appendXml(sb);
 	    }
-	    sb.append("</tests-details>");
+	    sb.append("<system-out><![CDATA[]]></system-out><system-err><![CDATA[]]></system-err></testsuite></testsuites>");
 	    return sb.toString();
 	  }
 	

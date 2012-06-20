@@ -17,7 +17,7 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package org.sonar.plugins.erlang.dialyzer;
+package org.sonar.plugins.erlang.violations.dialyzer;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -30,12 +30,20 @@ import java.io.Reader;
 
 import org.sonar.api.resources.Project;
 import org.sonar.plugins.erlang.language.Erlang;
+import org.sonar.plugins.erlang.violations.ErlangRuleManager;
+import org.sonar.plugins.erlang.violations.ErlangViolationResults;
+import org.sonar.plugins.erlang.violations.Issue;
 
+/**
+ * Read and parse generated dialyzer report 
+ * @author tkende
+ *
+ */
 public class ErlangDialyzer {
 	private static final String DIALYZER_VIOLATION_ROW_REGEX = "(.*?)(:[0-9]+:)(.*)";
 
-	public ErlangDialyzerResult dialyzer(Project project, String systemId, Reader reader, DialyzerRuleManager dialyzerRuleManager) {
-		ErlangDialyzerResult result = new ErlangDialyzerResult();
+	public ErlangViolationResults dialyzer(Project project, String systemId, Reader reader, ErlangRuleManager dialyzerRuleManager) {
+		ErlangViolationResults result = new ErlangViolationResults();
 		/**
 		 * Read dialyzer results
 		 */
@@ -50,10 +58,10 @@ public class ErlangDialyzer {
 			String strLine;
 			while ((strLine = breader.readLine()) != null) {
 				if (strLine.matches(DIALYZER_VIOLATION_ROW_REGEX)) {
-					String functionName = strLine.trim().replaceAll(DIALYZER_VIOLATION_ROW_REGEX, "$1");
-					if (systemId.contains(functionName)) {
+					String moduleName = strLine.trim().replaceAll(DIALYZER_VIOLATION_ROW_REGEX, "$1");
+					if (systemId.contains(moduleName)) {
 						String[] res = strLine.split(":");
-						Issue i = new Issue(res[0],Integer.valueOf(res[1]), dialyzerRuleManager.getRuleIdByMessage(res[2].trim()), res[2].trim());
+						Issue i = new Issue(res[0],Integer.valueOf(res[1]), dialyzerRuleManager.getRuleKeyByMessage(res[2].trim()), res[2].trim());
 						result.getIssues().add(i);
 					}
 				}
@@ -63,7 +71,6 @@ public class ErlangDialyzer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		return result;
 	}
 

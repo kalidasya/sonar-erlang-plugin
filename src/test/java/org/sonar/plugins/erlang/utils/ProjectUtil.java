@@ -19,6 +19,8 @@
  */
 package org.sonar.plugins.erlang.utils;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -28,25 +30,26 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 import org.apache.commons.configuration.Configuration;
+import org.sonar.api.batch.SensorContext;
 import org.sonar.api.resources.InputFile;
 import org.sonar.api.resources.Language;
 import org.sonar.api.resources.Project;
 import org.sonar.api.resources.ProjectFileSystem;
+import org.sonar.api.resources.Resource;
 import org.sonar.plugins.erlang.ErlangPlugin;
 import org.sonar.plugins.erlang.language.Erlang;
 
 public class ProjectUtil {
 
-	 public static Project getProject(InputFile inputFile, final Configuration configuration) throws URISyntaxException {
+	 public static Project getProject(ArrayList<InputFile> inputFiles, final Configuration configuration) throws URISyntaxException {
 		    final ProjectFileSystem fileSystem = mock(ProjectFileSystem.class);
 		    when(fileSystem.getSourceCharset()).thenReturn(Charset.defaultCharset());
 
 		    final File folder = new File(ProjectUtil.class.getResource("/org/sonar/plugins/erlang/erlcount").toURI());
 		    when(fileSystem.getBuildDir()).thenReturn(folder);
 		    when(fileSystem.getBasedir()).thenReturn(folder);
+		    when(fileSystem.testFiles(any(String.class))).thenReturn(inputFiles);
 
-		    ArrayList<InputFile> inputFiles = new ArrayList<InputFile>();
-		    inputFiles.add(inputFile);
 		    when(fileSystem.mainFiles(ErlangPlugin.LANG_KEY)).thenReturn(inputFiles);
 
 		    Project project = new Project("dummy") {
@@ -63,4 +66,10 @@ public class ProjectUtil {
 		    return project;
 
 		  }
+	 
+	 public static SensorContext mockContext() {
+	    SensorContext context = mock(SensorContext.class);
+	    when(context.isIndexed(any(Resource.class), eq(false))).thenReturn(true);
+	    return context;
+	  }
 }

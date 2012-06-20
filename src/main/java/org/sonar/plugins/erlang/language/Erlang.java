@@ -40,6 +40,11 @@ public class Erlang extends AbstractLanguage {
 	public String getDialyzerUri() {
 		return ErlangPlugin.DIALYZER_DEFAULT_FILENAME;
 	}
+	
+	public String getRefactorErlUri() {
+		return ErlangPlugin.REFACTORERL_DEFAULT_FILENAME;
+	}
+
 
 	public String getEunitFolder() {
 		return ErlangPlugin.EUNIT_DEFAULT_FOLDER;

@@ -19,14 +19,26 @@
  */
 package org.sonar.plugins.erlang.utils;
 
-import org.sonar.plugins.erlang.dialyzer.DialyzerRule;
-import org.sonar.plugins.erlang.dialyzer.DialyzerRuleManager;
+import org.sonar.plugins.erlang.violations.ErlangRule;
+import org.sonar.plugins.erlang.violations.ErlangRuleManager;
+import org.sonar.plugins.erlang.violations.dialyzer.DialyzerRuleRepository;
+import org.sonar.plugins.erlang.violations.refactorerl.RefactorErlRuleRepository;
 
 public class RuleUtil {
 
-	public static DialyzerRule getOneRule(String key){
-		DialyzerRuleManager rm = new DialyzerRuleManager();
-		return rm.getDializerRuleByKey(key);
+	public static ErlangRule getOneRule(String key, String repoKey){
+		ErlangRuleManager rm = new ErlangRuleManager(getFileUrlForRepo(repoKey));
+		return rm.getErlangRuleByKey(key);
+	}
+	
+	private static String getFileUrlForRepo(String repoKey){
+		if("dialyzer".equalsIgnoreCase(repoKey)){
+		return DialyzerRuleRepository.RULES_FILE;
+		} else if ("refactorerl".equalsIgnoreCase(repoKey)){
+			return RefactorErlRuleRepository.RULES_FILE;
+		}
+		
+		return null;
 	}
 	
 }

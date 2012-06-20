@@ -28,15 +28,16 @@ import org.sonar.api.Property;
 import org.sonar.api.SonarPlugin;
 import org.sonar.plugins.erlang.colorization.ErlangColorizerFormat;
 import org.sonar.plugins.erlang.cpd.ErlangCpdMapping;
-import org.sonar.plugins.erlang.dialyzer.DialyzerRuleRepository;
-import org.sonar.plugins.erlang.dialyzer.ErlangDefaultProfile;
 import org.sonar.plugins.erlang.language.Erlang;
 import org.sonar.plugins.erlang.sensor.BaseMetricsSensor;
-import org.sonar.plugins.erlang.sensor.DialyzerSensor;
+import org.sonar.plugins.erlang.sensor.ViolationSensor;
 import org.sonar.plugins.erlang.sensor.ErlangCoverageSensor;
 import org.sonar.plugins.erlang.sensor.ErlangEunitSensor;
 import org.sonar.plugins.erlang.sensor.ErlangLibrarySensor;
 import org.sonar.plugins.erlang.sensor.ErlangSourceImporterSensor;
+import org.sonar.plugins.erlang.violations.ErlangDefaultProfile;
+import org.sonar.plugins.erlang.violations.dialyzer.DialyzerRuleRepository;
+import org.sonar.plugins.erlang.violations.refactorerl.RefactorErlRuleRepository;
 
 @Properties({
 		@Property(key = ErlangPlugin.FILE_SUFFIXES_KEY, defaultValue = ErlangPlugin.FILE_SUFFIXES_DEFVALUE, name = "File suffixes", description = "Comma-separated list of suffixes for files to analyze. To not filter, leave the list empty.", global = true, project = true),
@@ -53,6 +54,7 @@ public class ErlangPlugin extends SonarPlugin {
 	public static final String DIALYZER_FILENAME_KEY = "sonar.erlang.dialyzer.filename";
 	
 	public static final String DIALYZER_DEFAULT_FILENAME = EUNIT_DEFAULT_FOLDER + "/dialyzer.log";
+	public static final String REFACTORERL_DEFAULT_FILENAME = EUNIT_DEFAULT_FOLDER + "/refactorerl.log";
 	public static final String NAME = "Erlang";
 	public static final String LANG_KEY = "erl";
 	public static final String EXTENSION = "."+LANG_KEY;
@@ -72,8 +74,9 @@ public class ErlangPlugin extends SonarPlugin {
 		extensions.add(ErlangColorizerFormat.class);
 		extensions.add(BaseMetricsSensor.class);
 		extensions.add(DialyzerRuleRepository.class);
+		extensions.add(RefactorErlRuleRepository.class);
 		extensions.add(ErlangDefaultProfile.class);
-		extensions.add(DialyzerSensor.class);
+		extensions.add(ViolationSensor.class);
 		extensions.add(ErlangCpdMapping.class);
 		extensions.add(ErlangEunitSensor.class);
 		extensions.add(ErlangCoverageSensor.class);

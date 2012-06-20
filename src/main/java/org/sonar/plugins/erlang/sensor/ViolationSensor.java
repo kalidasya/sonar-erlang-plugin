@@ -33,25 +33,34 @@ import org.sonar.api.resources.InputFile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.Violation;
-import org.sonar.plugins.erlang.dialyzer.DialyzerRuleManager;
-import org.sonar.plugins.erlang.dialyzer.DialyzerRuleRepository;
-import org.sonar.plugins.erlang.dialyzer.ErlangDialyzer;
-import org.sonar.plugins.erlang.dialyzer.ErlangDialyzerResult;
-import org.sonar.plugins.erlang.dialyzer.Issue;
 import org.sonar.plugins.erlang.language.Erlang;
 import org.sonar.plugins.erlang.language.ErlangFile;
+import org.sonar.plugins.erlang.violations.ErlangRuleManager;
+import org.sonar.plugins.erlang.violations.ErlangViolationResults;
+import org.sonar.plugins.erlang.violations.Issue;
+import org.sonar.plugins.erlang.violations.dialyzer.DialyzerRuleRepository;
+import org.sonar.plugins.erlang.violations.dialyzer.ErlangDialyzer;
+import org.sonar.plugins.erlang.violations.refactorerl.ErlangRefactorErl;
+import org.sonar.plugins.erlang.violations.refactorerl.RefactorErlRuleRepository;
 
-public class DialyzerSensor extends AbstractErlangSensor {
+/**
+ * Calls the dialyzer report parser and saves violations to sonar 
+ * @author tkende
+ *
+ */
+public class ViolationSensor extends AbstractErlangSensor {
 
-	private DialyzerRuleManager dialyzerRuleManager = new DialyzerRuleManager();
+	private ErlangRuleManager dialyzerRuleManager = new ErlangRuleManager(DialyzerRuleRepository.RULES_FILE);
+	private ErlangRuleManager refactorErlRuleManager = new ErlangRuleManager(RefactorErlRuleRepository.RULES_FILE);
 
-	public DialyzerSensor(Erlang erlang) {
+	public ViolationSensor(Erlang erlang) {
 		super(erlang);
 	}
 
 
-	private static final Logger LOG = LoggerFactory.getLogger(DialyzerSensor.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ViolationSensor.class);
 	private ErlangDialyzer dialyzer = new ErlangDialyzer();
+	private ErlangRefactorErl refactorErl = new ErlangRefactorErl();
 
 	public void analyse(Project project, SensorContext context) {
 		for (InputFile inputFile : project.getFileSystem().mainFiles(getErlang().getKey())) {
@@ -69,28 +78,31 @@ public class DialyzerSensor extends AbstractErlangSensor {
 		System.out.println("Erlang file in DS:" + erlangFile.getLongName());
 		Reader reader = null;
 		try {
-
 			reader = new StringReader(FileUtils.readFileToString(inputFile.getFile(), project.getFileSystem()
 					.getSourceCharset().name()));
-
 			LOG.debug("values:" + inputFile.getFile().getPath() + " " + project.getFileSystem().getSourceCharset().name()
 					+ " " + reader + " " + project);
-
-			ErlangDialyzerResult result = dialyzer.dialyzer(project, inputFile.getFile().getPath(), reader, dialyzerRuleManager);
-
+			ErlangViolationResults result = dialyzer.dialyzer(project, inputFile.getFile().getPath(), reader, dialyzerRuleManager);
 			List<Issue> issues = result.getIssues();
 			LOG.debug("Issue Size:" + result.getIssues().size() + " " + inputFile.getFile().getPath());
 			for (Issue issue : issues) {
-				/**
-				 * TODO: add some rule checking here
-				 */
 				Rule rule =  Rule.create(DialyzerRuleRepository.REPOSITORY_NAME, issue.ruleId);
 				Violation violation = Violation.create(rule, erlangFile);
 				violation.setLineId(issue.line);
 				violation.setMessage(issue.descr);
 				context.saveViolation(violation);
 			}
-
+			
+			result = refactorErl.refactorErl(project, inputFile.getFile().getPath(), reader, refactorErlRuleManager);
+			issues = result.getIssues();
+			LOG.debug("Issue Size:" + result.getIssues().size() + " " + inputFile.getFile().getPath());
+			for (Issue issue : issues) {
+				Rule rule =  Rule.create(DialyzerRuleRepository.REPOSITORY_NAME, issue.ruleId);
+				Violation violation = Violation.create(rule, erlangFile);
+				violation.setLineId(issue.line);
+				violation.setMessage(issue.descr);
+				context.saveViolation(violation);
+			}
 		} finally {
 			IOUtils.closeQuietly(reader);
 		}

@@ -48,4 +48,13 @@ public class CoverCoverageParserTest {
 		assertThat(result.getUncoveredLines(), Matchers.equalTo(1));
 		assertThat(result.getLinesToCover(), Matchers.equalTo(20));
 	}
+	
+	/**
+	 * Should not failed only logging error
+	 */
+	@Test()
+	public void checkFileNotExists() {
+		File fakeFile = new File("/org/sonar/plugins/erlang/erlcount/.eunit/there_is_no_such_a_file.html");
+		parser.parseFile(fakeFile, fileToAnalyse.getParent(), "there_is_no_such_a_file.html");
+	}
 }

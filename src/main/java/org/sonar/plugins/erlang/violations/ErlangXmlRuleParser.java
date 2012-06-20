@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
 
-package org.sonar.plugins.erlang.dialyzer;
+package org.sonar.plugins.erlang.violations;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,7 +33,7 @@ import org.dom4j.DocumentException;
 import org.sonar.api.ServerComponent;
 import org.xml.sax.SAXException;
 
-public final class DialyzerXmlRuleParser implements ServerComponent {
+public final class ErlangXmlRuleParser implements ServerComponent {
 
 	/**
 	 * Warning : the input stream is closed in this method
@@ -43,8 +43,8 @@ public final class DialyzerXmlRuleParser implements ServerComponent {
 	 * 
 	 * @throws DocumentException
 	 */
-	public List<DialyzerRule> parse(InputStream input) {
-		List<DialyzerRule> rules = new ArrayList<DialyzerRule>();
+	public List<ErlangRule> parse(InputStream input) {
+		List<ErlangRule> rules = new ArrayList<ErlangRule>();
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		SAXParser saxParser;
 		RuleHandler a = new RuleHandler();

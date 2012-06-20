@@ -1,6 +1,7 @@
 -module(erlcount_sup).
+-compile(export_all).
 -behaviour(supervisor).
--export_all().
+
 
 %%------------------
 %% VERY IMPORTANT COMMENT

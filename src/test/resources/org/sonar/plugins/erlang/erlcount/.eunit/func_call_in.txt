@@ -1,0 +1,34 @@
+erlcount.erl   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount.erl: 1-1
+    function_calls_in = 0
+erlcount_sup.erl   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_sup.erl: 1-1
+    function_calls_in = 1
+erlcount_counter.erl   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_counter.erl: 1-1
+    function_calls_in = 0
+gen_server
+    function_calls_in = 0
+erlang
+    function_calls_in = 0
+file
+    function_calls_in = 0
+erlcount_lib.erl   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_lib.erl: 1-1
+    function_calls_in = 2
+erlcount_dispatch.erl   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_dispatch.erl: 1-1
+    function_calls_in = 1
+gen_fsm
+    function_calls_in = 0
+application
+    function_calls_in = 0
+ppool
+    function_calls_in = 0
+lists
+    function_calls_in = 0
+io
+    function_calls_in = 0
+re
+    function_calls_in = 0
+queue
+    function_calls_in = 0
+filename
+    function_calls_in = 0
+supervisor
+    function_calls_in = 0

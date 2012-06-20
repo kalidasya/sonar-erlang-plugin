@@ -17,47 +17,25 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package org.sonar.plugins.erlang.dialyzer;
+package org.sonar.plugins.erlang.violations;
 
-import java.util.ArrayList;
-import java.util.List;
+public class Issue {
 
-import org.sonar.api.rules.Rule;
+	public final String filename;
+	public final int line;
+	public final String ruleId;
+	public final String descr;
 
-public class DialyzerRule{
-	List<String> messages = new ArrayList<String>();
-	Rule sonarRule = new Rule();
-
-	public DialyzerRule(){
-		super();
-	}
-	
-	public DialyzerRule(Rule rule, List<String> messages){
-		this.messages = messages;
-		sonarRule = rule;
-	}
-	
-	public boolean hasMessage(String message) {
-		boolean ret = false;
-		for (String ruleMessage : messages) {
-			if(message.matches(ruleMessage)){
-				ret = true;
-				break;
-			}
-		}
-		return ret;
+	public Issue(String filename, int line, String ruleId, String descr) {
+		this.filename = filename;
+		this.line = line;
+		this.ruleId = ruleId;
+		this.descr = descr;
 	}
 
-	public void setMessages(List<String> messageList) {
-		messages = messageList;
-	}
-	
-	public void addMessage(String message) {
-		messages.add(message);
-	}
-	
-	public Rule getRule(){
-		return sonarRule;
-	}
 
+	@Override
+	public String toString() {
+		return "(" + filename + ", " + line + ", " + ruleId + ", " + descr + ")";
+	}
 }

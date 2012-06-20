@@ -22,19 +22,11 @@ package org.sonar.plugins.erlang.testmetrics.eunit;
 import static org.junit.Assert.assertThat;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URISyntaxException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
-import org.sonar.plugins.erlang.dialyzer.RuleHandlerTest;
-import org.sonar.plugins.erlang.testmetrics.cover.CoverCoverageParser;
-import org.xml.sax.SAXException;
 
 public class EunitReportParserTest {
 
@@ -49,7 +41,6 @@ public class EunitReportParserTest {
 
 	@Test
 	public void checkRuleHandler(){
-		
 		assertThat(result.getErrors(), Matchers.equalTo(0D));
 		assertThat(result.getFailures(), Matchers.equalTo(1D));
 		assertThat(result.getTests(), Matchers.equalTo(7D));
@@ -60,8 +51,8 @@ public class EunitReportParserTest {
 		assertThat(result.getTestSuite().getTestCases().get(0).getName(), Matchers.equalTo("erlcount_eunit:find_erl_test_/0_20"));
 		assertThat(result.getTestSuite().getTestCases().get(0).getFailure().getReason(), Matchers.containsString("-D help|tree|search|stat|rates|opt|exec]"));
 		assertThat(result.getTestSuite().getTestCases().get(0).getFailure().getType(), Matchers.equalTo("assertEqual_failed"));
-		
-		
 	}
+	
+	
 	
 }

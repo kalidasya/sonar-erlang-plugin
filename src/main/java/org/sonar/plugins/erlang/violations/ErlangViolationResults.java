@@ -17,25 +17,18 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package org.sonar.plugins.erlang.dialyzer;
+package org.sonar.plugins.erlang.violations;
 
-public class Issue {
+import java.util.ArrayList;
+import java.util.List;
 
-	public final String filename;
-	public final int line;
-	public final String ruleId;
-	public final String descr;
 
-	Issue(String filename, int line, String ruleId, String descr) {
-		this.filename = filename;
-		this.line = line;
-		this.ruleId = ruleId;
-		this.descr = descr;
+public class ErlangViolationResults {
+	
+	List<Issue> issues = new ArrayList<Issue>();
+	
+	public List<Issue> getIssues() {
+		return issues;
 	}
 
-
-	@Override
-	public String toString() {
-		return "(" + filename + ", " + line + ", " + ruleId + ", " + descr + ")";
-	}
 }

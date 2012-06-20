@@ -17,27 +17,43 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package org.sonar.plugins.erlang.dialyzer;
+package org.sonar.plugins.erlang.violations;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.sonar.api.rules.RuleParam;
 import org.sonar.api.rules.RulePriority;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class RuleHandler extends DefaultHandler {
-	List<DialyzerRule> rules = new ArrayList<DialyzerRule>();
+	List<ErlangRule> rules = new ArrayList<ErlangRule>();
 	private String tmpValue = "";
 	private Object tmpRule;
+	private RuleParam param;
+	private boolean paramStarted = false;
+	
+	public List<ErlangRule> getRules(){
+		return rules;
+	}
 
 	@Override
 	public void startElement(String s, String s1, String elementName, Attributes attributes) throws SAXException {
 		if ("rule".equals(elementName)) {
-			rules.add(new DialyzerRule());
+			rules.add(new ErlangRule());
 			tmpRule = rules.get(rules.size() - 1);
+			paramStarted = false;
+		} else if (StringUtils.equalsIgnoreCase("param", elementName)) {
+			param = ((ErlangRule) tmpRule).getRule().createParameter();
+			param.setType(attributes.getValue("type"));
+			param.setKey(attributes.getValue("key"));
+			param.setDefaultValue(attributes.getValue("defaultValue"));
+			paramStarted = true;
+		} else {
+			paramStarted = false;
 		}
 		tmpValue = "";
 	}
@@ -45,17 +61,21 @@ public class RuleHandler extends DefaultHandler {
 	@Override
 	public void endElement(String s, String s1, String element) throws SAXException {
 		if (StringUtils.equalsIgnoreCase("name", element)) {
-			((DialyzerRule) tmpRule).getRule().setName(StringUtils.trim(tmpValue));
+			((ErlangRule) tmpRule).getRule().setName(StringUtils.trim(tmpValue));
 		} else if (StringUtils.equalsIgnoreCase("description", element)) {
-			((DialyzerRule) tmpRule).getRule().setDescription(StringUtils.trim(tmpValue));
+			if (paramStarted) {
+				param.setDescription(StringUtils.trim(tmpValue));
+			} else {
+				((ErlangRule) tmpRule).getRule().setDescription(StringUtils.trim(tmpValue));
+			}
 		} else if (StringUtils.equalsIgnoreCase("key", element)) {
-			((DialyzerRule) tmpRule).getRule().setKey(StringUtils.trim(tmpValue));
+			((ErlangRule) tmpRule).getRule().setKey(StringUtils.trim(tmpValue));
 		} else if (StringUtils.equalsIgnoreCase("configKey", element)) {
-			((DialyzerRule) tmpRule).getRule().setConfigKey((StringUtils.trim(tmpValue)));
+			((ErlangRule) tmpRule).getRule().setConfigKey((StringUtils.trim(tmpValue)));
 		} else if (StringUtils.equalsIgnoreCase("priority", element)) {
-			((DialyzerRule) tmpRule).getRule().setSeverity(RulePriority.valueOf(StringUtils.trim(tmpValue)));
+			((ErlangRule) tmpRule).getRule().setSeverity(RulePriority.valueOf(StringUtils.trim(tmpValue)));
 		} else if (StringUtils.equalsIgnoreCase("message", element)) {
-			((DialyzerRule) tmpRule).addMessage(tmpValue.replaceAll("~.", ".*?").replaceAll("([\\{\\}\\[\\]])", "\\\\$1"));
+			((ErlangRule) tmpRule).addMessage(tmpValue.replaceAll("~.", ".*?").replaceAll("([\\{\\}\\[\\]])", "\\\\$1"));
 		}
 	}
 

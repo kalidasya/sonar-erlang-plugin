@@ -26,7 +26,7 @@ public class TestCase {
 	Double time;
 	String name;
 	TestFailure failure;
-	
+
 	public TestCase(Double time, String name, TestFailure failure) {
 		super();
 		this.time = time;
@@ -61,25 +61,22 @@ public class TestCase {
 	public void setFailure(TestFailure failure) {
 		this.failure = failure;
 	}
-	
+
 	public StringBuilder appendXml(StringBuilder sb) {
 	    sb
-	        .append("<testcase status=\"")
-	        .append(getStatus())
-	        .append("\" time=\"")
+	        .append("<testcase time=\"")
 	        .append(time)
 	        .append("\" name=\"")
 	        .append(StringEscapeUtils.escapeXml(name))
-	        .append("\"");
-
+	        .append("\" classname=\"")
+	        .append(StringEscapeUtils.escapeXml(name))
+	        .append("\" ");
 	    if (isErrorOrFailure()) {
 	      sb
 	          .append(">")
-	          .append(isError() ? "<error message=\"" : "<failure message=\"")
-	          .append(StringEscapeUtils.escapeXml(failure.reason))
-	          .append("\">")
+	          .append(isError() ? "<error type=\"\">" : "<failure type=\"\" message=\"\"> ")
 	          .append("<![CDATA[")
-	          .append(StringEscapeUtils.escapeXml(""))
+	          .append(StringEscapeUtils.escapeXml(failure.reason))
 	          .append("]]>")
 	          .append(isError() ? "</error>" : "</failure>")
 	          .append("</testcase>");
@@ -90,8 +87,8 @@ public class TestCase {
 	  }
 
 	private String getStatus() {
-		if(isErrorOrFailure()){
-			if(isError()){
+		if (isErrorOrFailure()) {
+			if (isError()) {
 				return "error";
 			} else {
 				return "failure";
@@ -105,8 +102,7 @@ public class TestCase {
 	}
 
 	private boolean isErrorOrFailure() {
-		return failure!=null;
+		return failure != null;
 	}
-	
-	
+
 }

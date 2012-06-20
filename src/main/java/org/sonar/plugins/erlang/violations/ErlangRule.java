@@ -17,17 +17,51 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package org.sonar.plugins.erlang.dialyzer;
+package org.sonar.plugins.erlang.violations;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ErlangDialyzerResult {
+import org.sonar.api.rules.Rule;
+
+public class ErlangRule{
+	List<String> messages = new ArrayList<String>();
+	Rule sonarRule = new Rule();
+
+	public ErlangRule(){
+		super();
+	}
 	
-	List<Issue> issues = new ArrayList<Issue>();
+	public ErlangRule(Rule rule, List<String> messages){
+		this.messages = messages;
+		sonarRule = rule;
+	}
 	
-	public List<Issue> getIssues() {
-		return issues;
+	public boolean hasMessage(String message) {
+		boolean ret = false;
+		for (String ruleMessage : messages) {
+			if(message.matches(ruleMessage)){
+				ret = true;
+				break;
+			}
+		}
+		return ret;
+	}
+
+	public void setMessages(List<String> messageList) {
+		messages = messageList;
+	}
+	
+	public List<String> getMessages(){
+		return messages;
+	}
+	
+	public void addMessage(String message) {
+		messages.add(message);
+	}
+	
+	public Rule getRule(){
+		return sonarRule;
 	}
 
 }

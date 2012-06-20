@@ -17,7 +17,7 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package org.sonar.plugins.erlang.dialyzer;
+package org.sonar.plugins.erlang.violation;
 
 import static org.junit.Assert.assertThat;
 
@@ -30,6 +30,8 @@ import javax.xml.parsers.SAXParserFactory;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
+import org.sonar.plugins.erlang.violations.RuleHandler;
+import org.sonar.plugins.erlang.violations.dialyzer.DialyzerRuleRepository;
 import org.xml.sax.SAXException;
 
 public class RuleHandlerTest {
@@ -43,7 +45,7 @@ public class RuleHandlerTest {
 		ruleHandler = new RuleHandler();
 		try {
 			saxParser = factory.newSAXParser();
-			saxParser.parse(RuleHandlerTest.class.getResourceAsStream(DialyzerRuleManager.RULES_FILE_LOCATION), ruleHandler);
+			saxParser.parse(RuleHandlerTest.class.getResourceAsStream(DialyzerRuleRepository.RULES_FILE), ruleHandler);
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		} catch (SAXException e) {
@@ -55,7 +57,7 @@ public class RuleHandlerTest {
 
 	@Test
 	public void checkRuleHandler(){
-		assertThat(ruleHandler.rules.size(), Matchers.equalTo(42));
+		assertThat(ruleHandler.getRules().size(), Matchers.equalTo(42));
 	}
 	
 }

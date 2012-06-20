@@ -64,7 +64,7 @@ public final class ErlangEunitSensor extends AbstractErlangSensor {
 		String[] list = reportsDir.list(filter);
 
 		if (list.length == 0) {
-			LOG.warn("no files end with : ", reportsDir);
+			LOG.warn("no files ends with : ", reportsDir);
 			return;
 		}
 

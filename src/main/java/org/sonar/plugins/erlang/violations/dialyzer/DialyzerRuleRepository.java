@@ -18,17 +18,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
 
-package org.sonar.plugins.erlang.dialyzer;
+package org.sonar.plugins.erlang.violations.dialyzer;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RuleRepository;
 import org.sonar.api.rules.XMLRuleParser;
 import org.sonar.plugins.erlang.ErlangPlugin;
-import org.sonar.plugins.erlang.sensor.DialyzerSensor;
 
 public class DialyzerRuleRepository extends RuleRepository {
 	private XMLRuleParser parser;

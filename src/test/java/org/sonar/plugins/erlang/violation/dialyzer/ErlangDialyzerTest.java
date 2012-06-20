@@ -17,7 +17,7 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package org.sonar.plugins.erlang.dialyzer;
+package org.sonar.plugins.erlang.violation.dialyzer;
 
 import static org.mockito.Mockito.mock;
 
@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.io.FileUtils;
@@ -35,13 +36,18 @@ import org.sonar.api.resources.InputFile;
 import org.sonar.api.resources.InputFileUtils;
 import org.sonar.api.resources.Project;
 import org.sonar.plugins.erlang.utils.ProjectUtil;
+import org.sonar.plugins.erlang.violations.ErlangRuleManager;
+import org.sonar.plugins.erlang.violations.ErlangViolationResults;
+import org.sonar.plugins.erlang.violations.dialyzer.DialyzerRuleRepository;
+import org.sonar.plugins.erlang.violations.dialyzer.ErlangDialyzer;
+
 import static org.junit.Assert.assertThat;
 
 public class ErlangDialyzerTest {
 
 	private ErlangDialyzer ed;
 	private Configuration configuration;
-	private ErlangDialyzerResult result;
+	private ErlangViolationResults result;
 
 	@Before
 	public void setup() throws URISyntaxException, IOException {
@@ -50,14 +56,13 @@ public class ErlangDialyzerTest {
 		 
 		File fileToAnalyse =  new File(getClass().getResource("/org/sonar/plugins/erlang/erlcount/src/erlcount_counter.erl")
 				.toURI());
-
 		InputFile inputFile = InputFileUtils.create(fileToAnalyse.getParentFile(), fileToAnalyse);
-
-		Project project = ProjectUtil.getProject(inputFile, configuration);
-		
+		ArrayList<InputFile> inputFiles = new ArrayList<InputFile>();
+		inputFiles.add(inputFile);
+		Project project = ProjectUtil.getProject(inputFiles, configuration);
 		StringReader reader = new StringReader(FileUtils.readFileToString(inputFile.getFile(), project.getFileSystem()
 				.getSourceCharset().name()));
-		 result = ed.dialyzer(project, inputFile.getFile().getPath(), reader, new DialyzerRuleManager());
+		 result = ed.dialyzer(project, inputFile.getFile().getPath(), reader, new ErlangRuleManager(DialyzerRuleRepository.RULES_FILE));
 	}
 
 	@Test

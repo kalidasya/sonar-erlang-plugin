@@ -26,8 +26,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonar.plugins.erlang.dialyzer.ErlangDialyzer;
 import org.sonar.plugins.erlang.language.ErlangFunction;
+import org.sonar.plugins.erlang.violations.dialyzer.ErlangDialyzer;
 
 /**
  * This class contains all meause which can be done only by iterating over the

@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
 
-package org.sonar.plugins.erlang.dialyzer;
+package org.sonar.plugins.erlang.violations;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,25 +27,24 @@ import org.sonar.api.BatchExtension;
 import org.sonar.api.ServerExtension;
 import org.sonar.api.rules.Rule;
 
-public class DialyzerRuleManager implements ServerExtension, BatchExtension {
+public class ErlangRuleManager implements ServerExtension, BatchExtension {
 
-	private List<DialyzerRule> rules = new ArrayList<DialyzerRule>();
+	private List<ErlangRule> rules = new ArrayList<ErlangRule>();
 
 	public static final String OTHER_RULES_KEY = "OTHER_RULES";
 	public static final String UNUSED_NAMES_KEY = "UNUSED_NAMES";
 	public static final String CYCLOMATIC_COMPLEXITY_KEY = "CYCLOMATIC_COMPLEXITY";
-	public static final String RULES_FILE_LOCATION = "/org/sonar/plugins/erlang/dialyzer/rules.xml"; 
 
-	public DialyzerRuleManager() {
-		this(RULES_FILE_LOCATION);
+	/*public DialyzerRuleManager() {
+		this(DialyzerRuleRepository.RULES_FILE);
 	}
-
-	public DialyzerRuleManager(String rulesPath) {
-		rules = new DialyzerXmlRuleParser().parse(DialyzerRuleManager.class.getResourceAsStream(rulesPath));
+*/
+	public ErlangRuleManager(String rulesPath) {
+		rules = new ErlangXmlRuleParser().parse(ErlangRuleManager.class.getResourceAsStream(rulesPath));
 	}
 
 	public Rule getRuleByKey(String key){
-		for (DialyzerRule rule : rules) {
+		for (ErlangRule rule : rules) {
 			if (rule.getRule().getKey().equals(key)) {
 				return rule.getRule();
 			}
@@ -53,8 +52,8 @@ public class DialyzerRuleManager implements ServerExtension, BatchExtension {
 		return null;
 	}
 
-	public DialyzerRule getDializerRuleByKey(String key){
-		for (DialyzerRule rule : rules) {
+	public ErlangRule getErlangRuleByKey(String key){
+		for (ErlangRule rule : rules) {
 			if (rule.getRule().getKey().equals(key)) {
 				return rule;
 			}
@@ -62,8 +61,8 @@ public class DialyzerRuleManager implements ServerExtension, BatchExtension {
 		return null;
 	}
 	
-	public String getRuleIdByMessage(String message) {
-		for (DialyzerRule rule : rules) {
+	public String getRuleKeyByMessage(String message) {
+		for (ErlangRule rule : rules) {
 			if (rule.hasMessage(message)) {
 				return rule.getRule().getKey();
 			}
@@ -71,8 +70,25 @@ public class DialyzerRuleManager implements ServerExtension, BatchExtension {
 		return OTHER_RULES_KEY;
 	}
 
-	public List<DialyzerRule> getDialyzerRules() {
+	public List<ErlangRule> getErlangRules() {
 		return rules;
 	}
 
+	public String getRuleKeyByName(String name) {
+		for (ErlangRule rule : rules) {
+			if (rule.getRule().getName().equals(name)) {
+				return rule.getRule().getKey();
+			}
+		}
+		return OTHER_RULES_KEY;
+	}
+	
+	public Rule getRuleByName(String name) {
+		for (ErlangRule rule : rules) {
+			if (rule.getRule().getName().equals(name)) {
+				return rule.getRule();
+			}
+		}
+		return null;
+	}
 }
