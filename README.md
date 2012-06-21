@@ -1,7 +1,7 @@
 sonar-erlang-plugin
 ===================
 
-An Erlang plugin for sonar to make it possibly to analyse Erlang projects as well
+An Erlang plugin for sonar to make it possible to analyse Erlang projects as well
 
 It is based on other plugins like scala, javascript, python.
 
