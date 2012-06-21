@@ -21,38 +21,22 @@ package org.sonar.plugins.erlang.testmetrics.eunit;
 
 import static org.junit.Assert.assertThat;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.io.StringWriter;
 import java.net.URISyntaxException;
 
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.Source;
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.tools.ant.types.selectors.ExtendSelector;
-import org.custommonkey.xmlunit.XMLAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.sonar.plugins.erlang.utils.MyDefaultHandler;
 import org.sonar.plugins.erlang.violation.RuleHandlerTest;
-import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.DefaultHandler;
 
 public class TestReportHandlerTest {
 
@@ -83,7 +67,7 @@ public class TestReportHandlerTest {
 		assertThat(testReportHandler.testSuite.failures, Matchers.equalTo(1));
 		assertThat(testReportHandler.testSuite.tests, Matchers.equalTo(7));
 		assertThat(testReportHandler.testSuite.name, Matchers.equalTo("module 'erlcount_eunit'"));
-		assertThat(testReportHandler.testSuite.time, Matchers.equalTo(0.043D));
+		assertThat(testReportHandler.testSuite.time, Matchers.equalTo(0.025D));
 		assertThat(testReportHandler.testSuite.testCases.size(), Matchers.equalTo(7));
 		assertThat(testReportHandler.testSuite.testCases.get(0).getName(),
 				Matchers.equalTo("erlcount_eunit:find_erl_test_/0_20"));

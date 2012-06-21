@@ -70,14 +70,19 @@ public class TestCase {
 	        .append(StringEscapeUtils.escapeXml(name))
 	        .append("\" classname=\"")
 	        .append(StringEscapeUtils.escapeXml(name))
-	        .append("\" ");
+	        .append("\" status=\"")
+	        .append(getStatus())
+	        .append("\"");
+	    
 	    if (isErrorOrFailure()) {
 	      sb
 	          .append(">")
-	          .append(isError() ? "<error type=\"\">" : "<failure type=\"\" message=\"\"> ")
-	          .append("<![CDATA[")
+	          .append(isError() ? "<error type=\"" : "<failure type=\"")
+	          .append(failure.getType())
+	          .append("\" message=\"")
 	          .append(StringEscapeUtils.escapeXml(failure.reason))
-	          .append("]]>")
+	          .append("\">")
+	          .append(StringEscapeUtils.escapeXml(failure.reason))
 	          .append(isError() ? "</error>" : "</failure>")
 	          .append("</testcase>");
 	    } else {

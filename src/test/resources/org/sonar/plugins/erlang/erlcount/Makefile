@@ -1,6 +1,6 @@
 PATH := ${PATH}:/home/tkende/dev/erlang/rebar
 
-all: deps compile
+all: clean compile dialyzer test
 
 # Compiles the whole application
 compile:
@@ -25,5 +25,5 @@ docs:
 shell: compile
 	rebar shell
 
-diaylzer:
-	dialyzer --src -I src/ -o  .eunit/dialyzer.log
+dialyzer:
+	dialyzer ebin -o  .eunit/dialyzer.log

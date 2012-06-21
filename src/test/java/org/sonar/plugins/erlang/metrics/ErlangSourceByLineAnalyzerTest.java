@@ -39,7 +39,7 @@ public class ErlangSourceByLineAnalyzerTest {
 
 	@Before
 	public void setup() throws IOException, URISyntaxException{
-		File fileToAnalyse =  new File(getClass().getResource("/org/sonar/plugins/erlang/erlcount/src/erlcount_sup.erl")
+		File fileToAnalyse = new File(getClass().getResource("/org/sonar/plugins/erlang/erlcount/src/erlcount_sup.erl")
 				.toURI());
 		String source = FileUtils.readFileToString(fileToAnalyse, "UTF-8");
 		List<String> lines = StringUtils.convertStringToListOfLines(source);
@@ -50,7 +50,7 @@ public class ErlangSourceByLineAnalyzerTest {
 	public void checkLinesAnalyzer(){
 		assertThat(la.getNumberOfFunctions(), Matchers.equalTo(4D));
 		assertThat(la.getNumberOfComments(), Matchers.equalTo(4));
-		assertThat(la.countLines(), Matchers.equalTo(31));
+		assertThat(la.countLines(), Matchers.equalTo(32));
 		assertThat(la.getLinesOfCode(), Matchers.equalTo(21));
 	}
 }

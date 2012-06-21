@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="7" failures="1" errors="0" skipped="0" time="0.043" name="module 'erlcount_eunit'">
-  <testcase time="0.022" name="erlcount_eunit:find_erl_test_/0_20">
+<testsuite tests="7" failures="1" errors="0" skipped="0" time="0.067" name="module 'erlcount_eunit'">
+  <testcase time="0.046" name="erlcount_eunit:find_erl_test_/0_20">
     <failure type="assertEqual_failed">
 ::{assertEqual_failed,[{module,erlcount_eunit},
                      {line,21},
                      {expression,"lists : sort ( build_list ( erlcount_lib : find_erl ( ? TESTDIR ) ) )"},
-                     {expected,["Használat: find [-H] [-L] [-P][-Oszint] [-D help|tree|search|stat|rates|opt|exec] [útvonal...] [kifejezés]",
-                                [102,105,110,100,58,32,97,122,32,195,186,116,
-                                 118,111,110,97,108,97,107,110,97,107,32,109,
-                                 101,103,32,107,101,108,108,32,101,108,197,
-                                 145,122,110,105,195,188,107,32,97,32,107,105,
-                                 102,101,106,101,122,195,169,115,116,58,32,
-                                 101,114,108,99,111,117,110,116,95,99,111,117,
-                                 110,116,101,114,46,101,114,108]]},
+                     {expected,["Usage: find [-H] [-L] [-P] [-Olevel] [-D help|tree|search|stat|rates|opt|exec] [path...] [expression]",
+                                "find: paths must precede expression: erlcount_counter.erl"]},
                      {value,["../.eunit/erlcount.erl",
                              "../.eunit/erlcount_counter.erl",
                              "../.eunit/erlcount_dispatch.erl",

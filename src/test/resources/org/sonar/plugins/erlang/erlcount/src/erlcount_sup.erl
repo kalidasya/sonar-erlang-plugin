@@ -23,10 +23,10 @@ init([]) ->
         [erlcount_dispatch]}]}}.
         
 %% Specification defined, but it is also commented
--spec start_link(X) -> Y.
-start_link([]) ->
-    supervisor:start_link(?MODULE, []).
+-spec erlcount_sup:minus2(integer()) -> integer().
+minus2(X) ->
+    X-2.
 
--spec start_link(X,Z) -> Y.
-start_link([], []) ->
-    supervisor:start_link(?MODULE, []).    
+-spec add(integer(),integer()) -> integer().
+add(Q, Z) ->
+   minus2(Q+Z).    

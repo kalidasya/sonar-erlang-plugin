@@ -1,24 +1,4 @@
 
-erlcount.erl:2: Callback info about the application behaviour is not available
-erlcount_counter.erl:2: Callback info about the gen_server behaviour is not available
-erlcount_dispatch.erl:2: Callback info about the gen_fsm behaviour is not available
-erlcount_sup.erl:2: Callback info about the supervisor behaviour is not available
 Unknown functions:
-  application:get_env/1
-  file:list_dir/1
-  file:read_file/1
-  file:read_file_info/1
-  filename:extension/1
-  filename:join/2
-  gen_fsm:send_all_state_event/2
-  gen_fsm:send_event/2
-  gen_fsm:start_link/3
-  gen_server:start_link/3
   ppool:async_queue/2
   ppool:start_pool/3
-  queue:in/2
-  queue:new/0
-  queue:out/1
-  supervisor:start_link/2
-Unknown types:
-  file:date_time/0
