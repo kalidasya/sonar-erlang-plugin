@@ -104,11 +104,6 @@
       </rule>
       <rule>
          <repositoryKey>Erlang</repositoryKey>
-         <key>D020</key>
-         <priority>MAJOR</priority>
-      </rule>
-      <rule>
-         <repositoryKey>Erlang</repositoryKey>
          <key>D021</key>
          <priority>MAJOR</priority>
       </rule>

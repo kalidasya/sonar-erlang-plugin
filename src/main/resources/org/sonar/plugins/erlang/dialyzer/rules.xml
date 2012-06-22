@@ -225,18 +225,6 @@
       </messages>
    </rule>
    <rule>
-      <key>D020</key>
-      <name><![CDATA[unused_fun]]></name>
-      <configKey>unused_fun</configKey>
-      <description>
-      <![CDATA[unused_fun]]>
-      </description>
-      <messages>
-         <message>Function will never be called</message>
-         <message>Function ~w/~w will never be called</message>
-      </messages>
-   </rule>
-   <rule>
       <key>D021</key>
       <name><![CDATA[contract_diff]]></name>
       <configKey>contract_diff</configKey>
