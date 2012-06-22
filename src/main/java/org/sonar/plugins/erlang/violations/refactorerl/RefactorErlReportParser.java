@@ -38,6 +38,7 @@ public class RefactorErlReportParser {
 		String strLine;
 		RefactorErlReportUnit reportUnit = null;
 		while ((strLine = breader.readLine()) != null) {
+			strLine = strLine.trim();
 			Matcher matcher = REFACTORERL_UNIT_LEVEL_LINE.matcher(strLine);
 			Matcher matcher2 = REFACTORERL_METRIC_LINE.matcher(strLine);
 			if (matcher.matches()) {
@@ -55,7 +56,7 @@ public class RefactorErlReportParser {
 			} else if (matcher2.matches()) {
 				if (reportUnit != null) {
 					String name = matcher2.group(1).trim();
-					String value = matcher2.group(2).trim();
+					String value = matcher2.group(3).trim();
 					RefactorErlMetric metric = reportUnit.createMetric();
 					metric.setName(name);
 					metric.setValue(value);

@@ -51,5 +51,7 @@ dequeue_and_run(Queue) ->
 enqueue_many(Path, Files, Queue) ->
     F = fun(File, Q) -> queue:in(filename:join(Path,File), Q) end,
     lists:foldl(F, Queue, Files).
+unused_func(A,B) ->
+    throw({error, not_implemented}).
 
 

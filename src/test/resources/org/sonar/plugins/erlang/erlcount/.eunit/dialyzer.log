@@ -1,4 +1,5 @@
 
+erlcount_lib.erl:54: Function unused_func/2 will never be called
 Unknown functions:
   ppool:async_queue/2
   ppool:start_pool/3

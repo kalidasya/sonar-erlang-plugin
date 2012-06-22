@@ -17,44 +17,66 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package org.sonar.plugins.erlang.violation.dialyzer;
+package org.sonar.plugins.erlang.violation.refactorerl;
 
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
+import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.InputFile;
 import org.sonar.api.resources.InputFileUtils;
 import org.sonar.api.resources.Project;
+import org.sonar.api.rules.ActiveRule;
+import org.sonar.api.rules.Rule;
+import org.sonar.api.rules.RuleParam;
+import org.sonar.api.rules.RulePriority;
 import org.sonar.plugins.erlang.utils.ProjectUtil;
 import org.sonar.plugins.erlang.violations.ErlangRuleManager;
 import org.sonar.plugins.erlang.violations.ErlangViolationResults;
-import org.sonar.plugins.erlang.violations.dialyzer.DialyzerRuleRepository;
-import org.sonar.plugins.erlang.violations.dialyzer.ErlangDialyzer;
+import org.sonar.plugins.erlang.violations.refactorerl.ErlangRefactorErl;
+import org.sonar.plugins.erlang.violations.refactorerl.RefactorErlRuleRepository;
 
-import static org.junit.Assert.assertThat;
+public class ErlangRefactorErlTest {
 
-public class ErlangDialyzerTest {
-
-	private ErlangDialyzer ed;
+	private ErlangRefactorErl er;
 	private Configuration configuration;
 	private ErlangViolationResults result;
 
 	@Before
 	public void setup() throws URISyntaxException, IOException {
-		ed = new ErlangDialyzer();
+		er = new ErlangRefactorErl();
 		configuration = mock(Configuration.class);
-		 
-		File fileToAnalyse =  new File(getClass().getResource("/org/sonar/plugins/erlang/erlcount/src/erlcount_lib.erl")
+		RulesProfile rp = mock(RulesProfile.class);
+		List<ActiveRule> rlz = new ArrayList<ActiveRule>();
+		RuleParam param = new RuleParam();
+		param.setKey("maximum");
+		param.setDefaultValue("10");
+		List<RuleParam> params = new ArrayList<RuleParam>();
+		params.add(param);
+		Rule rule = new Rule();
+		rule.setParams(params);
+		rule.setName("mcCabe");
+		rule.setKey("R001");
+		ActiveRule activeRule = new ActiveRule();
+		activeRule.setPriority(RulePriority.MAJOR);
+		activeRule.setRule(rule);
+		rlz.add(activeRule);
+		when(rp.getActiveRulesByRepository("Erlang")).thenReturn(rlz);
+	    
+		File fileToAnalyse =  new File(getClass().getResource("/org/sonar/plugins/erlang/erlcount/src/erlcount_counter.erl")
 				.toURI());
 		InputFile inputFile = InputFileUtils.create(fileToAnalyse.getParentFile(), fileToAnalyse);
 		ArrayList<InputFile> inputFiles = new ArrayList<InputFile>();
@@ -62,13 +84,13 @@ public class ErlangDialyzerTest {
 		Project project = ProjectUtil.getProject(inputFiles, configuration);
 		StringReader reader = new StringReader(FileUtils.readFileToString(inputFile.getFile(), project.getFileSystem()
 				.getSourceCharset().name()));
-		 result = ed.dialyzer(project, inputFile.getFile().getPath(), reader, new ErlangRuleManager(DialyzerRuleRepository.RULES_FILE));
+		 result = er.refactorErl(project, inputFile.getFile().getPath(), reader, new ErlangRuleManager(RefactorErlRuleRepository.RULES_FILE),rp);
 	}
 
 	@Test
 	public void checkDialyzer() {
-		assertThat(result.getIssues().size(), Matchers.equalTo(1));
-		assertThat(result.getIssues().get(0).ruleId, Matchers.equalTo("D019"));
-		assertThat(result.getIssues().get(0).line, Matchers.equalTo(54));
+		assertThat(result.getIssues().size(), Matchers.equalTo(2));
+		assertThat(result.getIssues().get(0).ruleId, Matchers.equalTo("R001"));
+		
 	}
 }

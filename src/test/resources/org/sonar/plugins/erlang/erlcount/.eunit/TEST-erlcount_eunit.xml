@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="7" failures="1" errors="0" skipped="0" time="0.067" name="module 'erlcount_eunit'">
-  <testcase time="0.046" name="erlcount_eunit:find_erl_test_/0_20">
+<testsuite tests="7" failures="1" errors="0" skipped="0" time="0.023" name="module 'erlcount_eunit'">
+  <testcase time="0.003" name="erlcount_eunit:find_erl_test_/0_20">
     <failure type="assertEqual_failed">
 ::{assertEqual_failed,[{module,erlcount_eunit},
                      {line,21},

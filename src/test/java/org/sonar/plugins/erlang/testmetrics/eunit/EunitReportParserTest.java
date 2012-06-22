@@ -44,7 +44,7 @@ public class EunitReportParserTest {
 		assertThat(result.getErrors(), Matchers.equalTo(0D));
 		assertThat(result.getFailures(), Matchers.equalTo(1D));
 		assertThat(result.getTests(), Matchers.equalTo(7D));
-		assertThat(result.getDurationMilliseconds(), Matchers.equalTo(0.025D));
+		assertThat(result.getDurationMilliseconds(), Matchers.equalTo(0.023D));
 		assertThat(result.getTestSuite().getName(), Matchers.equalTo("module 'erlcount_eunit'"));
 		assertThat(result.getTestSuite().getTests(), Matchers.equalTo(7));
 		assertThat(result.getTestSuite().getTestCases().size(), Matchers.equalTo(7));

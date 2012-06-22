@@ -45,8 +45,8 @@ public class CoverCoverageParserTest {
 	public void checkLinesAnalyzer(){
 		CoverFileCoverage result = parser.parseFile(fileToAnalyse, fileToAnalyse.getParent(), "erlcount_lib.COVER.html");
 		assertThat(result.getCoveredLines(), Matchers.equalTo(18));
-		assertThat(result.getUncoveredLines(), Matchers.equalTo(2));
-		assertThat(result.getLinesToCover(), Matchers.equalTo(20));
+		assertThat(result.getUncoveredLines(), Matchers.equalTo(3));
+		assertThat(result.getLinesToCover(), Matchers.equalTo(21));
 	}
 	
 	/**

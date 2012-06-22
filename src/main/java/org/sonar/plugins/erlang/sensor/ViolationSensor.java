@@ -29,6 +29,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.SensorContext;
+import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.InputFile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
@@ -52,9 +53,11 @@ public class ViolationSensor extends AbstractErlangSensor {
 
 	private ErlangRuleManager dialyzerRuleManager = new ErlangRuleManager(DialyzerRuleRepository.RULES_FILE);
 	private ErlangRuleManager refactorErlRuleManager = new ErlangRuleManager(RefactorErlRuleRepository.RULES_FILE);
+	private RulesProfile rulesProfile;
 
-	public ViolationSensor(Erlang erlang) {
+	public ViolationSensor(Erlang erlang, RulesProfile rulesProfile) {
 		super(erlang);
+		this.rulesProfile = rulesProfile;
 	}
 
 
@@ -93,7 +96,7 @@ public class ViolationSensor extends AbstractErlangSensor {
 				context.saveViolation(violation);
 			}
 			
-			result = refactorErl.refactorErl(project, inputFile.getFile().getPath(), reader, refactorErlRuleManager);
+			result = refactorErl.refactorErl(project, inputFile.getFile().getPath(), reader, refactorErlRuleManager, rulesProfile);
 			issues = result.getIssues();
 			LOG.debug("Issue Size:" + result.getIssues().size() + " " + inputFile.getFile().getPath());
 			for (Issue issue : issues) {

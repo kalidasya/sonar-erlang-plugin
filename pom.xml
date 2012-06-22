@@ -119,9 +119,7 @@
          <plugin>
             <groupId>org.codehaus.sonar</groupId>
             <artifactId>sonar-dev-maven-plugin</artifactId>
-
          </plugin>
-
       </plugins>
    </build>
    <dependencies>

@@ -159,7 +159,15 @@ public class RefactorErlReportUnit {
 			this.endRow = endRow;
 		}
 		
-		
+		@Override
+		public String toString(){
+			return startRow+","+startCol+"-"+endRow+","+endCol;
+		}
+	}
+	
+	@Override
+	public String toString(){
+		return moduleName+":"+methodSign+" "+position.toString();
 	}
 	
 }

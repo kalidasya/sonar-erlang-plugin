@@ -28,13 +28,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
+import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RuleParam;
 import org.sonar.plugins.erlang.language.Erlang;
+import org.sonar.plugins.erlang.violations.ActiveRuleFilter;
 import org.sonar.plugins.erlang.violations.ErlangRuleManager;
 import org.sonar.plugins.erlang.violations.ErlangViolationResults;
 import org.sonar.plugins.erlang.violations.Issue;
@@ -54,7 +55,7 @@ public class ErlangRefactorErl {
 	 * 'application name':'function name'/'number of parameters' 'URL to the file': 'starting row','starting col'-'ending row','ending col'
 	 */
 	
-	public ErlangViolationResults refactorErl(Project project, String systemId, Reader reader, ErlangRuleManager erlangRuleManager) {
+	public ErlangViolationResults refactorErl(Project project, String systemId, Reader reader, ErlangRuleManager erlangRuleManager, RulesProfile profile) {
 		ErlangViolationResults result = new ErlangViolationResults();
 		/**
 		 * Read dialyzer results
@@ -68,11 +69,13 @@ public class ErlangRefactorErl {
 			BufferedReader breader = new BufferedReader(RefactorErlOutput);
 
 			RefactorErlReport report = RefactorErlReportParser.parse(breader);
-			String actModuleName = systemId.replaceAll("(.*?[\\/](.*?)(\\.erl.*))", "$2");
+			String actModuleName = systemId.replaceAll("(.*[\\\\/])(.*?)(\\.erl.*)", "$2");
 			List<RefactorErlReportUnit> matchingUnits = report.getUnitsByModuleName(actModuleName);
 			for (RefactorErlReportUnit refactorErlReportUnit : matchingUnits) {
 				for (RefactorErlMetric metric : refactorErlReportUnit.getMetrics()) {
-					Rule rule = erlangRuleManager.getRuleByName(metric.getName());
+					List<ActiveRule> activeRules = profile.getActiveRulesByRepository("Erlang");
+					
+					Rule rule = ActiveRuleFilter.getActiveRuleByRuleName(activeRules, metric.getName());
 					if(checkIsValid(rule, metric)){
 						Issue issue = new Issue(refactorErlReportUnit.getModuleName()+".erl",refactorErlReportUnit.getStartRow(), rule.getKey(), rule.getDescription());
 						result.getIssues().add(issue);	
@@ -107,7 +110,7 @@ public class ErlangRefactorErl {
 	private boolean checkIsValid(Rule rule, RefactorErlMetric metric) {
 		RuleParam param = rule.getParam("maximum");
 		if(param!=null){
-			return param.getDefaultValueAsInteger()>Integer.valueOf(metric.getValue());
+			return Integer.valueOf(metric.getValue())>param.getDefaultValueAsInteger();
 		}
 		return true;
 	}

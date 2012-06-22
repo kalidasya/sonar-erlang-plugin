@@ -53,8 +53,8 @@ public class ErlangPlugin extends SonarPlugin {
 	public static final String EUNIT_DEFAULT_FOLDER = ".eunit/";
 	public static final String DIALYZER_FILENAME_KEY = "sonar.erlang.dialyzer.filename";
 	
-	public static final String DIALYZER_DEFAULT_FILENAME = EUNIT_DEFAULT_FOLDER + "/dialyzer.log";
-	public static final String REFACTORERL_DEFAULT_FILENAME = EUNIT_DEFAULT_FOLDER + "/refactorerl.log";
+	public static final String DIALYZER_DEFAULT_FILENAME = EUNIT_DEFAULT_FOLDER + "dialyzer.log";
+	public static final String REFACTORERL_DEFAULT_FILENAME = EUNIT_DEFAULT_FOLDER + "refactorerl.log";
 	public static final String NAME = "Erlang";
 	public static final String LANG_KEY = "erl";
 	public static final String EXTENSION = "."+LANG_KEY;
