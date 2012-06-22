@@ -57,6 +57,7 @@ public class ErlangRefactorErl {
 	
 	public ErlangViolationResults refactorErl(Project project, String systemId, Reader reader, ErlangRuleManager erlangRuleManager, RulesProfile profile) {
 		ErlangViolationResults result = new ErlangViolationResults();
+		List<ActiveRule> activeRules = profile.getActiveRulesByRepository("Erlang");
 		/**
 		 * Read dialyzer results
 		 */
@@ -73,8 +74,6 @@ public class ErlangRefactorErl {
 			List<RefactorErlReportUnit> matchingUnits = report.getUnitsByModuleName(actModuleName);
 			for (RefactorErlReportUnit refactorErlReportUnit : matchingUnits) {
 				for (RefactorErlMetric metric : refactorErlReportUnit.getMetrics()) {
-					List<ActiveRule> activeRules = profile.getActiveRulesByRepository("Erlang");
-					
 					Rule rule = ActiveRuleFilter.getActiveRuleByRuleName(activeRules, metric.getName());
 					if(checkIsValid(rule, metric)){
 						Issue issue = new Issue(refactorErlReportUnit.getModuleName()+".erl",refactorErlReportUnit.getStartRow(), rule.getKey(), rule.getDescription());

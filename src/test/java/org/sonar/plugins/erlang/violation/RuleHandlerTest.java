@@ -57,7 +57,7 @@ public class RuleHandlerTest {
 
 	@Test
 	public void checkRuleHandler(){
-		assertThat(ruleHandler.getRules().size(), Matchers.equalTo(42));
+		assertThat(ruleHandler.getRules().size(), Matchers.equalTo(41));
 	}
 	
 }

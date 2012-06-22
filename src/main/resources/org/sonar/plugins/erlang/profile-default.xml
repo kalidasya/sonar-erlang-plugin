@@ -218,6 +218,12 @@
          <repositoryKey>Erlang</repositoryKey>
          <key>R001</key>
          <priority>MAJOR</priority>
+         <parameters>
+        <parameter>
+          <key>maximum</key>
+          <value>10</value>
+        </parameter>
+      </parameters>
       </rule>
    </rules>
 </profile>
