@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="7" failures="1" errors="0" skipped="0" time="0.023" name="module 'erlcount_eunit'">
-  <testcase time="0.003" name="erlcount_eunit:find_erl_test_/0_20">
+<testsuite tests="7" failures="1" errors="0" skipped="0" time="0.057" name="module 'erlcount_eunit'">
+  <testcase time="0.037" name="erlcount_eunit:find_erl_test_/0_20">
     <failure type="assertEqual_failed">
 ::{assertEqual_failed,[{module,erlcount_eunit},
                      {line,21},
@@ -13,11 +13,19 @@
                              "../.eunit/erlcount_eunit.erl",
                              "../.eunit/erlcount_lib.erl",
                              "../.eunit/erlcount_sup.erl",
+                             "../.eunit/refactorerl_issues.erl",
                              "../src/erlcount.erl",
                              "../src/erlcount_counter.erl",
                              "../src/erlcount_dispatch.erl",
                              "../src/erlcount_lib.erl",
                              "../src/erlcount_sup.erl",
+                             "../src/refactorerl_issues.erl",
+                             "../target/classes/erlcount.erl",
+                             "../target/classes/erlcount_counter.erl",
+                             "../target/classes/erlcount_dispatch.erl",
+                             "../target/classes/erlcount_lib.erl",
+                             "../target/classes/erlcount_sup.erl",
+                             "../target/test-classes/erlcount_eunit.erl",
                              "../test/erlcount_eunit.erl"]}]}
     </failure>
     <system-out>

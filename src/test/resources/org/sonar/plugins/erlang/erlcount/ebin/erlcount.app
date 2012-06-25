@@ -1,7 +1,7 @@
 {application, erlcount,
  [{vsn, "1.0.0"},
   {modules, [erlcount, erlcount_sup, erlcount_lib,
-             erlcount_dispatch, erlcount_counter]},
+             erlcount_dispatch, erlcount_counter,refactorerl_issues]},
   {applications, [ppool]},
   {registered, [erlcount]},
   {mod, {erlcount, []}},

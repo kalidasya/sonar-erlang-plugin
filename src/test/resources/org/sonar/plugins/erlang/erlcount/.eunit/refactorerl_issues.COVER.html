@@ -1,0 +1,30 @@
+<html>
+<head><title>.eunit/refactorerl_issues.COVER.html</title></head><body bgcolor=white text=black>
+<pre>
+File generated from /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/.eunit/refactorerl_issues.erl by COVER 2012-06-25 at 11:42:07
+
+****************************************************************************
+
+        |  -module(refactorerl_issues).
+        |  -behaviour(supervisor).
+        |  
+        |  mcCabeIssue() -&gt;
+<font color=red>     0..|  X=1.0,</font>
+<font color=red>     0..|  Y=2.0,</font>
+<font color=red>     0..|  Z=1.5,</font>
+<font color=red>     0..|      case {X, Y, Z} of</font>
+<font color=red>     0..|          {0, 0, 0} -&gt; empty_vector;    % empty_vector is an atom</font>
+<font color=red>     0..|          {A, A, A} -&gt; all_the_same;    % so is all_the_same</font>
+<font color=red>     0..|          {X1, Y1, Z1} -&gt; {X1 + 1, Y1 + 1, Z1 +1};</font>
+<font color=red>     0..|  	{1, 0, 0} -&gt; empty_vector;</font>
+<font color=red>     0..|  	{0, 1, 0} -&gt; empty_vector;</font>
+<font color=red>     0..|  	{0, 0, 1} -&gt; empty_vector;</font>
+<font color=red>     0..|  	{1, 1, 0} -&gt; empty_vector;</font>
+<font color=red>     0..|  	{1, 0, 1} -&gt; empty_vector;</font>
+<font color=red>     0..|  	{0, 1, 1} -&gt; empty_vector;</font>
+<font color=red>     0..|  	{1, 1, 1} -&gt; empty_vector;</font>
+<font color=red>     0..|  	{1, 2, 4} -&gt; empty_vector</font>
+        |      end.
+</pre>
+</body>
+</html>

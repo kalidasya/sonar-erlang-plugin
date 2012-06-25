@@ -67,7 +67,7 @@ public class TestReportHandlerTest {
 		assertThat(testReportHandler.testSuite.failures, Matchers.equalTo(1));
 		assertThat(testReportHandler.testSuite.tests, Matchers.equalTo(7));
 		assertThat(testReportHandler.testSuite.name, Matchers.equalTo("module 'erlcount_eunit'"));
-		assertThat(testReportHandler.testSuite.time, Matchers.equalTo(0.023D));
+		assertThat(testReportHandler.testSuite.time, Matchers.equalTo(0.057D));
 		assertThat(testReportHandler.testSuite.testCases.size(), Matchers.equalTo(7));
 		assertThat(testReportHandler.testSuite.testCases.get(0).getName(),
 				Matchers.equalTo("erlcount_eunit:find_erl_test_/0_20"));

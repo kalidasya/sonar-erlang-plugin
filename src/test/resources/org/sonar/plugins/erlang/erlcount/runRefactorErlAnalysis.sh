@@ -18,21 +18,28 @@ echo ---------------START UP SERVER
 #bin/RefactorErl stop >> /dev/null 	
 bin/RefactorErl start
 wait $!
+sleep 2
 echo ---------------SET parent folder
 bin/RefactorErl ri delenv appbase 
 wait $!
+sleep 2
 bin/RefactorErl ri addenv appbase "${appbase}"
 wait $!
+sleep 2
 bin/RefactorErl ri reset 
 wait $!
+sleep 2
 #set +v 
 echo ---------------Add project
 bin/RefactorErl ri add home "${application}" 
 wait $!
+sleep 2
 echo Add mcCabe file to: ${appbase}/${application}/mcCabe.txt
 bin/RefactorErl ri q "mods.funs.mcCabe" "[linenum,{out,'${appbase}/${application}/mcCabe.txt'}]"
+sleep 2
 echo Add fun_call_in file to: ${appbase}/${application}/func_call_in.txt
 bin/RefactorErl ri q "mods.function_calls_in" "[linenum,{out,'${appbase}/${application}/func_call_in.txt'}]"
+sleep 2
 
 bin/RefactorErl ri delenv appbase
 

@@ -13,11 +13,11 @@ erlcount_counter:handle_call/3   /home/tkende/dev/projects/sonar-erlang-plugin/s
 erlcount_counter:handle_cast/2   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_counter.erl: 26,1-27,21
     mcCabe = 1
 erlcount_counter:handle_info/2   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_counter.erl: 31,1-35,22
-    mcCabe = 11
+    mcCabe = 1
 erlcount_counter:terminate/2   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_counter.erl: 39,1-40,7
     mcCabe = 1
 erlcount_counter:code_change/3   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_counter.erl: 43,1-44,16
-    mcCabe = 11
+    mcCabe = 1
 gen_server:start_link/3
     mcCabe = 0
 erlang:self/0
@@ -116,3 +116,5 @@ erlcount_sup:minus2/1   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/r
     mcCabe = 1
 erlcount_sup:add/2   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_sup.erl: 31,1-32,15
     mcCabe = 1
+refactorerl_issues:mcCabeIssue/0   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/refactorerl_issues.erl: 4,1-20,8
+    mcCabe = 11

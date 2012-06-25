@@ -77,7 +77,7 @@ public class ErlangRefactorErlTest {
 		rlz.add(activeRule);
 		when(rp.getActiveRulesByRepository("Erlang")).thenReturn(rlz);
 	    
-		File fileToAnalyse =  new File(getClass().getResource("/org/sonar/plugins/erlang/erlcount/src/erlcount_counter.erl")
+		File fileToAnalyse =  new File(getClass().getResource("/org/sonar/plugins/erlang/erlcount/src/refactorerl_issues.erl")
 				.toURI());
 		InputFile inputFile = InputFileUtils.create(fileToAnalyse.getParentFile(), fileToAnalyse);
 		ArrayList<InputFile> inputFiles = new ArrayList<InputFile>();
@@ -90,8 +90,10 @@ public class ErlangRefactorErlTest {
 
 	@Test
 	public void checkRefactorErl() {
-		assertThat(result.getIssues().size(), Matchers.equalTo(2));
+		assertThat(result.getIssues().size(), Matchers.equalTo(1));
 		assertThat(result.getIssues().get(0).ruleId, Matchers.equalTo("R001"));
+		assertThat(result.getIssues().get(0).line, Matchers.equalTo(4));
+		assertThat(result.getIssues().get(0).descr, Matchers.equalTo("mcCabe is 11 (max allowed is 10)"));
 		
 	}
 }
