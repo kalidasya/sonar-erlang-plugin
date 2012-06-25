@@ -73,6 +73,7 @@ public class ErlangRefactorErlTest {
 		ActiveRule activeRule = new ActiveRule();
 		activeRule.setPriority(RulePriority.MAJOR);
 		activeRule.setRule(rule);
+		activeRule.setParameter("maximum", "10");
 		rlz.add(activeRule);
 		when(rp.getActiveRulesByRepository("Erlang")).thenReturn(rlz);
 	    
@@ -88,7 +89,7 @@ public class ErlangRefactorErlTest {
 	}
 
 	@Test
-	public void checkDialyzer() {
+	public void checkRefactorErl() {
 		assertThat(result.getIssues().size(), Matchers.equalTo(2));
 		assertThat(result.getIssues().get(0).ruleId, Matchers.equalTo("R001"));
 		

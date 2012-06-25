@@ -74,9 +74,9 @@ public class ErlangRefactorErl {
 			List<RefactorErlReportUnit> matchingUnits = report.getUnitsByModuleName(actModuleName);
 			for (RefactorErlReportUnit refactorErlReportUnit : matchingUnits) {
 				for (RefactorErlMetric metric : refactorErlReportUnit.getMetrics()) {
-					Rule rule = ActiveRuleFilter.getActiveRuleByRuleName(activeRules, metric.getName());
-					if(checkIsValid(rule, metric)){
-						Issue issue = new Issue(refactorErlReportUnit.getModuleName()+".erl",refactorErlReportUnit.getStartRow(), rule.getKey(), rule.getDescription());
+					ActiveRule activeRule = ActiveRuleFilter.getActiveRuleByRuleName(activeRules, metric.getName());
+					if(checkIsValid(activeRule, metric)){
+						Issue issue = new Issue(refactorErlReportUnit.getModuleName()+".erl",refactorErlReportUnit.getStartRow(), activeRule.getRuleKey(), getMessageForMetric(activeRule, metric));
 						result.getIssues().add(issue);	
 					}
 						
@@ -106,10 +106,18 @@ public class ErlangRefactorErl {
 		return result;
 	}
 
-	private boolean checkIsValid(Rule rule, RefactorErlMetric metric) {
-		RuleParam param = rule.getParam("maximum");
+	private String getMessageForMetric(ActiveRule activeRule, RefactorErlMetric metric) {
+		String param = activeRule.getParameter("maximum");
 		if(param!=null){
-			return Integer.valueOf(metric.getValue())>param.getDefaultValueAsInteger();
+			return activeRule.getRule().getName()+" is "+metric.getValue()+" (max allowed is "+param+")";
+		}
+		return activeRule.getRule().getDescription();
+	}
+
+	private boolean checkIsValid(ActiveRule activeRule, RefactorErlMetric metric) {
+		String param = activeRule.getParameter("maximum");
+		if(param!=null){
+			return Integer.valueOf(metric.getValue())>Integer.valueOf(param);
 		}
 		return true;
 	}

@@ -22,14 +22,13 @@ package org.sonar.plugins.erlang.violations;
 import java.util.List;
 
 import org.sonar.api.rules.ActiveRule;
-import org.sonar.api.rules.Rule;
 
 public class ActiveRuleFilter {
 
-	public static Rule getActiveRuleByRuleName(List<ActiveRule> activeRules, String name){
+	public static ActiveRule getActiveRuleByRuleName(List<ActiveRule> activeRules, String name){
 		for (ActiveRule activeRule : activeRules) {
 			if(activeRule.getRule().getName().equals(name)){
-				return activeRule.getRule();
+				return activeRule;
 			}
 		}
 		return null;
