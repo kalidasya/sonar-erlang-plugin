@@ -31,11 +31,13 @@ public class ErlangRuleRepository extends RuleRepository {
 	private XMLRuleParser parser;
 	public static final String REPOSITORY_NAME = "Erlang";
 	public static final String REPOSITORY_KEY = "Erlang";
+	public static final String DIALYZER_PATH = "/org/sonar/plugins/erlang/dialyzer/rules.xml";
+	public static final String REFACTORERL_PATH = "/org/sonar/plugins/erlang/refactorerl/rules.xml";
 	public static final List<String> RULES_FILE = new ArrayList<String>() {
 		private static final long serialVersionUID = 8245183286506333769L;
 		{
-			add("/org/sonar/plugins/erlang/dialyzer/rules.xml");
-			add("/org/sonar/plugins/erlang/refactorerl/rules.xml");
+			add(DIALYZER_PATH);
+			add(REFACTORERL_PATH);
 		}
 	};
 

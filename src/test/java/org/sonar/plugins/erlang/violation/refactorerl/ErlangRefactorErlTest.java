@@ -41,9 +41,9 @@ import org.sonar.api.rules.ActiveRule;
 import org.sonar.plugins.erlang.utils.ProjectUtil;
 import org.sonar.plugins.erlang.utils.RuleUtil;
 import org.sonar.plugins.erlang.violations.ErlangRuleManager;
+import org.sonar.plugins.erlang.violations.ErlangRuleRepository;
 import org.sonar.plugins.erlang.violations.ViolationReport;
 import org.sonar.plugins.erlang.violations.refactorerl.ErlangRefactorErl;
-import org.sonar.plugins.erlang.violations.refactorerl.RefactorErlRuleRepository;
 
 public class ErlangRefactorErlTest {
 
@@ -69,7 +69,7 @@ public class ErlangRefactorErlTest {
 		ArrayList<InputFile> inputFiles = new ArrayList<InputFile>();
 		inputFiles.add(inputFile);
 		Project project = ProjectUtil.getProject(inputFiles, configuration);
-		result = er.refactorErl(project, new ErlangRuleManager(RefactorErlRuleRepository.RULES_FILE),rp);
+		result = er.refactorErl(project, new ErlangRuleManager(ErlangRuleRepository.REFACTORERL_PATH),rp);
 	}
 
 	

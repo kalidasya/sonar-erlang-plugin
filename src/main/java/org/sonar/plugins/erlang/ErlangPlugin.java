@@ -37,8 +37,6 @@ import org.sonar.plugins.erlang.sensor.ErlangSourceImporterSensor;
 import org.sonar.plugins.erlang.sensor.ViolationSensor;
 import org.sonar.plugins.erlang.violations.ErlangDefaultProfile;
 import org.sonar.plugins.erlang.violations.ErlangRuleRepository;
-import org.sonar.plugins.erlang.violations.dialyzer.DialyzerRuleRepository;
-import org.sonar.plugins.erlang.violations.refactorerl.RefactorErlRuleRepository;
 
 @Properties({
 		@Property(key = ErlangPlugin.FILE_SUFFIXES_KEY, defaultValue = ErlangPlugin.FILE_SUFFIXES_DEFVALUE, name = "File suffixes", description = "Comma-separated list of suffixes for files to analyze. To not filter, leave the list empty.", global = true, project = true),

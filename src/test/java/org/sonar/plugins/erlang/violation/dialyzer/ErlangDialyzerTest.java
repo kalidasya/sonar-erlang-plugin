@@ -36,8 +36,8 @@ import org.sonar.api.resources.InputFileUtils;
 import org.sonar.api.resources.Project;
 import org.sonar.plugins.erlang.utils.ProjectUtil;
 import org.sonar.plugins.erlang.violations.ErlangRuleManager;
+import org.sonar.plugins.erlang.violations.ErlangRuleRepository;
 import org.sonar.plugins.erlang.violations.ViolationReport;
-import org.sonar.plugins.erlang.violations.dialyzer.DialyzerRuleRepository;
 import org.sonar.plugins.erlang.violations.dialyzer.ErlangDialyzer;
 
 public class ErlangDialyzerTest {
@@ -57,7 +57,7 @@ public class ErlangDialyzerTest {
 		ArrayList<InputFile> inputFiles = new ArrayList<InputFile>();
 		inputFiles.add(inputFile);
 		Project project = ProjectUtil.getProject(inputFiles, configuration);
-		result = ed.dialyzer(project, new ErlangRuleManager(DialyzerRuleRepository.RULES_FILE));
+		result = ed.dialyzer(project, new ErlangRuleManager(ErlangRuleRepository.DIALYZER_PATH));
 	}
 
 	@Test

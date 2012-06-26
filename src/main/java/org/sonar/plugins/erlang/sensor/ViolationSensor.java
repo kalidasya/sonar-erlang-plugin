@@ -32,12 +32,11 @@ import org.sonar.api.rules.Violation;
 import org.sonar.plugins.erlang.language.Erlang;
 import org.sonar.plugins.erlang.language.ErlangFile;
 import org.sonar.plugins.erlang.violations.ErlangRuleManager;
+import org.sonar.plugins.erlang.violations.ErlangRuleRepository;
 import org.sonar.plugins.erlang.violations.ViolationReport;
 import org.sonar.plugins.erlang.violations.ViolationReportUnit;
-import org.sonar.plugins.erlang.violations.dialyzer.DialyzerRuleRepository;
 import org.sonar.plugins.erlang.violations.dialyzer.ErlangDialyzer;
 import org.sonar.plugins.erlang.violations.refactorerl.ErlangRefactorErl;
-import org.sonar.plugins.erlang.violations.refactorerl.RefactorErlRuleRepository;
 
 /**
  * Calls the dialyzer report parser and the refactorerl report parser and saves
@@ -48,8 +47,8 @@ import org.sonar.plugins.erlang.violations.refactorerl.RefactorErlRuleRepository
  */
 public class ViolationSensor extends AbstractErlangSensor {
 
-	private ErlangRuleManager dialyzerRuleManager = new ErlangRuleManager(DialyzerRuleRepository.RULES_FILE);
-	private ErlangRuleManager refactorErlRuleManager = new ErlangRuleManager(RefactorErlRuleRepository.RULES_FILE);
+	private ErlangRuleManager dialyzerRuleManager = new ErlangRuleManager(ErlangRuleRepository.DIALYZER_PATH);
+	private ErlangRuleManager refactorErlRuleManager = new ErlangRuleManager(ErlangRuleRepository.REFACTORERL_PATH);
 	private RulesProfile rulesProfile;
 
 	public ViolationSensor(Erlang erlang, RulesProfile rulesProfile) {
@@ -93,7 +92,7 @@ public class ViolationSensor extends AbstractErlangSensor {
 			 * the DialyzerRuleRepository and the RefactorErlRuleRepository has the
 			 * same key and name...or not?
 			 */
-			Rule rule = Rule.create(RefactorErlRuleRepository.REPOSITORY_KEY, reportUnit.getMetricKey());
+			Rule rule = Rule.create(ErlangRuleRepository.REPOSITORY_KEY, reportUnit.getMetricKey());
 			Violation violation = Violation.create(rule, erlangFile);
 			violation.setLineId(reportUnit.getStartRow());
 			violation.setMessage(reportUnit.getDescription());

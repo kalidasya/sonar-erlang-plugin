@@ -30,8 +30,8 @@ import javax.xml.parsers.SAXParserFactory;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
+import org.sonar.plugins.erlang.violations.ErlangRuleRepository;
 import org.sonar.plugins.erlang.violations.RuleHandler;
-import org.sonar.plugins.erlang.violations.dialyzer.DialyzerRuleRepository;
 import org.xml.sax.SAXException;
 
 public class RuleHandlerTest {
@@ -45,7 +45,7 @@ public class RuleHandlerTest {
 		ruleHandler = new RuleHandler();
 		try {
 			saxParser = factory.newSAXParser();
-			saxParser.parse(RuleHandlerTest.class.getResourceAsStream(DialyzerRuleRepository.RULES_FILE), ruleHandler);
+			saxParser.parse(RuleHandlerTest.class.getResourceAsStream(ErlangRuleRepository.DIALYZER_PATH), ruleHandler);
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		} catch (SAXException e) {

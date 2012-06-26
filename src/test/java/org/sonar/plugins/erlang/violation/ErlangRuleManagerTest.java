@@ -25,8 +25,7 @@ import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.sonar.plugins.erlang.violations.ErlangRuleManager;
-import org.sonar.plugins.erlang.violations.dialyzer.DialyzerRuleRepository;
-import org.sonar.plugins.erlang.violations.refactorerl.RefactorErlRuleRepository;
+import org.sonar.plugins.erlang.violations.ErlangRuleRepository;
 
 public class ErlangRuleManagerTest {
 
@@ -35,8 +34,8 @@ public class ErlangRuleManagerTest {
 
 	@Before
 	public void setup(){
-		drm = new ErlangRuleManager(DialyzerRuleRepository.RULES_FILE);
-		rrm = new ErlangRuleManager(RefactorErlRuleRepository.RULES_FILE);
+		drm = new ErlangRuleManager(ErlangRuleRepository.DIALYZER_PATH);
+		rrm = new ErlangRuleManager(ErlangRuleRepository.REFACTORERL_PATH);
 	}
 	
 	@Test

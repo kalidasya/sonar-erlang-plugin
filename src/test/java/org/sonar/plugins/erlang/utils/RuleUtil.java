@@ -29,8 +29,7 @@ import org.sonar.api.rules.RulePriority;
 import org.sonar.check.Cardinality;
 import org.sonar.plugins.erlang.violations.ErlangRule;
 import org.sonar.plugins.erlang.violations.ErlangRuleManager;
-import org.sonar.plugins.erlang.violations.dialyzer.DialyzerRuleRepository;
-import org.sonar.plugins.erlang.violations.refactorerl.RefactorErlRuleRepository;
+import org.sonar.plugins.erlang.violations.ErlangRuleRepository;
 
 public class RuleUtil {
 
@@ -41,9 +40,9 @@ public class RuleUtil {
 	
 	private static String getFileUrlForRepo(String repoKey){
 		if("dialyzer".equalsIgnoreCase(repoKey)){
-		return DialyzerRuleRepository.RULES_FILE;
+		return ErlangRuleRepository.DIALYZER_PATH;
 		} else if ("refactorerl".equalsIgnoreCase(repoKey)){
-			return RefactorErlRuleRepository.RULES_FILE;
+			return ErlangRuleRepository.REFACTORERL_PATH;
 		}
 		
 		return null;
