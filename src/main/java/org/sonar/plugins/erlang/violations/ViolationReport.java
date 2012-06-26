@@ -17,40 +17,47 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package org.sonar.plugins.erlang.violations.refactorerl;
+package org.sonar.plugins.erlang.violations;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RefactorErlReport {
 
-	private List<RefactorErlReportUnit> units = new ArrayList<RefactorErlReportUnit>();
+public class ViolationReport {
 
-	public RefactorErlReport() {
+	private List<ViolationReportUnit> units = new ArrayList<ViolationReportUnit>();
+
+	public ViolationReport() {
 		super();
 	}
 
-	public List<RefactorErlReportUnit> getUnits() {
+	public List<ViolationReportUnit> getUnits() {
 		return units;
 	}
 
-	public RefactorErlReportUnit addUnit(RefactorErlReportUnit unit) {
+	public ViolationReportUnit addUnit(ViolationReportUnit unit) {
 		this.units.add(unit);
 		return this.units.get(this.units.size()-1);
 	}
 	
-	public RefactorErlReportUnit createUnit() {
-		return addUnit(new RefactorErlReportUnit());
+	public ViolationReportUnit createUnit() {
+		return addUnit(new ViolationReportUnit());
 	}
 
-	public List<RefactorErlReportUnit> getUnitsByModuleName(String moduleName) {
-		List<RefactorErlReportUnit> ret = new ArrayList<RefactorErlReportUnit>();
-		for (RefactorErlReportUnit unit : this.units) {
+	public List<ViolationReportUnit> getUnitsByModuleName(String moduleName) {
+		List<ViolationReportUnit> ret = new ArrayList<ViolationReportUnit>();
+		for (ViolationReportUnit unit : this.units) {
 			if(unit.getModuleName().equals(moduleName)){
 				ret.add(unit);
 			}
 		}
 		return ret;
 	}
+
+	public void appendUnits(List<ViolationReportUnit> addUnits) {
+		this.units.addAll(addUnits);
+		
+	}
+
 	
 }

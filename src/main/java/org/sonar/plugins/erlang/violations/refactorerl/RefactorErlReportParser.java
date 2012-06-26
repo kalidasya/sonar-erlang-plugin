@@ -21,8 +21,12 @@ package org.sonar.plugins.erlang.violations.refactorerl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.sonar.plugins.erlang.violations.ViolationReport;
+import org.sonar.plugins.erlang.violations.ViolationReportUnit;
 
 public class RefactorErlReportParser {
 
@@ -32,11 +36,11 @@ public class RefactorErlReportParser {
 	private static final Pattern REFACTORERL_METRIC_LINE = Pattern
 			.compile("([\'@_a-zA-z0-9]*?)( = )([\'@_a-zA-z0-9]*?)");
 
-	public static RefactorErlReport parse(BufferedReader breader) throws IOException {
-		RefactorErlReport report = new RefactorErlReport();
+	public static List<ViolationReportUnit> parse(BufferedReader breader) throws IOException {
+		ViolationReport report = new ViolationReport();
 
 		String strLine;
-		RefactorErlReportUnit reportUnit = null;
+		ViolationReportUnit reportUnit = null;
 		while ((strLine = breader.readLine()) != null) {
 			strLine = strLine.trim();
 			Matcher matcher = REFACTORERL_UNIT_LEVEL_LINE.matcher(strLine);
@@ -57,9 +61,8 @@ public class RefactorErlReportParser {
 				if (reportUnit != null) {
 					String name = matcher2.group(1).trim();
 					String value = matcher2.group(3).trim();
-					RefactorErlMetric metric = reportUnit.createMetric();
-					metric.setName(name);
-					metric.setValue(value);
+					reportUnit.setMetricKey(name);
+					reportUnit.setMetricValue(value);
 				}
 			} else {
 				/**
@@ -70,7 +73,7 @@ public class RefactorErlReportParser {
 			}
 
 		}
-		return report;
+		return report.getUnits();
 	}
 
 }

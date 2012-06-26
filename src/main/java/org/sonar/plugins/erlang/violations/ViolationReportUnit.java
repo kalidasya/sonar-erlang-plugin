@@ -17,21 +17,25 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package org.sonar.plugins.erlang.violations.refactorerl;
+package org.sonar.plugins.erlang.violations;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class RefactorErlReportUnit {
+public class ViolationReportUnit {
 
 	private String moduleName;
+	private Position position = new Position();
 	private String methodSign;
 	private String uri;
-	private Position position = new Position();
-	private List<RefactorErlMetric> metrics = new ArrayList<RefactorErlMetric>();
+	private String metricKey;
+	private String metricValue;
+	private String metricMessage;
+	private String description;
 	
-	public RefactorErlReportUnit() {
+	public ViolationReportUnit() {
 		super();
+	}
+	
+	public String getModuleFileName() {
+		return moduleName+".erl";
 	}
 
 	public String getModuleName() {
@@ -56,6 +60,38 @@ public class RefactorErlReportUnit {
 
 	public void setUri(String uri) {
 		this.uri = uri;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getMetricKey() {
+		return metricKey;
+	}
+
+	public void setMetricKey(String metricKey) {
+		this.metricKey = metricKey;
+	}
+
+	public String getMetricValue() {
+		return metricValue;
+	}
+
+	public void setMetricValue(String metricValue) {
+		this.metricValue = metricValue;
+	}
+
+	public String getMetricMessage() {
+		return metricMessage;
+	}
+
+	public void setMetricMessage(String metricMessage) {
+		this.metricMessage = metricMessage;
 	}
 
 	public Position getPosition() {
@@ -94,20 +130,6 @@ public class RefactorErlReportUnit {
 		return position.getEndCol();
 	}
 	
-	
-	public List<RefactorErlMetric> getMetrics() {
-		return metrics;
-	}
-
-	public RefactorErlMetric addMetric(RefactorErlMetric metric){
-		this.metrics.add(metric);
-		return this.metrics.get(this.metrics.size()-1);
-	}
-	
-	public RefactorErlMetric createMetric() {
-		return addMetric(new RefactorErlMetric());
-	}
-
 	public void setPosition(String position) {
 		String[] startEnd = position.split("-");
 		setStartRow(Integer.valueOf(startEnd[0].split(",")[0]));
@@ -167,7 +189,7 @@ public class RefactorErlReportUnit {
 	
 	@Override
 	public String toString(){
-		return moduleName+":"+methodSign+" "+position.toString();
+		return moduleName+":"+methodSign+" "+metricKey+" at line "+position.toString();
 	}
 	
 }

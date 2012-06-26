@@ -41,7 +41,7 @@ import org.sonar.api.rules.ActiveRule;
 import org.sonar.plugins.erlang.utils.ProjectUtil;
 import org.sonar.plugins.erlang.utils.RuleUtil;
 import org.sonar.plugins.erlang.violations.ErlangRuleManager;
-import org.sonar.plugins.erlang.violations.ErlangViolationResults;
+import org.sonar.plugins.erlang.violations.ViolationReport;
 import org.sonar.plugins.erlang.violations.refactorerl.ErlangRefactorErl;
 import org.sonar.plugins.erlang.violations.refactorerl.RefactorErlRuleRepository;
 
@@ -49,7 +49,7 @@ public class ErlangRefactorErlTest {
 
 	private ErlangRefactorErl er;
 	private Configuration configuration;
-	private ErlangViolationResults result;
+	private ViolationReport result;
 
 	@Before
 	public void setup() throws URISyntaxException, IOException {
@@ -75,10 +75,10 @@ public class ErlangRefactorErlTest {
 	
 	@Test
 	public void checkRefactorErl() {
-		assertThat(result.getIssues().size(), Matchers.equalTo(2));
-		assertThat(result.getIssues().get(1).ruleId, Matchers.equalTo("R001"));
-		assertThat(result.getIssues().get(1).line, Matchers.equalTo(4));
-		assertThat(result.getIssues().get(1).descr, Matchers.equalTo("mcCabe is 11 (max allowed is 10)"));
+		assertThat(result.getUnits().size(), Matchers.equalTo(2));
+		assertThat(result.getUnits().get(1).getMetricKey(), Matchers.equalTo("R001"));
+		assertThat(result.getUnits().get(1).getStartRow(), Matchers.equalTo(4));
+		assertThat(result.getUnits().get(1).getDescription(), Matchers.equalTo("mcCabe is 11 (max allowed is 10)"));
 		
 	}
 	

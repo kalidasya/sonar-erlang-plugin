@@ -36,7 +36,7 @@ import org.sonar.api.resources.InputFileUtils;
 import org.sonar.api.resources.Project;
 import org.sonar.plugins.erlang.utils.ProjectUtil;
 import org.sonar.plugins.erlang.violations.ErlangRuleManager;
-import org.sonar.plugins.erlang.violations.ErlangViolationResults;
+import org.sonar.plugins.erlang.violations.ViolationReport;
 import org.sonar.plugins.erlang.violations.dialyzer.DialyzerRuleRepository;
 import org.sonar.plugins.erlang.violations.dialyzer.ErlangDialyzer;
 
@@ -44,7 +44,7 @@ public class ErlangDialyzerTest {
 
 	private ErlangDialyzer ed;
 	private Configuration configuration;
-	private ErlangViolationResults result;
+	private ViolationReport result;
 
 	@Before
 	public void setup() throws URISyntaxException, IOException {
@@ -62,8 +62,8 @@ public class ErlangDialyzerTest {
 
 	@Test
 	public void checkDialyzer() {
-		assertThat(result.getIssues().size(), Matchers.equalTo(3));
-		assertThat(result.getIssues().get(0).ruleId, Matchers.equalTo("D019"));
-		assertThat(result.getIssues().get(0).line, Matchers.equalTo(54));
+		assertThat(result.getUnits().size(), Matchers.equalTo(3));
+		assertThat(result.getUnits().get(0).getMetricKey(), Matchers.equalTo("D019"));
+		assertThat(result.getUnits().get(0).getStartRow(), Matchers.equalTo(54));
 	}
 }

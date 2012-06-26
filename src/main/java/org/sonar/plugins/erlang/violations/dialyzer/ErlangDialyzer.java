@@ -30,19 +30,20 @@ import java.io.InputStreamReader;
 import org.sonar.api.resources.Project;
 import org.sonar.plugins.erlang.language.Erlang;
 import org.sonar.plugins.erlang.violations.ErlangRuleManager;
-import org.sonar.plugins.erlang.violations.ErlangViolationResults;
-import org.sonar.plugins.erlang.violations.Issue;
+import org.sonar.plugins.erlang.violations.ViolationReport;
+import org.sonar.plugins.erlang.violations.ViolationReportUnit;
 
 /**
- * Read and parse generated dialyzer report 
+ * Read and parse generated dialyzer report
+ * 
  * @author tkende
- *
+ * 
  */
 public class ErlangDialyzer {
 	private static final String DIALYZER_VIOLATION_ROW_REGEX = "(.*?)(:[0-9]+:)(.*)";
 
-	public ErlangViolationResults dialyzer(Project project, ErlangRuleManager dialyzerRuleManager) {
-		ErlangViolationResults result = new ErlangViolationResults();
+	public ViolationReport dialyzer(Project project, ErlangRuleManager dialyzerRuleManager) {
+		ViolationReport report = new ViolationReport();
 		/**
 		 * Read dialyzer results
 		 */
@@ -53,16 +54,17 @@ public class ErlangDialyzer {
 			DataInputStream in = new DataInputStream(fstream);
 			BufferedReader dialyzerOutput = new BufferedReader(new InputStreamReader(in));
 			BufferedReader breader = new BufferedReader(dialyzerOutput);
-			
+
 			String strLine;
 			while ((strLine = breader.readLine()) != null) {
 				if (strLine.matches(DIALYZER_VIOLATION_ROW_REGEX)) {
-					//String moduleName = strLine.trim().replaceAll(DIALYZER_VIOLATION_ROW_REGEX, "$1");
-					//if (systemId.contains(moduleName)) {
-						String[] res = strLine.split(":");
-						Issue i = new Issue(res[0],Integer.valueOf(res[1]), dialyzerRuleManager.getRuleKeyByMessage(res[2].trim()), res[2].trim());
-						result.getIssues().add(i);
-					//}
+					String[] res = strLine.split(":");
+					ViolationReportUnit unit = report.createUnit();
+					unit.setModuleName(res[0].replaceAll("\\.erl", ""));
+					unit.setStartRow(Integer.valueOf(res[1]));
+					unit.setMetricKey(dialyzerRuleManager.getRuleKeyByMessage(res[2]
+							.trim()));
+					unit.setDescription(res[2].trim());
 				}
 			}
 		} catch (FileNotFoundException e) {
@@ -70,7 +72,7 @@ public class ErlangDialyzer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return result;
+		return report;
 	}
 
 }
