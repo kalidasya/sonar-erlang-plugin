@@ -19,11 +19,11 @@
  */
 package org.sonar.plugins.erlang.colorizer;
 
-import org.junit.Test;
-import org.sonar.plugins.erlang.colorization.ErlangKeywords;
-
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+
+import org.junit.Test;
+import org.sonar.plugins.erlang.colorization.ErlangKeywords;
 
 public class ErlangKeywordsTest {
   @Test

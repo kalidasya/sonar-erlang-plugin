@@ -45,9 +45,11 @@ import org.sonar.plugins.erlang.violations.refactorerl.ErlangRefactorErl;
 import org.sonar.plugins.erlang.violations.refactorerl.RefactorErlRuleRepository;
 
 /**
- * Calls the dialyzer report parser and the refactorerl report parser and saves violations to sonar 
+ * Calls the dialyzer report parser and the refactorerl report parser and saves
+ * violations to sonar
+ * 
  * @author tkende
- *
+ * 
  */
 public class ViolationSensor extends AbstractErlangSensor {
 
@@ -60,15 +62,17 @@ public class ViolationSensor extends AbstractErlangSensor {
 		this.rulesProfile = rulesProfile;
 	}
 
-
 	private static final Logger LOG = LoggerFactory.getLogger(ViolationSensor.class);
 	private ErlangDialyzer dialyzer = new ErlangDialyzer();
 	private ErlangRefactorErl refactorErl = new ErlangRefactorErl();
 
 	public void analyse(Project project, SensorContext context) {
+		ErlangViolationResults violationIssues = refactorErl.refactorErl(project, refactorErlRuleManager, rulesProfile);
+		violationIssues.appendIssues(dialyzer.dialyzer(project, dialyzerRuleManager).getIssues());
 		for (InputFile inputFile : project.getFileSystem().mainFiles(getErlang().getKey())) {
 			try {
-				analyzeFile(inputFile, project, context);
+				// report = Erl
+				analyzeFile(inputFile, project, context, violationIssues);
 			} catch (Exception e) {
 				LOG.error("Can not analyze the file " + inputFile.getFileBaseDir() + "\\" + inputFile.getRelativePath(), e);
 			}
@@ -76,39 +80,19 @@ public class ViolationSensor extends AbstractErlangSensor {
 		}
 	}
 
-	private void analyzeFile(InputFile inputFile, Project project, SensorContext context) throws IOException {
+	private void analyzeFile(InputFile inputFile, Project project, SensorContext context,
+			ErlangViolationResults violationIssues) throws IOException {
 		ErlangFile erlangFile = ErlangFile.fromInputFile(inputFile);
-		System.out.println("Erlang file in DS:" + erlangFile.getLongName());
-		Reader reader = null;
-		try {
-			reader = new StringReader(FileUtils.readFileToString(inputFile.getFile(), project.getFileSystem()
-					.getSourceCharset().name()));
-			LOG.debug("values:" + inputFile.getFile().getPath() + " " + project.getFileSystem().getSourceCharset().name()
-					+ " " + reader + " " + project);
-			ErlangViolationResults result = dialyzer.dialyzer(project, inputFile.getFile().getPath(), reader, dialyzerRuleManager);
-			List<Issue> issues = result.getIssues();
-			LOG.debug("Issue Size:" + result.getIssues().size() + " " + inputFile.getFile().getPath());
-			for (Issue issue : issues) {
-				Rule rule =  Rule.create(DialyzerRuleRepository.REPOSITORY_NAME, issue.ruleId);
-				Violation violation = Violation.create(rule, erlangFile);
-				violation.setLineId(issue.line);
-				violation.setMessage(issue.descr);
-				context.saveViolation(violation);
-			}
-			
-			result = refactorErl.refactorErl(project, inputFile.getFile().getPath(), reader, refactorErlRuleManager, rulesProfile);
-			issues = result.getIssues();
-			LOG.debug("Issue Size:" + result.getIssues().size() + " " + inputFile.getFile().getPath());
-			for (Issue issue : issues) {
-				Rule rule =  Rule.create(DialyzerRuleRepository.REPOSITORY_NAME, issue.ruleId);
-				Violation violation = Violation.create(rule, erlangFile);
-				violation.setLineId(issue.line);
-				violation.setMessage(issue.descr);
-				context.saveViolation(violation);
-			}
-		} finally {
-			IOUtils.closeQuietly(reader);
+		String actModuleName = erlangFile.getName().concat(".erl");
+		List<Issue> issues = violationIssues.filterIssuesByModuleName(actModuleName);
+		for (Issue issue : issues) {
+			Rule rule = Rule.create(DialyzerRuleRepository.REPOSITORY_NAME, issue.ruleId);
+			Violation violation = Violation.create(rule, erlangFile);
+			violation.setLineId(issue.line);
+			violation.setMessage(issue.descr);
+			context.saveViolation(violation);
 		}
+
 	}
 
 }

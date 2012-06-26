@@ -26,7 +26,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Reader;
 
 import org.sonar.api.resources.Project;
 import org.sonar.plugins.erlang.language.Erlang;
@@ -42,7 +41,7 @@ import org.sonar.plugins.erlang.violations.Issue;
 public class ErlangDialyzer {
 	private static final String DIALYZER_VIOLATION_ROW_REGEX = "(.*?)(:[0-9]+:)(.*)";
 
-	public ErlangViolationResults dialyzer(Project project, String systemId, Reader reader, ErlangRuleManager dialyzerRuleManager) {
+	public ErlangViolationResults dialyzer(Project project, ErlangRuleManager dialyzerRuleManager) {
 		ErlangViolationResults result = new ErlangViolationResults();
 		/**
 		 * Read dialyzer results
@@ -58,12 +57,12 @@ public class ErlangDialyzer {
 			String strLine;
 			while ((strLine = breader.readLine()) != null) {
 				if (strLine.matches(DIALYZER_VIOLATION_ROW_REGEX)) {
-					String moduleName = strLine.trim().replaceAll(DIALYZER_VIOLATION_ROW_REGEX, "$1");
-					if (systemId.contains(moduleName)) {
+					//String moduleName = strLine.trim().replaceAll(DIALYZER_VIOLATION_ROW_REGEX, "$1");
+					//if (systemId.contains(moduleName)) {
 						String[] res = strLine.split(":");
 						Issue i = new Issue(res[0],Integer.valueOf(res[1]), dialyzerRuleManager.getRuleKeyByMessage(res[2].trim()), res[2].trim());
 						result.getIssues().add(i);
-					}
+					//}
 				}
 			}
 		} catch (FileNotFoundException e) {

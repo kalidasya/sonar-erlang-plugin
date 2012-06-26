@@ -19,6 +19,14 @@
  */
 package org.sonar.plugins.erlang.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.sonar.api.rules.ActiveRule;
+import org.sonar.api.rules.Rule;
+import org.sonar.api.rules.RuleParam;
+import org.sonar.api.rules.RulePriority;
+import org.sonar.check.Cardinality;
 import org.sonar.plugins.erlang.violations.ErlangRule;
 import org.sonar.plugins.erlang.violations.ErlangRuleManager;
 import org.sonar.plugins.erlang.violations.dialyzer.DialyzerRuleRepository;
@@ -39,6 +47,28 @@ public class RuleUtil {
 		}
 		
 		return null;
+	}
+	
+	public static ActiveRule generateActiveRule(String ruleName, String ruleKey, String paramName, String paramValue) {
+		RuleParam param = new RuleParam();
+		param.setKey(paramName);
+		param.setDefaultValue(paramValue);
+		List<RuleParam> params = new ArrayList<RuleParam>();
+		params.add(param);
+		Rule rule = new Rule();
+		rule.setParams(params);
+		rule.setName(ruleName);
+		rule.setKey(ruleKey);
+		rule.setConfigKey(ruleKey);
+		rule.setPluginName("Erlang");
+		rule.setEnabled(true);
+		rule.setSeverity(RulePriority.MAJOR);
+		rule.setCardinality(Cardinality.SINGLE);
+		ActiveRule activeRule = new ActiveRule();
+		activeRule.setPriority(RulePriority.MAJOR);
+		activeRule.setRule(rule);
+		activeRule.setParameter(paramName, paramValue);
+		return activeRule;
 	}
 	
 }

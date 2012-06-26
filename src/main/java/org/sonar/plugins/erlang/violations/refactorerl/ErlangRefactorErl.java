@@ -27,8 +27,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.URI;
-import java.net.URL;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -37,7 +35,6 @@ import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.ActiveRule;
 import org.sonar.plugins.erlang.language.Erlang;
-import org.sonar.plugins.erlang.testmetrics.utils.GenericExtFilter;
 import org.sonar.plugins.erlang.testmetrics.utils.GenericFileNameRegexFilter;
 import org.sonar.plugins.erlang.violations.ActiveRuleFilter;
 import org.sonar.plugins.erlang.violations.ErlangRuleManager;
@@ -61,8 +58,7 @@ public class ErlangRefactorErl {
 	 * row','starting col'-'ending row','ending col'
 	 */
 
-	public ErlangViolationResults refactorErl(Project project, String systemId, Reader reader,
-			ErlangRuleManager erlangRuleManager, RulesProfile profile) {
+	public ErlangViolationResults refactorErl(Project project, ErlangRuleManager erlangRuleManager, RulesProfile profile) {
 		ErlangViolationResults result = new ErlangViolationResults();
 		List<ActiveRule> activeRules = profile.getActiveRulesByRepository("Erlang");
 
@@ -96,9 +92,9 @@ public class ErlangRefactorErl {
 				BufferedReader RefactorErlOutput = new BufferedReader(new InputStreamReader(in));
 				BufferedReader breader = new BufferedReader(RefactorErlOutput);
 				RefactorErlReport report = RefactorErlReportParser.parse(breader);
-				String actModuleName = systemId.replaceAll("(.*[\\\\/])(.*?)(\\.erl.*)", "$2");
-				List<RefactorErlReportUnit> matchingUnits = report.getUnitsByModuleName(actModuleName);
-				for (RefactorErlReportUnit refactorErlReportUnit : matchingUnits) {
+			//	String actModuleName = systemId.replaceAll("(.*[\\\\/])(.*?)(\\.erl.*)", "$2");
+			//	List<RefactorErlReportUnit> matchingUnits = report.getUnitsByModuleName(actModuleName);
+				for (RefactorErlReportUnit refactorErlReportUnit : report.getUnits()) {
 					for (RefactorErlMetric metric : refactorErlReportUnit.getMetrics()) {
 						ActiveRule activeRule = ActiveRuleFilter.getActiveRuleByRuleName(activeRules, metric.getName());
 						if (checkIsValid(activeRule, metric)) {

@@ -62,18 +62,14 @@ public class BaseMetricsSensor extends AbstractErlangSensor {
 		// MetricDistribution complexityOfFunctions = null;
 		for (InputFile inputFile : fileSystem.mainFiles(getErlang().getKey())) {
 			final ErlangFile erlangFile = ErlangFile.fromInputFile(inputFile);
-			System.out.println("Erlang file in BMS:" + erlangFile.getLongName());
 			packages.add(erlangFile.getParent());
 			sensorContext.saveMeasure(erlangFile, CoreMetrics.FILES, 1.0);
 
 			try {
 				final String source = FileUtils.readFileToString(inputFile.getFile(), charset);
 				final List<String> lines = StringUtils.convertStringToListOfLines(source);
-				// final List<Comment> comments = new
-				// Lexer().getComments(source);
 
 				final ErlangSourceByLineAnalyzer linesAnalyzer = new ErlangSourceByLineAnalyzer(lines);
-				// final LinesAnalyzer linesAnalyzer = new LinesAnalyzer(lines);
 
 				addLineMetrics(sensorContext, erlangFile, linesAnalyzer);
 				addCodeMetrics(sensorContext, erlangFile, linesAnalyzer);

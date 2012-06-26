@@ -30,5 +30,19 @@ public class ErlangViolationResults {
 	public List<Issue> getIssues() {
 		return issues;
 	}
+	
+	public void appendIssues(List<Issue> issues){
+		this.issues.addAll(issues);
+	}
+
+	public List<Issue> filterIssuesByModuleName(String actModuleName) {
+		List<Issue> ret = new ArrayList<Issue>(); 
+		for (Issue issue : this.issues) {
+			if(issue.filename.equalsIgnoreCase(actModuleName)){
+				ret.add(issue);
+			}
+		}
+		return ret;
+	}
 
 }

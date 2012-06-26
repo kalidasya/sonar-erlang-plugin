@@ -19,16 +19,15 @@
  */
 package org.sonar.plugins.erlang.violation.dialyzer;
 
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import org.apache.commons.configuration.Configuration;
-import org.apache.commons.io.FileUtils;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,8 +39,6 @@ import org.sonar.plugins.erlang.violations.ErlangRuleManager;
 import org.sonar.plugins.erlang.violations.ErlangViolationResults;
 import org.sonar.plugins.erlang.violations.dialyzer.DialyzerRuleRepository;
 import org.sonar.plugins.erlang.violations.dialyzer.ErlangDialyzer;
-
-import static org.junit.Assert.assertThat;
 
 public class ErlangDialyzerTest {
 
@@ -60,14 +57,12 @@ public class ErlangDialyzerTest {
 		ArrayList<InputFile> inputFiles = new ArrayList<InputFile>();
 		inputFiles.add(inputFile);
 		Project project = ProjectUtil.getProject(inputFiles, configuration);
-		StringReader reader = new StringReader(FileUtils.readFileToString(inputFile.getFile(), project.getFileSystem()
-				.getSourceCharset().name()));
-		 result = ed.dialyzer(project, inputFile.getFile().getPath(), reader, new ErlangRuleManager(DialyzerRuleRepository.RULES_FILE));
+		result = ed.dialyzer(project, new ErlangRuleManager(DialyzerRuleRepository.RULES_FILE));
 	}
 
 	@Test
 	public void checkDialyzer() {
-		assertThat(result.getIssues().size(), Matchers.equalTo(1));
+		assertThat(result.getIssues().size(), Matchers.equalTo(3));
 		assertThat(result.getIssues().get(0).ruleId, Matchers.equalTo("D019"));
 		assertThat(result.getIssues().get(0).line, Matchers.equalTo(54));
 	}

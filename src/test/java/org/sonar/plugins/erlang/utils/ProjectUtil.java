@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import org.apache.commons.configuration.Configuration;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.resources.InputFile;
+import org.sonar.api.resources.InputFileUtils;
 import org.sonar.api.resources.Language;
 import org.sonar.api.resources.Project;
 import org.sonar.api.resources.ProjectFileSystem;
@@ -72,4 +73,10 @@ public class ProjectUtil {
 	    when(context.isIndexed(any(Resource.class), eq(false))).thenReturn(true);
 	    return context;
 	  }
+	 
+	 public static InputFile getInputFileByPath(String path) throws URISyntaxException {
+			File fileToAnalyse = new File(ProjectUtil.class.getResource(path).toURI());
+			InputFile inputFile = InputFileUtils.create(fileToAnalyse.getParentFile(), fileToAnalyse);
+			return inputFile;
+		}
 }
