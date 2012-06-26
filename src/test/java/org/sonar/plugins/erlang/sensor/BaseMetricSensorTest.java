@@ -73,6 +73,19 @@ public class BaseMetricSensorTest {
 		assertThat(capturedValues.get(2), Matchers.equalTo(21D));
 		assertThat("First violation is not comment_lines", capturedMetrics.get(3).getKey(), Matchers.equalTo("comment_lines"));
 		assertThat(capturedValues.get(3), Matchers.equalTo(4D));
+		assertThat("First violation is not classes", capturedMetrics.get(4).getKey(), Matchers.equalTo("classes"));
+		assertThat(capturedValues.get(4), Matchers.equalTo(1D));
+		assertThat("First violation is not functions", capturedMetrics.get(5).getKey(), Matchers.equalTo("functions"));
+		assertThat(capturedValues.get(5), Matchers.equalTo(4D));
+		assertThat("First violation is not public_api", capturedMetrics.get(6).getKey(), Matchers.equalTo("public_api"));
+		assertThat(capturedValues.get(6), Matchers.equalTo(4D));
+		assertThat("First violation is not public_undocumented_api", capturedMetrics.get(7).getKey(), Matchers.equalTo("public_undocumented_api"));
+		assertThat(capturedValues.get(7), Matchers.equalTo(1D));
+		assertThat("First violation is not public_documented_api_density", capturedMetrics.get(8).getKey(), Matchers.equalTo("public_documented_api_density"));
+		assertThat(capturedValues.get(8), Matchers.equalTo(100-((1D/4D)*100)));
+		assertThat("First violation is not packages", capturedMetrics.get(9).getKey(), Matchers.equalTo("packages"));
+		assertThat(capturedValues.get(9), Matchers.equalTo(1D));
+		
 	}
 
 }

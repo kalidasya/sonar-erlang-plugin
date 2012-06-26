@@ -36,8 +36,8 @@ exec(A, Acc)->
       </pre>
       ]]>
       </description>
-      <!-- <param key="maximum" type="i" defaultValue="10">
+      <param key="maximum" type="i" defaultValue="10">
          <description><![CDATA[The maximum max_depth_of_calling threshold. Default is 10.]]></description>
-      </param> -->
+      </param>
    </rule>
 </rules>

@@ -71,12 +71,10 @@ public class ViolationSensor extends AbstractErlangSensor {
 		violationIssues.appendIssues(dialyzer.dialyzer(project, dialyzerRuleManager).getIssues());
 		for (InputFile inputFile : project.getFileSystem().mainFiles(getErlang().getKey())) {
 			try {
-				// report = Erl
 				analyzeFile(inputFile, project, context, violationIssues);
 			} catch (Exception e) {
 				LOG.error("Can not analyze the file " + inputFile.getFileBaseDir() + "\\" + inputFile.getRelativePath(), e);
 			}
-
 		}
 	}
 
