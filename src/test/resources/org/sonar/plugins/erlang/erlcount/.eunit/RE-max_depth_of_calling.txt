@@ -1,0 +1,144 @@
+erlcount:start/2   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount.erl: 5,1-6,30
+    max_depth_of_calling = 2
+erlcount:stop/1   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount.erl: 8,1-9,7
+    max_depth_of_calling = 0
+erlcount_sup:start_link/0   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_sup.erl: 9,1-10,39
+    max_depth_of_calling = 1
+erlcount_counter:start_link/4   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_counter.erl: 9,1-10,78
+    max_depth_of_calling = 1
+erlcount_counter:init/1   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_counter.erl: 15,1-20,29
+    max_depth_of_calling = 1
+erlcount_counter:handle_call/3   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_counter.erl: 23,1-24,21
+    max_depth_of_calling = 0
+erlcount_counter:handle_cast/2   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_counter.erl: 26,1-27,21
+    max_depth_of_calling = 0
+erlcount_counter:handle_info/2   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_counter.erl: 31,1-35,22
+    max_depth_of_calling = 2
+erlcount_counter:terminate/2   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_counter.erl: 39,1-40,7
+    max_depth_of_calling = 0
+erlcount_counter:code_change/3   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_counter.erl: 43,1-44,16
+    max_depth_of_calling = 0
+gen_server:start_link/3
+    max_depth_of_calling = 0
+erlang:self/0
+    max_depth_of_calling = 0
+file:read_file/1
+    max_depth_of_calling = 0
+erlcount_lib:regex_count/2   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_lib.erl: 9,1-13,8
+    max_depth_of_calling = 1
+erlcount_dispatch:complete/4   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_dispatch.erl: 14,1-15,69
+    max_depth_of_calling = 1
+erlcount_dispatch:start_link/0   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_dispatch.erl: 11,1-12,40
+    max_depth_of_calling = 1
+erlcount_dispatch:init/1   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_dispatch.erl: 19,1-32,8
+    max_depth_of_calling = 1
+erlcount_dispatch:dispatching/2   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_dispatch.erl: 34,1-47,26
+    max_depth_of_calling = 2
+erlcount_dispatch:listening/2   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_dispatch.erl: 49,1-53,34
+    max_depth_of_calling = 1
+erlcount_dispatch:handle_event/3   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_dispatch.erl: 55,1-64,8
+    max_depth_of_calling = 2
+erlcount_dispatch:handle_sync_event/4   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_dispatch.erl: 66,1-68,30
+    max_depth_of_calling = 1
+erlcount_dispatch:handle_info/3   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_dispatch.erl: 70,1-72,30
+    max_depth_of_calling = 5
+erlcount_dispatch:terminate/3   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_dispatch.erl: 74,1-75,7
+    max_depth_of_calling = 0
+erlcount_dispatch:code_change/4   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_dispatch.erl: 77,1-78,22
+    max_depth_of_calling = 0
+gen_fsm:start_link/3
+    max_depth_of_calling = 0
+gen_fsm:send_all_state_event/2
+    max_depth_of_calling = 0
+application:get_env/1
+    max_depth_of_calling = 0
+ppool:start_pool/3
+    max_depth_of_calling = 0
+lists:all/2
+    max_depth_of_calling = 0
+erlcount_dispatch:valid_regex/1   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_dispatch.erl: 81,1-86,8
+    max_depth_of_calling = 1
+erlang:make_ref/0
+    max_depth_of_calling = 0
+ppool:async_queue/2
+    max_depth_of_calling = 0
+lists:foldl/3
+    max_depth_of_calling = 0
+gen_fsm:send_event/2
+    max_depth_of_calling = 0
+io:format/2
+    max_depth_of_calling = 0
+lists:keyfind/3
+    max_depth_of_calling = 0
+lists:keyreplace/4
+    max_depth_of_calling = 0
+erlcount_lib:find_erl/1   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_lib.erl: 6,1-7,37
+    max_depth_of_calling = 4
+re:run/2
+    max_depth_of_calling = 0
+erlcount_lib:find_erl/2   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_lib.erl: 17,1-23,8
+    max_depth_of_calling = 3
+queue:new/0
+    max_depth_of_calling = 0
+re:run/3
+    max_depth_of_calling = 0
+erlang:length/1
+    max_depth_of_calling = 0
+file:read_file_info/1
+    max_depth_of_calling = 0
+erlcount_lib:handle_directory/2   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_lib.erl: 26,1-32,8
+    max_depth_of_calling = 4
+erlcount_lib:handle_regular_file/2   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_lib.erl: 35,1-41,8
+    max_depth_of_calling = 5
+erlcount_lib:dequeue_and_run/1   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_lib.erl: 44,1-48,8
+    max_depth_of_calling = 4
+file:list_dir/1
+    max_depth_of_calling = 0
+erlcount_lib:enqueue_many/3   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_lib.erl: 51,1-53,33
+    max_depth_of_calling = 1
+filename:extension/1
+    max_depth_of_calling = 0
+queue:out/1
+    max_depth_of_calling = 0
+queue:in/2
+    max_depth_of_calling = 0
+filename:join/2
+    max_depth_of_calling = 0
+erlcount_lib:unused_func/2   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_lib.erl: 54,1-55,36
+    max_depth_of_calling = 1
+erlang:throw/1
+    max_depth_of_calling = 0
+supervisor:start_link/2
+    max_depth_of_calling = 0
+erlcount_sup:init/1   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_sup.erl: 13,1-23,32
+    max_depth_of_calling = 0
+erlcount_sup:minus2/1   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_sup.erl: 27,1-28,8
+    max_depth_of_calling = 0
+erlcount_sup:add/2   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_sup.erl: 31,1-32,15
+    max_depth_of_calling = 1
+refactorerl_issues:maxDepthOfCalling_0/0   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/refactorerl_issues.erl: 22,1-24,26
+    max_depth_of_calling = 11
+refactorerl_issues:maxDepthOfCalling_1/1   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/refactorerl_issues.erl: 26,1-27,28
+    max_depth_of_calling = 10
+refactorerl_issues:mcCabeIssue/0   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/refactorerl_issues.erl: 4,1-20,8
+    max_depth_of_calling = 0
+refactorerl_issues:maxDepthOfCalling_2/1   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/refactorerl_issues.erl: 29,1-30,28
+    max_depth_of_calling = 9
+refactorerl_issues:maxDepthOfCalling_3/1   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/refactorerl_issues.erl: 32,1-33,28
+    max_depth_of_calling = 8
+refactorerl_issues:maxDepthOfCalling_4/1   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/refactorerl_issues.erl: 35,1-36,28
+    max_depth_of_calling = 7
+refactorerl_issues:maxDepthOfCalling_5/1   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/refactorerl_issues.erl: 38,1-39,28
+    max_depth_of_calling = 6
+refactorerl_issues:maxDepthOfCalling_6/1   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/refactorerl_issues.erl: 41,1-42,28
+    max_depth_of_calling = 5
+refactorerl_issues:maxDepthOfCalling_7/1   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/refactorerl_issues.erl: 44,1-45,28
+    max_depth_of_calling = 4
+refactorerl_issues:maxDepthOfCalling_8/1   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/refactorerl_issues.erl: 47,1-48,28
+    max_depth_of_calling = 3
+refactorerl_issues:maxDepthOfCalling_9/1   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/refactorerl_issues.erl: 50,1-51,29
+    max_depth_of_calling = 2
+refactorerl_issues:maxDepthOfCalling_10/1   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/refactorerl_issues.erl: 53,1-54,29
+    max_depth_of_calling = 1
+refactorerl_issues:maxDepthOfCalling_11/1   /home/tkende/dev/projects/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/refactorerl_issues.erl: 56,1-57,7
+    max_depth_of_calling = 0

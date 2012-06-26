@@ -61,20 +61,10 @@ public class ErlangRefactorErlTest {
 		configuration = mock(Configuration.class);
 		RulesProfile rp = mock(RulesProfile.class);
 		List<ActiveRule> rlz = new ArrayList<ActiveRule>();
-		RuleParam param = new RuleParam();
-		param.setKey("maximum");
-		param.setDefaultValue("10");
-		List<RuleParam> params = new ArrayList<RuleParam>();
-		params.add(param);
-		Rule rule = new Rule();
-		rule.setParams(params);
-		rule.setName("mcCabe");
-		rule.setKey("R001");
-		ActiveRule activeRule = new ActiveRule();
-		activeRule.setPriority(RulePriority.MAJOR);
-		activeRule.setRule(rule);
-		activeRule.setParameter("maximum", "10");
+		ActiveRule activeRule = generateActiveRule("mcCabe","R001","maximum","10");
+		ActiveRule activeRule2 = generateActiveRule("max_depth_of_calling","R002","maximum","10");
 		rlz.add(activeRule);
+		rlz.add(activeRule2);
 		when(rp.getActiveRulesByRepository("Erlang")).thenReturn(rlz);
 	    
 		File fileToAnalyse =  new File(getClass().getResource("/org/sonar/plugins/erlang/erlcount/src/refactorerl_issues.erl")
@@ -88,6 +78,7 @@ public class ErlangRefactorErlTest {
 		 result = er.refactorErl(project, inputFile.getFile().getPath(), reader, new ErlangRuleManager(RefactorErlRuleRepository.RULES_FILE),rp);
 	}
 
+	
 	@Test
 	public void checkRefactorErl() {
 		assertThat(result.getIssues().size(), Matchers.equalTo(1));
@@ -95,5 +86,22 @@ public class ErlangRefactorErlTest {
 		assertThat(result.getIssues().get(0).line, Matchers.equalTo(4));
 		assertThat(result.getIssues().get(0).descr, Matchers.equalTo("mcCabe is 11 (max allowed is 10)"));
 		
+	}
+	
+	private ActiveRule generateActiveRule(String ruleName, String ruleKey, String paramName, String paramValue) {
+		RuleParam param = new RuleParam();
+		param.setKey(paramName);
+		param.setDefaultValue(paramValue);
+		List<RuleParam> params = new ArrayList<RuleParam>();
+		params.add(param);
+		Rule rule = new Rule();
+		rule.setParams(params);
+		rule.setName(ruleName);
+		rule.setKey(ruleKey);
+		ActiveRule activeRule = new ActiveRule();
+		activeRule.setPriority(RulePriority.MAJOR);
+		activeRule.setRule(rule);
+		activeRule.setParameter(paramName, paramValue);
+		return activeRule;
 	}
 }

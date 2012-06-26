@@ -219,11 +219,22 @@
          <key>R001</key>
          <priority>MAJOR</priority>
          <parameters>
-        <parameter>
-          <key>maximum</key>
-          <value>10</value>
-        </parameter>
-      </parameters>
+            <parameter>
+               <key>maximum</key>
+               <value>10</value>
+            </parameter>
+         </parameters>
+      </rule>
+      <rule>
+         <repositoryKey>Erlang</repositoryKey>
+         <key>R002</key>
+         <priority>MAJOR</priority>
+         <parameters>
+            <parameter>
+               <key>maximum</key>
+               <value>10</value>
+            </parameter>
+         </parameters>
       </rule>
    </rules>
 </profile>

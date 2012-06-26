@@ -35,14 +35,18 @@ bin/RefactorErl ri add home "${application}"
 wait $!
 sleep 2
 echo Add mcCabe file to: ${appbase}/${application}/mcCabe.txt
-bin/RefactorErl ri q "mods.funs.mcCabe" "[linenum,{out,'${appbase}/${application}/mcCabe.txt'}]"
+bin/RefactorErl ri q "mods.funs.mcCabe" "[linenum,{out,'${appbase}/${application}/.eunit/RE-mcCabe.txt'}]"
 sleep 2
-echo Add fun_call_in file to: ${appbase}/${application}/func_call_in.txt
-bin/RefactorErl ri q "mods.function_calls_in" "[linenum,{out,'${appbase}/${application}/func_call_in.txt'}]"
+#echo Add fun_call_in file to: ${appbase}/${application}/func_call_in.txt
+#bin/RefactorErl ri q "mods.funs.function_calls_in" "[linenum,{out,'${appbase}/${application}/.eunit/RE-func_call_in.txt'}]"
+#sleep 2
+echo Add max_depth_of_calling file to: ${appbase}/${application}/max_depth_of_calling.txt
+bin/RefactorErl ri q "mods.funs.max_depth_of_calling" "[linenum,{out,'${appbase}/${application}/.eunit/RE-max_depth_of_calling.txt'}]"
 sleep 2
+max_depth_of_calling
 
 bin/RefactorErl ri delenv appbase
 
 bin/RefactorErl stop #>> /dev/null
 
-mv ${appbase}/${application}/mcCabe.txt ${appbase}/${application}/.eunit/refactorerl.log
+#mv ${appbase}/${application}/mcCabe.txt ${appbase}/${application}/.eunit/refactorerl.log

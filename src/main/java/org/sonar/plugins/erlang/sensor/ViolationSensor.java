@@ -45,7 +45,7 @@ import org.sonar.plugins.erlang.violations.refactorerl.ErlangRefactorErl;
 import org.sonar.plugins.erlang.violations.refactorerl.RefactorErlRuleRepository;
 
 /**
- * Calls the dialyzer report parser and saves violations to sonar 
+ * Calls the dialyzer report parser and the refactorerl report parser and saves violations to sonar 
  * @author tkende
  *
  */

@@ -15,4 +15,29 @@
          <description><![CDATA[The maximum cyclomatic complexity threshold. Default is 10.]]></description>
       </param>
    </rule>
+   <rule>
+      <key>R002</key>
+      <name><![CDATA[max_depth_of_calling]]></name>
+      <configKey>max_depth_of_calling</configKey>
+      <description>
+      <![CDATA[<p>The domain of the query is a module or a function. The length of function call-chains, namely the chain with the maximum depth. The depth of calling in the following example is 3.</p>
+      <pre>
+...
+f([A|B], Acc) ->
+	Acc0 = exec(A, Acc),
+	f(B, Acc0);
+ f([], Acc0)->
+	Acc0.
+
+exec(A, Acc)->
+	io:format("~w",[A]),
+	A + Acc.
+...
+      </pre>
+      ]]>
+      </description>
+      <!-- <param key="maximum" type="i" defaultValue="10">
+         <description><![CDATA[The maximum max_depth_of_calling threshold. Default is 10.]]></description>
+      </param> -->
+   </rule>
 </rules>

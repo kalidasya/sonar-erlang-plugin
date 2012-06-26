@@ -41,8 +41,8 @@ public class Erlang extends AbstractLanguage {
 		return ErlangPlugin.DIALYZER_DEFAULT_FILENAME;
 	}
 	
-	public String getRefactorErlUri() {
-		return ErlangPlugin.REFACTORERL_DEFAULT_FILENAME;
+	public String getRefactorErlFilenamePattern() {
+		return ErlangPlugin.REFACTORERL_DEFAULT_FILENAME_PATTERN;
 	}
 
 

@@ -27,95 +27,111 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URI;
+import java.net.URL;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.ActiveRule;
 import org.sonar.plugins.erlang.language.Erlang;
+import org.sonar.plugins.erlang.testmetrics.utils.GenericExtFilter;
+import org.sonar.plugins.erlang.testmetrics.utils.GenericFileNameRegexFilter;
 import org.sonar.plugins.erlang.violations.ActiveRuleFilter;
 import org.sonar.plugins.erlang.violations.ErlangRuleManager;
 import org.sonar.plugins.erlang.violations.ErlangViolationResults;
 import org.sonar.plugins.erlang.violations.Issue;
 
 /**
- * Read and parse generated dialyzer report 
+ * Read and parse generated dialyzer report
+ * 
  * @author tkende
- *
+ * 
  */
 public class ErlangRefactorErl {
+	private final static Logger LOG = LoggerFactory.getLogger(ErlangRefactorErl.class);
+
 	/**
-	 * Matches to something like:
-	 * (ATOM:ATOM/NUMBER)(WHITESPACES)(SOMETHING NOT WHITESPACES)(:WHITESPACES)(NUMBER,NUMBER-NUMBER,NUMBER)
-	 * like:
-	 * game:start/0   /home/dev/project/erlang/game.erl: 4,1-5,12
-	 * means:
-	 * 'application name':'function name'/'number of parameters' 'URL to the file': 'starting row','starting col'-'ending row','ending col'
+	 * Matches to something like: (ATOM:ATOM/NUMBER)(WHITESPACES)(SOMETHING NOT
+	 * WHITESPACES)(:WHITESPACES)(NUMBER,NUMBER-NUMBER,NUMBER) like: game:start/0
+	 * /home/dev/project/erlang/game.erl: 4,1-5,12 means: 'application
+	 * name':'function name'/'number of parameters' 'URL to the file': 'starting
+	 * row','starting col'-'ending row','ending col'
 	 */
-	
-	public ErlangViolationResults refactorErl(Project project, String systemId, Reader reader, ErlangRuleManager erlangRuleManager, RulesProfile profile) {
+
+	public ErlangViolationResults refactorErl(Project project, String systemId, Reader reader,
+			ErlangRuleManager erlangRuleManager, RulesProfile profile) {
 		ErlangViolationResults result = new ErlangViolationResults();
 		List<ActiveRule> activeRules = profile.getActiveRulesByRepository("Erlang");
-		/**
-		 * Read dialyzer results
-		 */
-		try {
-			String refactorerlUri = ((Erlang) project.getLanguage()).getRefactorErlUri();
-			File file = new File(project.getFileSystem().getBasedir(), refactorerlUri);
-			FileInputStream fstream = new FileInputStream(file);
-			DataInputStream in = new DataInputStream(fstream);
-			BufferedReader RefactorErlOutput = new BufferedReader(new InputStreamReader(in));
-			BufferedReader breader = new BufferedReader(RefactorErlOutput);
 
-			RefactorErlReport report = RefactorErlReportParser.parse(breader);
-			String actModuleName = systemId.replaceAll("(.*[\\\\/])(.*?)(\\.erl.*)", "$2");
-			List<RefactorErlReportUnit> matchingUnits = report.getUnitsByModuleName(actModuleName);
-			for (RefactorErlReportUnit refactorErlReportUnit : matchingUnits) {
-				for (RefactorErlMetric metric : refactorErlReportUnit.getMetrics()) {
-					ActiveRule activeRule = ActiveRuleFilter.getActiveRuleByRuleName(activeRules, metric.getName());
-					if(checkIsValid(activeRule, metric)){
-						Issue issue = new Issue(refactorErlReportUnit.getModuleName()+".erl",refactorErlReportUnit.getStartRow(), activeRule.getRuleKey(), getMessageForMetric(activeRule, metric));
-						result.getIssues().add(issue);	
-					}
-						
-				}
-				
-			}
-		/*	while ((strLine = breader.readLine()) != null) {
-				Matcher matcher = REFACTORERL_VIOLATION_ROW_REGEX.matcher(strLine);
-				if (matcher.matches()) {
-					String moduleName = matcher.group(1).split(":")[0];
-					if (systemId.contains(moduleName)) {
-						Integer rowNum = Integer.valueOf(matcher.group(1).split("-")[0].split(",")[0]);
-						strLine = breader.readLine().trim();
-						String name = strLine.split(" = ")[0];
-						Rule rule = erlangRuleManager.getRuleByName(name);
-						Issue i = new Issue(moduleName+".erl",rowNum, rule.getKey(), rule.getDescription());
-						result.getIssues().add(i);
-					}
-				}
-			}*/
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		/**
+		 * Read refactorErl results
+		 */
+		File basedir = new File(project.getFileSystem().getBasedir()+File.separator+((Erlang) project.getLanguage()).getEunitFolder());
+		LOG.debug("Parsing refactorErl reports from folder {}", basedir.getAbsolutePath());
+		
+		String refactorErlPattern = ((Erlang) project.getLanguage()).getRefactorErlFilenamePattern();
+
+		GenericFileNameRegexFilter filter = new GenericFileNameRegexFilter(refactorErlPattern);
+
+		if (basedir.isDirectory() == false) {
+			LOG.warn("Folder does not exist {}", basedir);
+			return null;
 		}
 
+		String[] list = basedir.list(filter);
+
+		if (list.length == 0) {
+			LOG.warn("no file matches to : ", refactorErlPattern);
+			return null;
+		}
+
+		for (String file : list) {
+			try {
+				File oneReportFile = new File(basedir, file);
+				FileInputStream fstream = new FileInputStream(oneReportFile);
+				DataInputStream in = new DataInputStream(fstream);
+				BufferedReader RefactorErlOutput = new BufferedReader(new InputStreamReader(in));
+				BufferedReader breader = new BufferedReader(RefactorErlOutput);
+				RefactorErlReport report = RefactorErlReportParser.parse(breader);
+				String actModuleName = systemId.replaceAll("(.*[\\\\/])(.*?)(\\.erl.*)", "$2");
+				List<RefactorErlReportUnit> matchingUnits = report.getUnitsByModuleName(actModuleName);
+				for (RefactorErlReportUnit refactorErlReportUnit : matchingUnits) {
+					for (RefactorErlMetric metric : refactorErlReportUnit.getMetrics()) {
+						ActiveRule activeRule = ActiveRuleFilter.getActiveRuleByRuleName(activeRules, metric.getName());
+						if (checkIsValid(activeRule, metric)) {
+							Issue issue = new Issue(refactorErlReportUnit.getModuleName() + ".erl",
+									refactorErlReportUnit.getStartRow(), activeRule.getRuleKey(), getMessageForMetric(
+											activeRule, metric));
+							result.getIssues().add(issue);
+						}
+
+					}
+
+				}
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		return result;
 	}
 
 	private String getMessageForMetric(ActiveRule activeRule, RefactorErlMetric metric) {
 		String param = activeRule.getParameter("maximum");
-		if(param!=null){
-			return activeRule.getRule().getName()+" is "+metric.getValue()+" (max allowed is "+param+")";
+		if (param != null) {
+			return activeRule.getRule().getName() + " is " + metric.getValue() + " (max allowed is " + param + ")";
 		}
 		return activeRule.getRule().getDescription();
 	}
 
 	private boolean checkIsValid(ActiveRule activeRule, RefactorErlMetric metric) {
 		String param = activeRule.getParameter("maximum");
-		if(param!=null){
-			return Integer.valueOf(metric.getValue())>Integer.valueOf(param);
+		if (param != null) {
+			return Integer.valueOf(metric.getValue()) > Integer.valueOf(param);
 		}
 		return true;
 	}

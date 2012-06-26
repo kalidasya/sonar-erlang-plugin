@@ -18,3 +18,41 @@ Z=1.5,
 	{1, 1, 1} -> empty_vector;
 	{1, 2, 4} -> empty_vector
     end.
+
+maxDepthOfCalling_0() ->
+   A=0,
+   maxDepthOfCalling_1(A).
+
+maxDepthOfCalling_1(A) ->
+   maxDepthOfCalling_2(A+1).
+
+maxDepthOfCalling_2(A) ->
+   maxDepthOfCalling_3(A+1).
+
+maxDepthOfCalling_3(A) ->
+   maxDepthOfCalling_4(A+1).
+
+maxDepthOfCalling_4(A) ->
+   maxDepthOfCalling_5(A+1).
+
+maxDepthOfCalling_5(A) ->
+   maxDepthOfCalling_6(A+1).
+
+maxDepthOfCalling_6(A) ->
+   maxDepthOfCalling_7(A+1).
+
+maxDepthOfCalling_7(A) ->
+   maxDepthOfCalling_8(A+1).
+        
+maxDepthOfCalling_8(A) ->
+   maxDepthOfCalling_9(A+1).
+
+maxDepthOfCalling_9(A) ->
+   maxDepthOfCalling_10(A+1).
+
+maxDepthOfCalling_10(A) ->
+   maxDepthOfCalling_11(A+1).
+
+maxDepthOfCalling_11(A) ->
+   A+1.
+      
