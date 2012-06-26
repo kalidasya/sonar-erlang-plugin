@@ -92,10 +92,6 @@ public class ErlangRefactorErl {
 				BufferedReader RefactorErlOutput = new BufferedReader(new InputStreamReader(in));
 				BufferedReader breader = new BufferedReader(RefactorErlOutput);
 				List<ViolationReportUnit> units = RefactorErlReportParser.parse(breader);
-				// String actModuleName =
-				// systemId.replaceAll("(.*[\\\\/])(.*?)(\\.erl.*)", "$2");
-				// List<RefactorErlReportUnit> matchingUnits =
-				// report.getUnitsByModuleName(actModuleName);
 				for (ViolationReportUnit refactorErlReportUnit : units) {
 					ActiveRule activeRule = ActiveRuleFilter.getActiveRuleByRuleName(activeRules,
 							refactorErlReportUnit.getMetricKey());

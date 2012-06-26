@@ -36,6 +36,7 @@ import org.sonar.plugins.erlang.sensor.ErlangLibrarySensor;
 import org.sonar.plugins.erlang.sensor.ErlangSourceImporterSensor;
 import org.sonar.plugins.erlang.sensor.ViolationSensor;
 import org.sonar.plugins.erlang.violations.ErlangDefaultProfile;
+import org.sonar.plugins.erlang.violations.ErlangRuleRepository;
 import org.sonar.plugins.erlang.violations.dialyzer.DialyzerRuleRepository;
 import org.sonar.plugins.erlang.violations.refactorerl.RefactorErlRuleRepository;
 
@@ -76,8 +77,9 @@ public class ErlangPlugin extends SonarPlugin {
 		extensions.add(ErlangSourceImporterSensor.class);
 		extensions.add(ErlangColorizerFormat.class);
 		extensions.add(BaseMetricsSensor.class);
-		extensions.add(DialyzerRuleRepository.class);
-		extensions.add(RefactorErlRuleRepository.class);
+//		extensions.add(DialyzerRuleRepository.class);
+//		extensions.add(RefactorErlRuleRepository.class);
+		extensions.add(ErlangRuleRepository.class);
 		extensions.add(ErlangDefaultProfile.class);
 		extensions.add(ViolationSensor.class);
 		extensions.add(ErlangCpdMapping.class);

@@ -69,6 +69,7 @@ public class ViolationSensorTest {
 		rlz.add(activeRule);
 		rlz.add(activeRule2);
 		when(rp.getActiveRulesByRepository("Erlang")).thenReturn(rlz);
+		when(rp.getName()).thenReturn("Erlang");
 
 		new ViolationSensor(new Erlang(), rp).analyse(ProjectUtil.getProject(inputFiles, configuration), context);
 	}

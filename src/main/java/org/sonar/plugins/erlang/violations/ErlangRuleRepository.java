@@ -17,9 +17,9 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
+package org.sonar.plugins.erlang.violations;
 
-package org.sonar.plugins.erlang.violations.refactorerl;
-
+import java.util.ArrayList;
 import java.util.List;
 
 import org.sonar.api.rules.Rule;
@@ -27,32 +27,39 @@ import org.sonar.api.rules.RuleRepository;
 import org.sonar.api.rules.XMLRuleParser;
 import org.sonar.plugins.erlang.ErlangPlugin;
 
-public class RefactorErlRuleRepository extends RuleRepository {
+public class ErlangRuleRepository extends RuleRepository {
 	private XMLRuleParser parser;
 	public static final String REPOSITORY_NAME = "Erlang";
 	public static final String REPOSITORY_KEY = "Erlang";
-	public static final String RULES_FILE = "/org/sonar/plugins/erlang/refactorerl/rules.xml";
+	public static final List<String> RULES_FILE = new ArrayList<String>() {
+		private static final long serialVersionUID = 8245183286506333769L;
+		{
+			add("/org/sonar/plugins/erlang/dialyzer/rules.xml");
+			add("/org/sonar/plugins/erlang/refactorerl/rules.xml");
+		}
+	};
 
-	public RefactorErlRuleRepository() {
+	public ErlangRuleRepository() {
 		super(REPOSITORY_KEY, ErlangPlugin.LANG_KEY);
 		setName(REPOSITORY_NAME);
 		this.parser = new XMLRuleParser();
 	}
 
-	public RefactorErlRuleRepository(XMLRuleParser parser) {
+	public ErlangRuleRepository(XMLRuleParser parser) {
 		super(REPOSITORY_KEY, ErlangPlugin.LANG_KEY);
 		setName(REPOSITORY_NAME);
-		
 		this.parser = parser;
 	}
 
 	@Override
-	  public List<Rule> createRules() {
-	    List<Rule> rules = parser.parse(getClass().getResourceAsStream(RULES_FILE));
-	    for (Rule r : rules) {
-	      r.setRepositoryKey(REPOSITORY_KEY);
-	    }
-	    return rules;
-	  }
-
+	public List<Rule> createRules() {
+		List<Rule> rules = new ArrayList<Rule>();
+		for (String oneFile : RULES_FILE) {
+			rules.addAll(parser.parse(getClass().getResourceAsStream(oneFile)));
+		}
+		for (Rule rule : rules) {
+			rule.setRepositoryKey(REPOSITORY_KEY);
+		}
+		return rules;
+	}
 }

@@ -64,43 +64,40 @@ public class ViolationSensor extends AbstractErlangSensor {
 	public void analyse(Project project, SensorContext context) {
 		ViolationReport report = refactorErl.refactorErl(project, refactorErlRuleManager, rulesProfile);
 		report.appendUnits(dialyzer.dialyzer(project, dialyzerRuleManager).getUnits());
-		
+
 		for (InputFile inputFile : project.getFileSystem().mainFiles(getErlang().getKey())) {
 			try {
 				analyzeFile(inputFile, project, context, report);
 			} catch (Exception e) {
 				LOG.error("Can not analyze the file " + inputFile.getFileBaseDir() + "\\" + inputFile.getRelativePath(), e);
 			}
-			
+
 			/**
 			 * Add complexity stuff
-			 * @param report 
+			 * 
+			 * @param report
 			 */
-			
+
 		}
 	}
 
-	private void analyzeFile(InputFile inputFile, Project project, SensorContext context,
-			ViolationReport report) throws IOException {
+	private void analyzeFile(InputFile inputFile, Project project, SensorContext context, ViolationReport report)
+			throws IOException {
 		ErlangFile erlangFile = ErlangFile.fromInputFile(inputFile);
 		String actModuleName = erlangFile.getName();
-		
+
 		for (ViolationReportUnit reportUnit : report.getUnitsByModuleName(actModuleName)) {
-				Rule rule = Rule.create(DialyzerRuleRepository.REPOSITORY_NAME, reportUnit.getMetricKey());
-				Violation violation = Violation.create(rule, erlangFile);
-				violation.setLineId(reportUnit.getStartRow());
-				violation.setMessage(reportUnit.getDescription());
-				context.saveViolation(violation);	
-			
-		}/*
-		for (Issue issue : issues) {
-			Rule rule = Rule.create(DialyzerRuleRepository.REPOSITORY_NAME, issue.ruleKey);
+			/**
+			 * TODO: review this, how can I get the repository key from the
+			 * rulesProfile, instead of this reference... it is also stupid that
+			 * the DialyzerRuleRepository and the RefactorErlRuleRepository has the
+			 * same key and name...or not?
+			 */
+			Rule rule = Rule.create(RefactorErlRuleRepository.REPOSITORY_KEY, reportUnit.getMetricKey());
 			Violation violation = Violation.create(rule, erlangFile);
-			violation.setLineId(issue.line);
-			violation.setMessage(issue.descr);
+			violation.setLineId(reportUnit.getStartRow());
+			violation.setMessage(reportUnit.getDescription());
 			context.saveViolation(violation);
-		}*/
-
+		}
 	}
-
 }
