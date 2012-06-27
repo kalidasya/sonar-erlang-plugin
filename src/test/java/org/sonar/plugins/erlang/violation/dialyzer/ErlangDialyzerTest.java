@@ -56,7 +56,7 @@ public class ErlangDialyzerTest {
 		InputFile inputFile = InputFileUtils.create(fileToAnalyse.getParentFile(), fileToAnalyse);
 		ArrayList<InputFile> inputFiles = new ArrayList<InputFile>();
 		inputFiles.add(inputFile);
-		Project project = ProjectUtil.getProject(inputFiles, configuration);
+		Project project = ProjectUtil.getProject(inputFiles, null, configuration);
 		result = ed.dialyzer(project, new ErlangRuleManager(ErlangRuleRepository.DIALYZER_PATH));
 	}
 

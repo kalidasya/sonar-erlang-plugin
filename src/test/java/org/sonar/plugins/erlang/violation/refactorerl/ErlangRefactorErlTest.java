@@ -68,7 +68,7 @@ public class ErlangRefactorErlTest {
 		InputFile inputFile = InputFileUtils.create(fileToAnalyse.getParentFile(), fileToAnalyse);
 		ArrayList<InputFile> inputFiles = new ArrayList<InputFile>();
 		inputFiles.add(inputFile);
-		Project project = ProjectUtil.getProject(inputFiles, configuration);
+		Project project = ProjectUtil.getProject(inputFiles, null, configuration);
 		result = er.refactorErl(project, new ErlangRuleManager(ErlangRuleRepository.REFACTORERL_PATH),rp);
 	}
 
