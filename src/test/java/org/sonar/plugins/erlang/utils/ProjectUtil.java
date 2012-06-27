@@ -42,16 +42,18 @@ import org.sonar.plugins.erlang.language.Erlang;
 
 public class ProjectUtil {
 
-	 public static Project getProject(ArrayList<InputFile> inputFiles, final Configuration configuration) throws URISyntaxException {
+	 public static Project getProject(ArrayList<InputFile> srcFiles, ArrayList<InputFile> otherFiles, final Configuration configuration) throws URISyntaxException {
 		    final ProjectFileSystem fileSystem = mock(ProjectFileSystem.class);
 		    when(fileSystem.getSourceCharset()).thenReturn(Charset.defaultCharset());
 
 		    final File folder = new File(ProjectUtil.class.getResource("/org/sonar/plugins/erlang/erlcount").toURI());
 		    when(fileSystem.getBuildDir()).thenReturn(folder);
 		    when(fileSystem.getBasedir()).thenReturn(folder);
-		    when(fileSystem.testFiles(any(String.class))).thenReturn(inputFiles);
-
-		    when(fileSystem.mainFiles(ErlangPlugin.LANG_KEY)).thenReturn(inputFiles);
+		    when(fileSystem.getSourceDirs()).thenReturn(new ArrayList<File>(){{add(new File(folder,ErlangPlugin.EUNIT_DEFAULT_FOLDER));}});
+		    
+		    
+		    when(fileSystem.testFiles(any(String.class))).thenReturn(otherFiles);
+		    when(fileSystem.mainFiles(ErlangPlugin.LANG_KEY)).thenReturn(srcFiles);
 
 		    Project project = new Project("dummy") {
 

@@ -24,8 +24,16 @@ import java.util.List;
 
 public class ErlangFunction {
 
+	private final String functionSign;
 	private final List<String> functionLines = new ArrayList<String>();
 	
+	
+	
+	public ErlangFunction(String functionSign) {
+		super();
+		this.functionSign = functionSign;
+	}
+
 	public void addLine(String line){
 		functionLines.add(line);
 	}
@@ -36,5 +44,9 @@ public class ErlangFunction {
 	
 	public List<String> getLines(){
 		return functionLines;
+	}
+
+	public String getFunctionSign() {
+		return functionSign;
 	}
 }

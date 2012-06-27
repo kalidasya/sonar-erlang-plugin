@@ -19,27 +19,31 @@
  */
 package org.sonar.plugins.erlang.sensor;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import java.io.File;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.configuration.Configuration;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.measures.CoreMetrics;
+import org.sonar.api.measures.Measure;
+import org.sonar.api.measures.Metric;
 import org.sonar.api.resources.InputFile;
-import org.sonar.api.resources.InputFileUtils;
 import org.sonar.api.resources.Resource;
 import org.sonar.plugins.erlang.language.Erlang;
 import org.sonar.plugins.erlang.utils.ProjectUtil;
 
-public class ErlangEunitSensorTest {
+public class ErlangCoverageSensorTest {
 
 	private SensorContext context;
 
@@ -49,21 +53,32 @@ public class ErlangEunitSensorTest {
 		Configuration configuration = mock(Configuration.class);
 		ArrayList<InputFile> srcFiles = new ArrayList<InputFile>();
 		ArrayList<InputFile> otherFiles = new ArrayList<InputFile>();
-		
-		srcFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/erlcount_eunit.erl"));
-		otherFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/TEST-erlcount_eunit.xml"));
-		new ErlangEunitSensor(new Erlang()).collect(ProjectUtil.getProject(srcFiles, otherFiles, configuration), context, new File(
-				getClass().getResource("/org/sonar/plugins/erlang/erlcount/.eunit/").toURI()));
+		otherFiles.add(ProjectUtil
+				.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/erlcount_lib.COVER.html"));
+		srcFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/src/erlcount_lib.erl"));
+
+		new ErlangCoverageSensor(new Erlang()).analyse(ProjectUtil.getProject(srcFiles, otherFiles, configuration),
+				context);
 	}
 
 	@Test
 	public void shouldSaveErrorsAndFailuresInXML() throws URISyntaxException {
-		verify(context).saveMeasure((Resource) anyObject(), eq(CoreMetrics.TESTS), eq(7.0));
-		verify(context).saveMeasure((Resource) anyObject(), eq(CoreMetrics.SKIPPED_TESTS), eq(0.0));
-		verify(context).saveMeasure((Resource) anyObject(), eq(CoreMetrics.TEST_ERRORS), eq(0.0));
-		verify(context).saveMeasure((Resource) anyObject(), eq(CoreMetrics.TEST_FAILURES), eq(1.0));
-		verify(context).saveMeasure((Resource) anyObject(), eq(CoreMetrics.TEST_EXECUTION_TIME), eq(0.057));
-		verify(context).saveMeasure((Resource) anyObject(), eq(CoreMetrics.TEST_SUCCESS_DENSITY), eq(85.71));
+		ArgumentCaptor<Metric> argument = ArgumentCaptor.forClass(Metric.class);
+		ArgumentCaptor<Double> argument2 = ArgumentCaptor.forClass(Double.class);
+		ArgumentCaptor<Measure> argumentMeasure = ArgumentCaptor.forClass(Measure.class);
+		verify(context, times(3)).saveMeasure((Resource) anyObject(), argument.capture(), argument2.capture());
+		verify(context, times(1)).saveMeasure((Resource) anyObject(), argumentMeasure.capture());
+		List<Metric> types = argument.getAllValues();
+		List<Double> values = argument2.getAllValues();
+		List<Measure> measure = argumentMeasure.getAllValues();
+		assertThat(types.get(0), Matchers.equalTo(CoreMetrics.LINES_TO_COVER));
+		assertThat(values.get(0), Matchers.equalTo(21D));
+		assertThat(types.get(1), Matchers.equalTo(CoreMetrics.UNCOVERED_LINES));
+		assertThat(values.get(1), Matchers.equalTo(3D));
+		assertThat(types.get(2), Matchers.equalTo(CoreMetrics.STATEMENTS));
+		assertThat(values.get(2), Matchers.equalTo(21D));
+		
+		assertThat(measure.get(0).getMetricKey(), Matchers.equalTo(CoreMetrics.COVERAGE_LINE_HITS_DATA_KEY));
 	}
 
 }

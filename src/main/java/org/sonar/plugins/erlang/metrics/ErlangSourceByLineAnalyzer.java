@@ -21,6 +21,7 @@ package org.sonar.plugins.erlang.metrics;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
@@ -39,11 +40,14 @@ import org.sonar.plugins.erlang.violations.dialyzer.ErlangDialyzer;
  */
 
 public class ErlangSourceByLineAnalyzer {
-
+	private static final String FUNCTION_ENDS_REGEX = ".*\\.$";
+	private static final String FUNCTION_START_REGEX = "(^[a-z]+[a-z0-9_@]+)( *\\()(.*?)(\\)) *->";
+	
 	public static final Pattern isCommentPatter = Pattern.compile("%+ *[^-=]+");
 	public static final Pattern isDecoratorPatter = Pattern.compile("%+ *[-=]+");
-	private static final String FUNCTION_ENDS_REGEX = ".*\\.$";
-	private static final String FUNCTION_START_REGEX = "^[a-z]+[a-z0-9_@]+ *\\(.*?\\) *->";
+	public static final Pattern functionStartsPattern = Pattern.compile(FUNCTION_START_REGEX);
+	
+	
 	private static final Logger LOG = LoggerFactory.getLogger(ErlangDialyzer.class);
 
 	private final List<String> lines;
@@ -86,8 +90,11 @@ public class ErlangSourceByLineAnalyzer {
 				numberOfComments++;
 			} else if (isDecoratorPatter.matcher(line.trim()).matches()) {
 				numberOfDecoratorLines++;
-			} else if (line.trim().matches(FUNCTION_START_REGEX) && !functionOpened) {
-				functions.add(new ErlangFunction());
+			} else if (functionStartsPattern.matcher(line.trim()).matches() && !functionOpened) {
+				Matcher m = functionStartsPattern.matcher(line.trim());
+				m.find();
+				String paramNumber = (m.group(3).trim().length()==0)?"0":String.valueOf(m.group(3).trim().split(",").length);
+				functions.add(new ErlangFunction(m.group(1)+"/"+paramNumber));
 				latest = functions.get(functions.size() - 1);
 				latest.addLine(line);
 				functionOpened = true;

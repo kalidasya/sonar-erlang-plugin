@@ -20,10 +20,14 @@
 package org.sonar.plugins.erlang.sensor;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.SensorContext;
+import org.sonar.api.measures.CoreMetrics;
+import org.sonar.api.measures.PersistenceMode;
+import org.sonar.api.measures.RangeDistributionBuilder;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.InputFile;
 import org.sonar.api.resources.Project;
@@ -63,26 +67,18 @@ public class ViolationSensor extends AbstractErlangSensor {
 	public void analyse(Project project, SensorContext context) {
 		ViolationReport report = refactorErl.refactorErl(project, refactorErlRuleManager, rulesProfile);
 		report.appendUnits(dialyzer.dialyzer(project, dialyzerRuleManager).getUnits());
-
 		for (InputFile inputFile : project.getFileSystem().mainFiles(getErlang().getKey())) {
+			ErlangFile erlangFile = ErlangFile.fromInputFile(inputFile);
 			try {
-				analyzeFile(inputFile, project, context, report);
+				analyzeFile(erlangFile, project, context, report);
 			} catch (Exception e) {
 				LOG.error("Can not analyze the file " + inputFile.getFileBaseDir() + "\\" + inputFile.getRelativePath(), e);
 			}
-
-			/**
-			 * Add complexity stuff
-			 * 
-			 * @param report
-			 */
-
 		}
 	}
 
-	private void analyzeFile(InputFile inputFile, Project project, SensorContext context, ViolationReport report)
+	private void analyzeFile(ErlangFile erlangFile, Project project, SensorContext context, ViolationReport report)
 			throws IOException {
-		ErlangFile erlangFile = ErlangFile.fromInputFile(inputFile);
 		String actModuleName = erlangFile.getName();
 
 		for (ViolationReportUnit reportUnit : report.getUnitsByModuleName(actModuleName)) {

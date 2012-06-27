@@ -19,6 +19,8 @@
  */
 package org.sonar.plugins.erlang.sensor;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
@@ -29,15 +31,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.measures.CoreMetrics;
+import org.sonar.api.measures.PersistenceMode;
+import org.sonar.api.measures.RangeDistributionBuilder;
 import org.sonar.api.resources.InputFile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.resources.ProjectFileSystem;
+import org.sonar.plugins.erlang.ErlangPlugin;
 import org.sonar.plugins.erlang.language.Erlang;
 import org.sonar.plugins.erlang.language.ErlangFile;
 import org.sonar.plugins.erlang.language.ErlangPackage;
 import org.sonar.plugins.erlang.metrics.ErlangSourceByLineAnalyzer;
 import org.sonar.plugins.erlang.metrics.PublicApiCounter;
 import org.sonar.plugins.erlang.utils.StringUtils;
+import org.sonar.plugins.erlang.violations.ViolationReport;
+import org.sonar.plugins.erlang.violations.ViolationReportUnit;
+import org.sonar.plugins.erlang.violations.refactorerl.ErlangRefactorErl;
 
 /**
  * This is the main sensor of the Erlang plugin. It gathers all results of the
@@ -46,7 +54,9 @@ import org.sonar.plugins.erlang.utils.StringUtils;
  * @since 0.1
  */
 public class BaseMetricsSensor extends AbstractErlangSensor {
-
+	private final Number[] FUNCTIONS_DISTRIB_BOTTOM_LIMITS = { 1, 2, 4, 6, 8, 10, 12, 20, 30 };
+	private final Number[] FILES_DISTRIB_BOTTOM_LIMITS = { 0, 5, 10, 20, 30, 60, 90 };
+	private static final String MC_CABE_KEY = "mcCabe";
 	private static final Logger LOGGER = LoggerFactory.getLogger(BaseMetricsSensor.class);
 
 	public BaseMetricsSensor(Erlang erlang) {
@@ -75,13 +85,12 @@ public class BaseMetricsSensor extends AbstractErlangSensor {
 				addCodeMetrics(sensorContext, erlangFile, linesAnalyzer);
 				addPublicApiMetrics(sensorContext, erlangFile, source, linesAnalyzer);
 
-				// complexityOfClasses =
-				// sumUpMetricDistributions(complexityOfClasses,
-				// ComplexityCalculator.measureComplexityOfClasses(source));
-
-				// complexityOfFunctions =
-				// sumUpMetricDistributions(complexityOfFunctions,
-				// ComplexityCalculator.measureComplexityOfFunctions(source));
+				/**
+				 * Add complexity stuff
+				 * 
+				 * @param report
+				 */
+				complexityMeasures(project, sensorContext, erlangFile);
 
 			} catch (IOException ioe) {
 				LOGGER.error("Could not read the file: " + inputFile.getFile().getAbsolutePath(), ioe);
@@ -90,11 +99,54 @@ public class BaseMetricsSensor extends AbstractErlangSensor {
 		if (project.getModules().size() > 0) {
 			sensorContext.saveMeasure(CoreMetrics.PROJECTS, (double) project.getModules().size());
 		}
-
-		// sensorContext.saveMeasure(complexityOfClasses.getMeasure());
-		// sensorContext.saveMeasure(complexityOfFunctions.getMeasure());
-
 		computePackagesMetric(sensorContext, packages);
+	}
+	
+	private void complexityMeasures(Project project, SensorContext sensorContext, ErlangFile erlangFile) throws FileNotFoundException, IOException{
+		File basedir = new File(project.getFileSystem().getBasedir() + File.separator
+				+ ((Erlang) project.getLanguage()).getEunitFolder());
+		String[] mcCabeFileName = ErlangRefactorErl.getFileNamesByPattern(basedir,
+				ErlangPlugin.REFACTORERL_MCCABE_FILENAME_PATTERN);
+		if (mcCabeFileName != null) {
+			ViolationReport report = new ViolationReport();
+			report.setUnits(ErlangRefactorErl.readRefactorErlReportUnits(basedir, mcCabeFileName[0]));
+			List<ViolationReportUnit> mcCabeMetrics = report.getUnitsByMetricKey(MC_CABE_KEY);
+
+			RangeDistributionBuilder fileComplexityDistribution = new RangeDistributionBuilder(
+					CoreMetrics.FILE_COMPLEXITY_DISTRIBUTION, FILES_DISTRIB_BOTTOM_LIMITS);
+
+			RangeDistributionBuilder methodComplexityDistribution = new RangeDistributionBuilder(
+					CoreMetrics.FUNCTION_COMPLEXITY_DISTRIBUTION, FUNCTIONS_DISTRIB_BOTTOM_LIMITS);
+
+			List<ViolationReportUnit> mcCabeResults = ViolationReport.filterUnitsByModuleName(mcCabeMetrics,
+					erlangFile.getName());
+			
+			analyseClasses(erlangFile, mcCabeResults, fileComplexityDistribution, methodComplexityDistribution);
+			double fileComplexity = calculteFileComplexity(mcCabeResults, methodComplexityDistribution);
+			
+			sensorContext.saveMeasure(erlangFile, CoreMetrics.COMPLEXITY, fileComplexity);
+			sensorContext.saveMeasure(erlangFile, fileComplexityDistribution.build().setPersistenceMode(PersistenceMode.MEMORY));
+			sensorContext.saveMeasure(erlangFile, methodComplexityDistribution.build().setPersistenceMode(PersistenceMode.MEMORY));
+			
+		} else {
+			LOGGER.warn("No coverage report found: " + basedir.getAbsolutePath() + " with pattern:");
+		}
+	}
+
+	private double calculteFileComplexity(List<ViolationReportUnit> filterUnitsByModuleName,
+			RangeDistributionBuilder methodComplexityDistribution) {
+		double i = 0;
+		for (ViolationReportUnit violationReportUnit : filterUnitsByModuleName) {
+			i += Integer.valueOf(violationReportUnit.getMetricValue());
+			methodComplexityDistribution.add(Integer.valueOf(violationReportUnit.getMetricValue()));
+		}
+		return i;
+	}
+
+	private void analyseClasses(ErlangFile erlangFile, List<ViolationReportUnit> mcCabeResults,
+			RangeDistributionBuilder fileComplexityDistribution, RangeDistributionBuilder methodComplexityDistribution) {
+		double classResult = calculteFileComplexity(mcCabeResults, methodComplexityDistribution);
+		fileComplexityDistribution.add(classResult);
 	}
 
 	private void addLineMetrics(SensorContext sensorContext, ErlangFile erlangFile,

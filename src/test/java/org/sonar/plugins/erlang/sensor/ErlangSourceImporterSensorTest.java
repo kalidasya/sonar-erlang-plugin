@@ -19,27 +19,28 @@
  */
 package org.sonar.plugins.erlang.sensor;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import java.io.File;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import org.apache.commons.configuration.Configuration;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.sonar.api.batch.SensorContext;
-import org.sonar.api.measures.CoreMetrics;
+import org.sonar.api.measures.Measure;
 import org.sonar.api.resources.InputFile;
-import org.sonar.api.resources.InputFileUtils;
 import org.sonar.api.resources.Resource;
 import org.sonar.plugins.erlang.language.Erlang;
 import org.sonar.plugins.erlang.utils.ProjectUtil;
 
-public class ErlangEunitSensorTest {
+public class ErlangSourceImporterSensorTest {
 
 	private SensorContext context;
 
@@ -49,21 +50,19 @@ public class ErlangEunitSensorTest {
 		Configuration configuration = mock(Configuration.class);
 		ArrayList<InputFile> srcFiles = new ArrayList<InputFile>();
 		ArrayList<InputFile> otherFiles = new ArrayList<InputFile>();
-		
-		srcFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/erlcount_eunit.erl"));
-		otherFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/TEST-erlcount_eunit.xml"));
-		new ErlangEunitSensor(new Erlang()).collect(ProjectUtil.getProject(srcFiles, otherFiles, configuration), context, new File(
-				getClass().getResource("/org/sonar/plugins/erlang/erlcount/.eunit/").toURI()));
+		srcFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/src/erlcount.erl"));
+		otherFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/test/erlcount_eunit.erl"));
+		new ErlangSourceImporterSensor(new Erlang()).analyse(ProjectUtil.getProject(srcFiles, otherFiles, configuration), context);
 	}
 
 	@Test
 	public void shouldSaveErrorsAndFailuresInXML() throws URISyntaxException {
-		verify(context).saveMeasure((Resource) anyObject(), eq(CoreMetrics.TESTS), eq(7.0));
-		verify(context).saveMeasure((Resource) anyObject(), eq(CoreMetrics.SKIPPED_TESTS), eq(0.0));
-		verify(context).saveMeasure((Resource) anyObject(), eq(CoreMetrics.TEST_ERRORS), eq(0.0));
-		verify(context).saveMeasure((Resource) anyObject(), eq(CoreMetrics.TEST_FAILURES), eq(1.0));
-		verify(context).saveMeasure((Resource) anyObject(), eq(CoreMetrics.TEST_EXECUTION_TIME), eq(0.057));
-		verify(context).saveMeasure((Resource) anyObject(), eq(CoreMetrics.TEST_SUCCESS_DENSITY), eq(85.71));
+		ArgumentCaptor<String> argument2 = ArgumentCaptor.forClass(String.class);
+		ArgumentCaptor<Measure> argumentMeasure = ArgumentCaptor.forClass(Measure.class);
+		verify(context, times(2)).index((Resource) anyObject());
+		verify(context, times(2)).saveSource((Resource) anyObject(), argument2.capture());
+		assertThat(argument2.getAllValues().get(0), Matchers.startsWith("-module(erlcount)"));
+		assertThat(argument2.getAllValues().get(1), Matchers.startsWith("-module(erlcount_eunit)"));
 	}
 
 }

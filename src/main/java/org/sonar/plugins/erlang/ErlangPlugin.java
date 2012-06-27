@@ -45,7 +45,9 @@ import org.sonar.plugins.erlang.violations.ErlangRuleRepository;
 
 		@Property(key = ErlangPlugin.DIALYZER_FILENAME_KEY, defaultValue = ErlangPlugin.DIALYZER_DEFAULT_FILENAME, name = "Dialyzer Default Filename", description = "Filename of the dialyzer output located in the eunit folder", global = true, project = true),
 		
-		@Property(key = ErlangPlugin.REFACTORERL_DEFAULT_FILENAME_PATTERN_KEY, defaultValue = ErlangPlugin.REFACTORERL_DEFAULT_FILENAME_PATTERN, name = "RefactorErl default report pattern", description = "Filename patter to the RefactorErl output files", global = true, project = true)
+		@Property(key = ErlangPlugin.REFACTORERL_DEFAULT_FILENAME_PATTERN_KEY, defaultValue = ErlangPlugin.REFACTORERL_DEFAULT_FILENAME_PATTERN, name = "RefactorErl default report pattern", description = "Filename patter to the RefactorErl output files", global = true, project = true),
+		
+		@Property(key = ErlangPlugin.REFACTORERL_MCCABE_FILENAME_PATTERN, defaultValue = ErlangPlugin.REFACTORERL_MCCABE_FILENAME_PATTERN, name = "RefactorErl default mcCabe file pattern", description = "Filename patter to the RefactorErl mcCabe report file", global = true, project = true)
 
 })
 public class ErlangPlugin extends SonarPlugin {
@@ -57,6 +59,7 @@ public class ErlangPlugin extends SonarPlugin {
 	public static final String DIALYZER_DEFAULT_FILENAME = EUNIT_DEFAULT_FOLDER + "dialyzer.log";
 	public static final String REFACTORERL_DEFAULT_FILENAME_PATTERN_KEY = "sonar.erlang.refactorerl.filename";
 	public static final String REFACTORERL_DEFAULT_FILENAME_PATTERN = "RE-.*\\.txt";
+	public static final String REFACTORERL_MCCABE_FILENAME_PATTERN = "RE-mcCabe.txt";
 	public static final String NAME = "Erlang";
 	public static final String LANG_KEY = "erl";
 	public static final String EXTENSION = "."+LANG_KEY;

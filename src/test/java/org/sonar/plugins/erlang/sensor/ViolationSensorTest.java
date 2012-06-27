@@ -53,13 +53,14 @@ public class ViolationSensorTest {
 	public void setup() throws URISyntaxException {
 		context = ProjectUtil.mockContext();
 		Configuration configuration = mock(Configuration.class);
-		ArrayList<InputFile> inputFiles = new ArrayList<InputFile>();
-		inputFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/RE-max_depth_of_calling.txt"));
-		inputFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/RE-mcCabe.txt"));
-		inputFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/dialyzer.log"));
-		inputFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/dialyzer.log"));
-		inputFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/src/refactorerl_issues.erl"));
-		inputFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/src/erlcount_lib.erl"));
+		ArrayList<InputFile> srcFiles = new ArrayList<InputFile>();
+		ArrayList<InputFile> otherFiles = new ArrayList<InputFile>();
+		otherFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/RE-max_depth_of_calling.txt"));
+		otherFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/RE-mcCabe.txt"));
+		otherFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/dialyzer.log"));
+		otherFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/dialyzer.log"));
+		srcFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/src/refactorerl_issues.erl"));
+		srcFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/src/erlcount_lib.erl"));
 		
 
 		RulesProfile rp = mock(RulesProfile.class);
@@ -71,7 +72,7 @@ public class ViolationSensorTest {
 		when(rp.getActiveRulesByRepository("Erlang")).thenReturn(rlz);
 		when(rp.getName()).thenReturn("Erlang");
 
-		new ViolationSensor(new Erlang(), rp).analyse(ProjectUtil.getProject(inputFiles, configuration), context);
+		new ViolationSensor(new Erlang(), rp).analyse(ProjectUtil.getProject(srcFiles, otherFiles, configuration), context);
 	}
 
 	@Test

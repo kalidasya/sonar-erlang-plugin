@@ -34,6 +34,10 @@ public class ViolationReport {
 	public List<ViolationReportUnit> getUnits() {
 		return units;
 	}
+	
+	public void setUnits(List<ViolationReportUnit> units) {
+		this.units = units;
+	}
 
 	public ViolationReportUnit addUnit(ViolationReportUnit unit) {
 		this.units.add(unit);
@@ -59,5 +63,24 @@ public class ViolationReport {
 		
 	}
 
+	public List<ViolationReportUnit> getUnitsByMetricKey(String mcCabeKey) {
+		List<ViolationReportUnit> ret = new ArrayList<ViolationReportUnit>();
+		for (ViolationReportUnit unit : this.units) {
+			if(unit.getMetricKey().equals(mcCabeKey)){
+				ret.add(unit);
+			}
+		}
+		return ret;
+	}
+
+	public static List<ViolationReportUnit> filterUnitsByModuleName(List<ViolationReportUnit> units, String moduleName){
+		List<ViolationReportUnit> ret = new ArrayList<ViolationReportUnit>();
+		for (ViolationReportUnit unit : units) {
+			if(unit.getModuleName().equals(moduleName)){
+				ret.add(unit);
+			}
+		}
+		return ret;
+	}
 	
 }

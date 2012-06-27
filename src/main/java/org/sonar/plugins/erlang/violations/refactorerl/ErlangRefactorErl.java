@@ -70,14 +70,7 @@ public class ErlangRefactorErl {
 
 		String refactorErlPattern = ((Erlang) project.getLanguage()).getRefactorErlFilenamePattern();
 
-		GenericFileNameRegexFilter filter = new GenericFileNameRegexFilter(refactorErlPattern);
-
-		if (basedir.isDirectory() == false) {
-			LOG.warn("Folder does not exist {}", basedir);
-			return null;
-		}
-
-		String[] list = basedir.list(filter);
+		String[] list = getFileNamesByPattern(basedir, refactorErlPattern);
 
 		if (list.length == 0) {
 			LOG.warn("no file matches to : ", refactorErlPattern);
@@ -86,20 +79,16 @@ public class ErlangRefactorErl {
 
 		for (String file : list) {
 			try {
-				File oneReportFile = new File(basedir, file);
-				FileInputStream fstream = new FileInputStream(oneReportFile);
-				DataInputStream in = new DataInputStream(fstream);
-				BufferedReader RefactorErlOutput = new BufferedReader(new InputStreamReader(in));
-				BufferedReader breader = new BufferedReader(RefactorErlOutput);
-				List<ViolationReportUnit> units = RefactorErlReportParser.parse(breader);
+				List<ViolationReportUnit> units = readRefactorErlReportUnits(basedir, file);
 				for (ViolationReportUnit refactorErlReportUnit : units) {
 					ActiveRule activeRule = ActiveRuleFilter.getActiveRuleByRuleName(activeRules,
 							refactorErlReportUnit.getMetricKey());
-					if (checkIsValid(activeRule, refactorErlReportUnit.getMetricValue())) {
+					if (activeRule != null && checkIsValid(activeRule, refactorErlReportUnit.getMetricValue())) {
 						refactorErlReportUnit.setDescription(getMessageForMetric(activeRule,
 								refactorErlReportUnit.getMetricValue()));
 						/**
-						 * Replace key coming from activeProfile because it contains the name now
+						 * Replace key coming from activeProfile because it contains
+						 * the name originaly 
 						 */
 						refactorErlReportUnit.setMetricKey(activeRule.getRuleKey());
 						report.addUnit(refactorErlReportUnit);
@@ -112,6 +101,29 @@ public class ErlangRefactorErl {
 			}
 		}
 		return report;
+	}
+
+	public static String[] getFileNamesByPattern(File basedir, String refactorErlPattern) {
+		GenericFileNameRegexFilter filter = new GenericFileNameRegexFilter(refactorErlPattern);
+
+		if (basedir.isDirectory() == false) {
+			LOG.warn("Folder does not exist {}", basedir);
+			return null;
+		}
+
+		String[] list = basedir.list(filter);
+		return list;
+	}
+
+	public static List<ViolationReportUnit> readRefactorErlReportUnits(File basedir, String file) throws FileNotFoundException,
+			IOException {
+		File oneReportFile = new File(basedir, file);
+		FileInputStream fstream = new FileInputStream(oneReportFile);
+		DataInputStream in = new DataInputStream(fstream);
+		BufferedReader RefactorErlOutput = new BufferedReader(new InputStreamReader(in));
+		BufferedReader breader = new BufferedReader(RefactorErlOutput);
+		List<ViolationReportUnit> units = RefactorErlReportParser.parse(breader);
+		return units;
 	}
 
 	private String getMessageForMetric(ActiveRule activeRule, Object value) {
