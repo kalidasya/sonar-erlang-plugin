@@ -20,6 +20,8 @@ The current metrics in nutshell:
 * count undocumented public apis (exported APIs which has no text comment before) included published by export_all()
 * number of statements (number of statements = (covered+uncovered lines))
 * fix -spec issue in undocumented public API counter, but multiline -spec still not supported
+* Two RefactorErl rules introduced (as a POC)
+* Based on RefactorErl cyclomatic complexity implemented
 
 
 BUGS:
@@ -35,6 +37,5 @@ MISSING FEATURES to reach milestone 2:
 
 Areas of improvement:
 	* anonym method counter
-	* use RefarctorErl for other metrics
 	* create new quantitative rules based on RefactorErl stuff
 	
