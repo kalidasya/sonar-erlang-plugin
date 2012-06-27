@@ -74,7 +74,7 @@ public class ErlangRefactorErl {
 
 		if (list.length == 0) {
 			LOG.warn("no file matches to : ", refactorErlPattern);
-			return null;
+			return report;
 		}
 
 		for (String file : list) {
@@ -108,7 +108,7 @@ public class ErlangRefactorErl {
 
 		if (basedir.isDirectory() == false) {
 			LOG.warn("Folder does not exist {}", basedir);
-			return null;
+			return new String[0];
 		}
 
 		String[] list = basedir.list(filter);

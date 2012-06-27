@@ -107,7 +107,7 @@ public class BaseMetricsSensor extends AbstractErlangSensor {
 				+ ((Erlang) project.getLanguage()).getEunitFolder());
 		String[] mcCabeFileName = ErlangRefactorErl.getFileNamesByPattern(basedir,
 				ErlangPlugin.REFACTORERL_MCCABE_FILENAME_PATTERN);
-		if (mcCabeFileName != null) {
+		if (mcCabeFileName != null && mcCabeFileName.length>0) {
 			ViolationReport report = new ViolationReport();
 			report.setUnits(ErlangRefactorErl.readRefactorErlReportUnits(basedir, mcCabeFileName[0]));
 			List<ViolationReportUnit> mcCabeMetrics = report.getUnitsByMetricKey(MC_CABE_KEY);
