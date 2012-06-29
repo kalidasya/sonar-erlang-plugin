@@ -41,6 +41,7 @@ import org.sonar.plugins.erlang.violations.ViolationReportUnit;
  */
 public class ErlangDialyzer {
 	private static final String DIALYZER_VIOLATION_ROW_REGEX = "(.*?)(:[0-9]+:)(.*)";
+	private static final String REPO_KEY = "Erlang";
 
 	public ViolationReport dialyzer(Project project, ErlangRuleManager dialyzerRuleManager) {
 		ViolationReport report = new ViolationReport();
@@ -65,8 +66,10 @@ public class ErlangDialyzer {
 					unit.setMetricKey(dialyzerRuleManager.getRuleKeyByMessage(res[2]
 							.trim()));
 					unit.setDescription(res[2].trim());
+					unit.setRepositoryKey(REPO_KEY);
 				}
 			}
+			breader.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

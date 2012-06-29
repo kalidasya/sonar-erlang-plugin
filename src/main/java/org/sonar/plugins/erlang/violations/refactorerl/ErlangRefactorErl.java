@@ -48,6 +48,7 @@ import org.sonar.plugins.erlang.violations.ViolationReportUnit;
  */
 public class ErlangRefactorErl {
 	private final static Logger LOG = LoggerFactory.getLogger(ErlangRefactorErl.class);
+	public static final String REPO_KEY = "Erlang";
 
 	/**
 	 * Matches to something like: (ATOM:ATOM/NUMBER)(WHITESPACES)(SOMETHING NOT

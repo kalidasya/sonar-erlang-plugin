@@ -57,6 +57,7 @@ public class RefactorErlReportParser {
 				reportUnit.setMethodSign(methodName);
 				reportUnit.setUri(url);
 				reportUnit.setPosition(position);
+				reportUnit.setRepositoryKey(ErlangRefactorErl.REPO_KEY);
 			} else if (matcher2.matches()) {
 				if (reportUnit != null) {
 					String name = matcher2.group(1).trim();

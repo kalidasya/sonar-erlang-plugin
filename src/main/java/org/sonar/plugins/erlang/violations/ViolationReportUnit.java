@@ -28,6 +28,7 @@ public class ViolationReportUnit {
 	private String metricKey;
 	private String metricValue;
 	private String metricMessage;
+	private String repositoryKey;
 	private String description;
 	
 	public ViolationReportUnit() {
@@ -84,6 +85,14 @@ public class ViolationReportUnit {
 
 	public void setMetricValue(String metricValue) {
 		this.metricValue = metricValue;
+	}
+
+	public String getRepositoryKey() {
+		return repositoryKey;
+	}
+
+	public void setRepositoryKey(String repositoryKey) {
+		this.repositoryKey = repositoryKey;
 	}
 
 	public String getMetricMessage() {

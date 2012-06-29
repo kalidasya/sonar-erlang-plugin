@@ -20,18 +20,15 @@
 package org.sonar.plugins.erlang.sensor;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.SensorContext;
-import org.sonar.api.measures.CoreMetrics;
-import org.sonar.api.measures.PersistenceMode;
-import org.sonar.api.measures.RangeDistributionBuilder;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.InputFile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.Rule;
+import org.sonar.api.rules.RuleFinder;
 import org.sonar.api.rules.Violation;
 import org.sonar.plugins.erlang.language.Erlang;
 import org.sonar.plugins.erlang.language.ErlangFile;
@@ -80,15 +77,8 @@ public class ViolationSensor extends AbstractErlangSensor {
 	private void analyzeFile(ErlangFile erlangFile, Project project, SensorContext context, ViolationReport report)
 			throws IOException {
 		String actModuleName = erlangFile.getName();
-
 		for (ViolationReportUnit reportUnit : report.getUnitsByModuleName(actModuleName)) {
-			/**
-			 * TODO: review this, how can I get the repository key from the
-			 * rulesProfile, instead of this reference... it is also stupid that
-			 * the DialyzerRuleRepository and the RefactorErlRuleRepository has the
-			 * same key and name...or not?
-			 */
-			Rule rule = Rule.create(ErlangRuleRepository.REPOSITORY_KEY, reportUnit.getMetricKey());
+			Rule rule = Rule.create(reportUnit.getRepositoryKey(), reportUnit.getMetricKey());
 			Violation violation = Violation.create(rule, erlangFile);
 			violation.setLineId(reportUnit.getStartRow());
 			violation.setMessage(reportUnit.getDescription());
