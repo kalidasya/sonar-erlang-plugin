@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copied from dialyzer.erl -->
 <rules>
-   <rule>
-      <key>R001</key>
-      <name><![CDATA[mcCabe]]></name>
-      <configKey>mcCabe</configKey>
-      <description>
+	<rule>
+		<key>R001</key>
+		<name><![CDATA[mcCabe]]></name>
+		<configKey>mcCabe</configKey>
+		<description>
       <![CDATA[McCabe cyclomatic complexity metric. Available for modules and functions. 
       We define it based on the control flow graph of the functions with the number of 
       different execution paths of a function, namely the number of different outputs of 
       the function. ]]>
-      </description>
-      <param key="maximum" type="i" defaultValue="10">
-         <description><![CDATA[The maximum cyclomatic complexity threshold. Default is 10.]]></description>
-      </param>
-   </rule>
-   <rule>
-      <key>R002</key>
-      <name><![CDATA[max_depth_of_calling]]></name>
-      <configKey>max_depth_of_calling</configKey>
-      <description>
+		</description>
+		<param key="maximum" type="i" defaultValue="10">
+			<description><![CDATA[The maximum cyclomatic complexity threshold. Default is 10.]]></description>
+		</param>
+	</rule>
+	<rule>
+		<key>R002</key>
+		<name><![CDATA[max_depth_of_calling]]></name>
+		<configKey>max_depth_of_calling</configKey>
+		<description>
       <![CDATA[<p>The domain of the query is a module or a function. The length of function call-chains, namely the chain with the maximum depth. The depth of calling in the following example is 3.</p>
       <pre>
 ...
@@ -35,9 +35,20 @@ exec(A, Acc)->
 ...
       </pre>
       ]]>
-      </description>
-      <param key="maximum" type="i" defaultValue="10">
-         <description><![CDATA[The maximum max_depth_of_calling threshold. Default is 10.]]></description>
-      </param>
-   </rule>
+		</description>
+		<param key="maximum" type="i" defaultValue="10">
+			<description><![CDATA[The maximum max_depth_of_calling threshold. Default is 10.]]></description>
+		</param>
+	</rule>
+	<rule>
+		<key>R003</key>
+		<name><![CDATA[cohesion]]></name>
+		<configKey>cohesion</configKey>
+		<description>
+      <![CDATA[The domain of the query is a module. The number of call-paths of functions that call each other. By call-path we mean that an f1 function calls f2 (e.g. f1()->f2().). If f2 also calls f1, then the two calls still count as one call-path.]]>
+		</description>
+		<param key="maximum" type="i" defaultValue="4">
+			<description><![CDATA[The maximum cohesion threshold. Default is 4.]]></description>
+		</param>
+	</rule>
 </rules>
