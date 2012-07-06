@@ -59,8 +59,10 @@ public class ErlangRefactorErlTest {
 		List<ActiveRule> rlz = new ArrayList<ActiveRule>();
 		ActiveRule activeRule = RuleUtil.generateActiveRule("mcCabe","R001","maximum","10");
 		ActiveRule activeRule2 = RuleUtil.generateActiveRule("max_depth_of_calling","R002","maximum","10");
+		ActiveRule activeRule3 = RuleUtil.generateActiveRule("cohesion","R003","maximum","4");
 		rlz.add(activeRule);
 		rlz.add(activeRule2);
+		rlz.add(activeRule3);
 		when(rp.getActiveRulesByRepository("Erlang")).thenReturn(rlz);
 	    
 		File fileToAnalyse =  new File(getClass().getResource("/org/sonar/plugins/erlang/erlcount/src/refactorerl_issues.erl")
@@ -75,10 +77,10 @@ public class ErlangRefactorErlTest {
 	
 	@Test
 	public void checkRefactorErl() {
-		assertThat(result.getUnits().size(), Matchers.equalTo(2));
-		assertThat(result.getUnits().get(1).getMetricKey(), Matchers.equalTo("R001"));
-		assertThat(result.getUnits().get(1).getStartRow(), Matchers.equalTo(4));
-		assertThat(result.getUnits().get(1).getDescription(), Matchers.equalTo("mcCabe is 11 (max allowed is 10)"));
+		assertThat(result.getUnits().size(), Matchers.equalTo(4));
+		assertThat(result.getUnits().get(3).getMetricKey(), Matchers.equalTo("R001"));
+		assertThat(result.getUnits().get(3).getStartRow(), Matchers.equalTo(4));
+		assertThat(result.getUnits().get(3).getDescription(), Matchers.equalTo("mcCabe is 11 (max allowed is 10)"));
 		
 	}
 	

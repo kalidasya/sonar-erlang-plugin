@@ -48,6 +48,7 @@ public class ViolationSensorTest {
 	private SensorContext context;
 	private ActiveRule activeRule;
 	private ActiveRule activeRule2;
+	private ActiveRule activeRule3;
 
 	@Before
 	public void setup() throws URISyntaxException {
@@ -57,7 +58,7 @@ public class ViolationSensorTest {
 		ArrayList<InputFile> otherFiles = new ArrayList<InputFile>();
 		otherFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/RE-max_depth_of_calling.txt"));
 		otherFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/RE-mcCabe.txt"));
-		otherFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/dialyzer.log"));
+		otherFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/RE-cohesion.txt"));
 		otherFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/dialyzer.log"));
 		srcFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/src/refactorerl_issues.erl"));
 		srcFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/src/erlcount_lib.erl"));
@@ -67,8 +68,10 @@ public class ViolationSensorTest {
 		List<ActiveRule> rlz = new ArrayList<ActiveRule>();
 		activeRule = RuleUtil.generateActiveRule("mcCabe", "R001", "maximum", "10");
 		activeRule2 = RuleUtil.generateActiveRule("max_depth_of_calling", "R002", "maximum", "10");
+		activeRule3 = RuleUtil.generateActiveRule("cohesion", "R003", "maximum", "4");
 		rlz.add(activeRule);
 		rlz.add(activeRule2);
+		rlz.add(activeRule3);
 		when(rp.getActiveRulesByRepository("Erlang")).thenReturn(rlz);
 		when(rp.getName()).thenReturn("Erlang");
 
@@ -76,13 +79,13 @@ public class ViolationSensorTest {
 	}
 
 	@Test
-	public void shouldSaveErrorsAndFailuresInXML() throws URISyntaxException {
+	public void checkSensor() throws URISyntaxException {
 		ArgumentCaptor<Violation> argument = ArgumentCaptor.forClass(Violation.class);
-		verify(context, times(5)).saveViolation( argument.capture());
+		verify(context, times(7)).saveViolation( argument.capture());
 		List<Violation> capturedViolations = argument.getAllValues();
-		assertThat("First violation is not R002", capturedViolations.get(0).getRule().getKey(), Matchers.equalTo("R002"));
-		assertThat("First violation is not R002", capturedViolations.get(0).getMessage(), Matchers.equalTo("max_depth_of_calling is 11 (max allowed is 10)"));
-		assertThat("First violation is not R002", capturedViolations.get(0).getLineId(), Matchers.equalTo(22));
+		assertThat("violation is not R002", capturedViolations.get(0).getRule().getKey(), Matchers.equalTo("R002"));
+		assertThat("violation is not R002", capturedViolations.get(0).getMessage(), Matchers.equalTo("max_depth_of_calling is 11 (max allowed is 10)"));
+		assertThat("violation is not R002", capturedViolations.get(0).getLineId(), Matchers.equalTo(22));
 	}
 
 }

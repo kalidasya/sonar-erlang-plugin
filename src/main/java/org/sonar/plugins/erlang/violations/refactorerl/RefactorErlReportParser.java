@@ -33,6 +33,9 @@ public class RefactorErlReportParser {
 	private static final Pattern REFACTORERL_UNIT_LEVEL_LINE = Pattern
 			.compile("([\'@_a-zA-z0-9]*?:[\'@_a-zA-z0-9]*?/[0-9]+)( *)([^ ]+)(: *)([0-9]+,[0-9]+-[0-9]+,[0-9]+)");
 
+	private static final Pattern REFACTORERL_MODULE_LEVEL_LINE = Pattern
+			.compile("([\'@_a-zA-z0-9\\.]*?)( *)([^ ]+)(: *)([0-9]+-[0-9]+)");
+
 	private static final Pattern REFACTORERL_METRIC_LINE = Pattern
 			.compile("([\'@_a-zA-z0-9]*?)( = )([\'@_a-zA-z0-9]*?)");
 
@@ -45,6 +48,7 @@ public class RefactorErlReportParser {
 			strLine = strLine.trim();
 			Matcher matcher = REFACTORERL_UNIT_LEVEL_LINE.matcher(strLine);
 			Matcher matcher2 = REFACTORERL_METRIC_LINE.matcher(strLine);
+			Matcher matcher3 = REFACTORERL_MODULE_LEVEL_LINE.matcher(strLine);
 			if (matcher.matches()) {
 				String[] moduleNameAndMethod = matcher.group(1).split(":");
 				String moduleName = moduleNameAndMethod[0];
@@ -58,6 +62,16 @@ public class RefactorErlReportParser {
 				reportUnit.setUri(url);
 				reportUnit.setPosition(position);
 				reportUnit.setRepositoryKey(ErlangRefactorErl.REPO_KEY);
+			} else if (matcher3.matches()) {
+				String moduleName = matcher3.group(1).replaceAll("\\.erl", "");
+				String url = matcher3.group(3);
+				String position = matcher3.group(5);
+
+				reportUnit = report.createUnit();
+				reportUnit.setModuleName(moduleName);
+				reportUnit.setUri(url);
+				reportUnit.setPosition(position);
+				reportUnit.setRepositoryKey(ErlangRefactorErl.REPO_KEY);
 			} else if (matcher2.matches()) {
 				if (reportUnit != null) {
 					String name = matcher2.group(1).trim();
@@ -67,8 +81,8 @@ public class RefactorErlReportParser {
 				}
 			} else {
 				/**
-				 * Erease the reportUnit to make sure not trying to analyse external
-				 * library metrics
+				 * Erease the reportUnit to make sure not trying to analyse
+				 * external library metrics
 				 */
 				reportUnit = null;
 			}

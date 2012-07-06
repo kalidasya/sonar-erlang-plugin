@@ -141,10 +141,21 @@ public class ViolationReportUnit {
 	
 	public void setPosition(String position) {
 		String[] startEnd = position.split("-");
-		setStartRow(Integer.valueOf(startEnd[0].split(",")[0]));
-		setStartCol(Integer.valueOf(startEnd[0].split(",")[1]));
-		setEndRow(Integer.valueOf(startEnd[1].split(",")[0]));
-		setEndCol(Integer.valueOf(startEnd[1].split(",")[1]));
+		String[] start = startEnd[0].split(",");
+		String[] end = startEnd[1].split(",");
+		setStartRow(Integer.valueOf(start[0]));
+		if(start.length>1){
+			setStartCol(Integer.valueOf(start[1]));
+		} else {
+			setStartCol(1);
+		}
+		setEndRow(Integer.valueOf(end[0]));
+		if(end.length>1){
+			setEndCol(Integer.valueOf(end[1]));	
+		} else {
+			setEndCol(1);
+		}
+		
 	}
 
 	
