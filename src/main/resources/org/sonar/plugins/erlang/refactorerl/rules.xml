@@ -51,4 +51,110 @@ exec(A, Acc)->
 			<description><![CDATA[The maximum cohesion threshold. Default is 4.]]></description>
 		</param>
 	</rule>
+	<rule>
+		<key>R004</key>
+		<name><![CDATA[max_depth_of_cases]]></name>
+		<configKey>max_depth_of_cases</configKey>
+		<description>
+      <![CDATA[<p>The domain of the query is a module or a function. Gives the maximum of case control structures embedded in case of a concrete function (how deeply are the case control structures embedded). In case of a module it measures the same regarding all the functions in the module. Measuring does not break in case of case expressions, namely when the case is not embedded into a case structure. However, the following embedding does not increase the sum.</p>
+      <pre>
+...
+A = case B of
+        1 -> 2;
+        2 -> ok
+    end
+...
+      </pre>
+      ]]>
+		</description>
+		<param key="maximum" type="i" defaultValue="10">
+			<description><![CDATA[The maximum max_depth_of_cases threshold. Default is 10.]]></description>
+		</param>
+	</rule>
+	<rule>
+		<key>R005</key>
+		<name><![CDATA[max_depth_of_structs]]></name>
+		<configKey>max_depth_of_structs</configKey>
+		<description>
+      <![CDATA[The domain of the query is a module or a function. Gives the maximum of structures embedded in function (how deeply are the block, case, fun, if, receive, try control structures embedded). In case of a module it measures the same regarding all the functions in the module.]]>
+		</description>
+		<param key="maximum" type="i" defaultValue="10">
+			<description><![CDATA[The maximum max_depth_of_structs threshold. Default is 10.]]></description>
+		</param>
+	</rule>
+	<rule>
+		<key>R006</key>
+		<name><![CDATA[number_of_funclauses]]></name>
+		<configKey>number_of_funclauses</configKey>
+		<description>
+      <![CDATA[<p>The domain of the query is a module or a function. Gives the number of a functions clauses. Counts all distinct branches, but does not add the functions having the same name, but different arity, to the sum. The number of funclauses in the following example is 2.</p>
+      <pre>
+...
+f(Fun, [H|Tail])->
+    Fun(H),
+    f(Tail);
+
+f(_, [])->
+    ok.
+
+f(A, B)->
+    A + B.
+...
+      </pre>
+      ]]>
+		</description>
+		<param key="maximum" type="i" defaultValue="10">
+			<description><![CDATA[The maximum number_of_funclauses threshold. Default is 10.]]></description>
+		</param>
+	</rule>
+	<rule>
+		<key>R007</key>
+		<name><![CDATA[branches_of_recursion]]></name>
+		<configKey>branches_of_recursion</configKey>
+		<description>
+      <![CDATA[<p>The domain of the query is a module or a function. Gives the number of a certain function's branches, how many times a function calls itself, and not the number of clauses it has besides definition. The branches of recursion in the following example is 2.</p>
+      <pre>
+quicksort([H|T]) ->
+    {Smaller_Ones,Larger_Ones} = split(H,T,{[],[]}),
+    lists:append( quicksort(Smaller_Ones),
+                  [H | quicksort(Larger_Ones)]
+                );
+quicksort([]) -> [].
+
+split(Pivot, [H|T], {Acc_S, Acc_L}) ->
+    if Pivot > H -> New_Acc = { [H|Acc_S] , Acc_L };
+       true      -> New_Acc = { Acc_S , [H|Acc_L] }
+    end,
+    split(Pivot,T,New_Acc);
+split(_,[],Acc) -> Acc.
+      </pre>
+      ]]>
+		</description>
+		<param key="maximum" type="i" defaultValue="10">
+			<description><![CDATA[The maximum branches_of_recursion threshold. Default is 10.]]></description>
+		</param>
+	</rule>
+	<rule>
+		<key>R008</key>
+		<name><![CDATA[no_space_after_comma]]></name>
+		<configKey>no_space_after_comma</configKey>
+		<description>
+      <![CDATA[The domain of the query is a module or a function. It gives the number of cases when there are not any whitespaces after a comma or a semicolon in the given module's or function's text.]]>
+		</description>
+		<param key="maximum" type="i" defaultValue="0">
+			<description><![CDATA[The maximum no_space_after_comma threshold. Default is 0.]]></description>
+		</param>
+	</rule>
+		<rule>
+		<key>R009</key>
+		<name><![CDATA[is_tail_recursive]]></name>
+		<configKey>is_tail_recursive</configKey>
+		<description>
+      <![CDATA[The domain of the query is a function. It returns with 1, if the given function is tail recursive; with 0, if it is recursive, but not tail recursive; and -1 if it is not a recursive function (direct and indirect recursions are also examined). If we use this metric from the semanctic query language, the result is converted to tail_rec, non_tail_rec or non_rec atom.]]>
+		</description>
+		<param key="minimum" type="i" defaultValue="1">
+			<description><![CDATA[The minimum is_tail_recursive threshold. Default is 1.]]></description>
+		</param>
+	</rule>
+	 
 </rules>

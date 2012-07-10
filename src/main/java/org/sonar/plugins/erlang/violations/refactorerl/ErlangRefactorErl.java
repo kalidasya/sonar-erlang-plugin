@@ -140,6 +140,10 @@ public class ErlangRefactorErl {
 		if (param != null) {
 			return (Integer.valueOf(value) > Integer.valueOf(param));
 		}
+		param = activeRule.getParameter("minimum");
+		if (param != null) {
+			return (Integer.valueOf(value) < Integer.valueOf(param));
+		}
 		return true;
 	}
 
