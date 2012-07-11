@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copied from dialyzer.erl -->
 <rules>
 	<rule>
 		<key>R001</key>
@@ -152,8 +151,8 @@ split(_,[],Acc) -> Acc.
 		<description>
       <![CDATA[The domain of the query is a function. It returns with 1, if the given function is tail recursive; with 0, if it is recursive, but not tail recursive; and -1 if it is not a recursive function (direct and indirect recursions are also examined). If we use this metric from the semanctic query language, the result is converted to tail_rec, non_tail_rec or non_rec atom.]]>
 		</description>
-		<param key="minimum" type="i" defaultValue="1">
-			<description><![CDATA[The minimum is_tail_recursive threshold. Default is 1.]]></description>
+		<param key="not" type="i" defaultValue="0">
+			<description><![CDATA[Comma separated list of the not allowed value. Default is 0.]]></description>
 		</param>
 	</rule>
 	 

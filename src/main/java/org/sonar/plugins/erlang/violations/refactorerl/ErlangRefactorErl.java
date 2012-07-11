@@ -134,6 +134,14 @@ public class ErlangRefactorErl {
 		if (param != null) {
 			return activeRule.getRule().getName() + " is " + String.valueOf(value) + " (max allowed is " + param + ")";
 		}
+		param = activeRule.getParameter("minimum");
+		if (param != null) {
+			return activeRule.getRule().getName() + " is " + String.valueOf(value) + " (min allowed is " + param + ")";
+		}
+		param = activeRule.getParameter("not");
+		if (param != null) {
+			return activeRule.getRule().getName() + " is " + String.valueOf(value) + " (not allowed numbers are: " + param + ")";
+		}
 		return activeRule.getRule().getDescription();
 	}
 
@@ -145,6 +153,11 @@ public class ErlangRefactorErl {
 		param = activeRule.getParameter("minimum");
 		if (param != null) {
 			return (Integer.valueOf(value) < Integer.valueOf(param));
+		}
+		param = activeRule.getParameter("not");
+		if (param != null) {
+			param = param.replaceAll("[ \n\r\t]", "");
+			return ArrayUtils.contains(param.split(","),value);
 		}
 		return true;
 	}
