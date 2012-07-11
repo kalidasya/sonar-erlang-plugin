@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.profiles.RulesProfile;
@@ -132,6 +133,14 @@ public class ErlangRefactorErl {
 		if (param != null) {
 			return activeRule.getRule().getName() + " is " + String.valueOf(value) + " (max allowed is " + param + ")";
 		}
+		param = activeRule.getParameter("minimum");
+		if (param != null) {
+			return activeRule.getRule().getName() + " is " + String.valueOf(value) + " (min allowed is " + param + ")";
+		}
+		param = activeRule.getParameter("not");
+		if (param != null) {
+			return activeRule.getRule().getName() + " is " + String.valueOf(value) + " (not allowed numbers are: " + param + ")";
+		}
 		return activeRule.getRule().getDescription();
 	}
 
@@ -143,6 +152,11 @@ public class ErlangRefactorErl {
 		param = activeRule.getParameter("minimum");
 		if (param != null) {
 			return (Integer.valueOf(value) < Integer.valueOf(param));
+		}
+		param = activeRule.getParameter("not");
+		if (param != null) {
+			param = param.replaceAll("[ \n\r\t]", "");
+			return ArrayUtils.contains(param.split(","),value);
 		}
 		return true;
 	}

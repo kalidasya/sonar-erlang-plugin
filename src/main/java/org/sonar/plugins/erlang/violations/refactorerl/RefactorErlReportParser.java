@@ -77,7 +77,12 @@ public class RefactorErlReportParser {
 					String name = matcher2.group(1).trim();
 					String value = matcher2.group(3).trim();
 					reportUnit.setMetricKey(name);
-					reportUnit.setMetricValue(value);
+					if(RefactorErlMappings.map.containsKey(value)){
+						reportUnit.setMetricValue(RefactorErlMappings.map.get(value));
+					} else {
+						reportUnit.setMetricValue(value);	
+					}
+					
 				}
 			} else {
 				/**
