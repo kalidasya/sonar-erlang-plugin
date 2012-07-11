@@ -29,6 +29,7 @@ import org.sonar.api.SonarPlugin;
 import org.sonar.plugins.erlang.colorization.ErlangColorizerFormat;
 import org.sonar.plugins.erlang.cpd.ErlangCpdMapping;
 import org.sonar.plugins.erlang.language.Erlang;
+import org.sonar.plugins.erlang.metrics.CustomMetrics;
 import org.sonar.plugins.erlang.sensor.BaseMetricsSensor;
 import org.sonar.plugins.erlang.sensor.ErlangCoverageSensor;
 import org.sonar.plugins.erlang.sensor.ErlangEunitSensor;
@@ -37,6 +38,7 @@ import org.sonar.plugins.erlang.sensor.ErlangSourceImporterSensor;
 import org.sonar.plugins.erlang.sensor.ViolationSensor;
 import org.sonar.plugins.erlang.violations.ErlangDefaultProfile;
 import org.sonar.plugins.erlang.violations.ErlangRuleRepository;
+import org.sonar.plugins.erlang.widgets.CustomMetricWidget;
 
 @Properties({
 		@Property(key = ErlangPlugin.FILE_SUFFIXES_KEY, defaultValue = ErlangPlugin.FILE_SUFFIXES_DEFVALUE, name = "File suffixes", description = "Comma-separated list of suffixes for files to analyze. To not filter, leave the list empty.", global = true, project = true),
@@ -75,11 +77,11 @@ public class ErlangPlugin extends SonarPlugin {
 	public List getExtensions() {
 		final List<Class<? extends Extension>> extensions = new ArrayList<Class<? extends Extension>>();
 		extensions.add(Erlang.class);
+		extensions.add(CustomMetrics.class);
+		extensions.add(CustomMetricWidget.class);
 		extensions.add(ErlangSourceImporterSensor.class);
 		extensions.add(ErlangColorizerFormat.class);
 		extensions.add(BaseMetricsSensor.class);
-//		extensions.add(DialyzerRuleRepository.class);
-//		extensions.add(RefactorErlRuleRepository.class);
 		extensions.add(ErlangRuleRepository.class);
 		extensions.add(ErlangDefaultProfile.class);
 		extensions.add(ViolationSensor.class);

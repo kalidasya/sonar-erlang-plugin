@@ -17,25 +17,27 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package org.sonar.plugins.erlang;
+package org.sonar.plugins.erlang.widgets;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import org.sonar.api.web.AbstractRubyTemplate;
+import org.sonar.api.web.RubyRailsWidget;
 
-import org.junit.Before;
-import org.junit.Test;
+public class CustomMetricWidget extends AbstractRubyTemplate implements RubyRailsWidget{
 
-public class ErlangPluginTest {
+	@Override
+	public String getId() {
+		return "erlang_custom_metric_widget";
+	}
 
-  private ErlangPlugin plugin;
+	@Override
+	public String getTitle() {
+		return "Erlang custom metrics";
+	}
 
-  @Before
-  public void setUp() throws Exception {
-    plugin = new ErlangPlugin();
-  }
+	@Override
+	protected String getTemplatePath() {
+		return "/custom_metrics_widget.html.erb";
+		
+	}
 
-  @Test
-  public void testGetExtensions() throws Exception {
-    assertThat(plugin.getExtensions().size(), is(13));
-  }
 }

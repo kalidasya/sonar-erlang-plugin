@@ -1,0 +1,36 @@
+erlcount.erl   /home/tkende/dev1/spil-workspace/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount.erl: 1-1
+    imported_modules = 0
+erlcount_sup.erl   /home/tkende/dev1/spil-workspace/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_sup.erl: 1-1
+    imported_modules = 0
+erlcount_counter.erl   /home/tkende/dev1/spil-workspace/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_counter.erl: 1-1
+    imported_modules = 0
+gen_server
+    imported_modules = 0
+erlang
+    imported_modules = 0
+file
+    imported_modules = 0
+erlcount_lib.erl   /home/tkende/dev1/spil-workspace/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_lib.erl: 1-1
+    imported_modules = 0
+erlcount_dispatch.erl   /home/tkende/dev1/spil-workspace/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_dispatch.erl: 1-1
+    imported_modules = 0
+gen_fsm
+    imported_modules = 0
+application
+    imported_modules = 0
+ppool
+    imported_modules = 0
+lists
+    imported_modules = 0
+io
+    imported_modules = 0
+re
+    imported_modules = 0
+queue
+    imported_modules = 0
+filename
+    imported_modules = 0
+supervisor
+    imported_modules = 0
+refactorerl_issues.erl   /home/tkende/dev1/spil-workspace/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/refactorerl_issues.erl: 1-1
+    imported_modules = 0

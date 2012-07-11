@@ -1,0 +1,39 @@
+
+<table width="100%">
+  <tbody>
+<%
+  re_imported_modules=measure('re_imported_modules')
+  if re_imported_modules
+%>
+    <tr>
+      <td valign="top" width="50%">
+        <div class="dashbox">
+          <p class="title"><%= message('Number of imported modules') -%></p>
+          <p>
+            <%= format_measure(measure('re_imported_modules'),:url => url_for_drilldown('re_imported_modules'))%>
+              <%= dashboard_configuration.selected_period? ? format_variation('re_imported_modules') : trend_icon('re_imported_modules') -%>
+          </p>
+       </div>
+      </td>
+    </tr>
+    <%
+      end
+        re_calls_for_function=measure('re_calls_for_function')
+  	if re_calls_for_function
+    %>
+    <tr>
+      <td valign="top" width="50%">
+        <div class="dashbox">
+          <p class="title"><%= message('Number of calls for function') -%></p>
+          <p>
+            <%= format_measure(measure('re_calls_for_function'),:url => url_for_drilldown('re_calls_for_function'))%>
+              <%= dashboard_configuration.selected_period? ? format_variation('re_calls_for_function') : trend_icon('re_calls_for_function') -%>
+          </p>
+       </div>
+      </td>
+    </tr>
+    <%
+    end
+   	%>
+  </tbody>
+</table>

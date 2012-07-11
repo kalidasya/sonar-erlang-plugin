@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.SensorContext;
@@ -40,6 +41,7 @@ import org.sonar.plugins.erlang.ErlangPlugin;
 import org.sonar.plugins.erlang.language.Erlang;
 import org.sonar.plugins.erlang.language.ErlangFile;
 import org.sonar.plugins.erlang.language.ErlangPackage;
+import org.sonar.plugins.erlang.metrics.CustomMetrics;
 import org.sonar.plugins.erlang.metrics.ErlangSourceByLineAnalyzer;
 import org.sonar.plugins.erlang.metrics.PublicApiCounter;
 import org.sonar.plugins.erlang.utils.StringUtils;
@@ -57,6 +59,7 @@ public class BaseMetricsSensor extends AbstractErlangSensor {
 	private final Number[] FUNCTIONS_DISTRIB_BOTTOM_LIMITS = { 1, 2, 4, 6, 8, 10, 12, 20, 30 };
 	private final Number[] FILES_DISTRIB_BOTTOM_LIMITS = { 0, 5, 10, 20, 30, 60, 90 };
 	private static final String MC_CABE_KEY = "mcCabe";
+	private static final String CALLS_OF_FUN = "re_calls_for_function";
 	private static final Logger LOGGER = LoggerFactory.getLogger(BaseMetricsSensor.class);
 
 	public BaseMetricsSensor(Erlang erlang) {
@@ -101,16 +104,18 @@ public class BaseMetricsSensor extends AbstractErlangSensor {
 		}
 		computePackagesMetric(sensorContext, packages);
 	}
-	
-	private void complexityMeasures(Project project, SensorContext sensorContext, ErlangFile erlangFile) throws FileNotFoundException, IOException{
+
+	private void complexityMeasures(Project project, SensorContext sensorContext, ErlangFile erlangFile)
+			throws FileNotFoundException, IOException {
 		File basedir = new File(project.getFileSystem().getBasedir() + File.separator
 				+ ((Erlang) project.getLanguage()).getEunitFolder());
 		String[] mcCabeFileName = ErlangRefactorErl.getFileNamesByPattern(basedir,
 				ErlangPlugin.REFACTORERL_MCCABE_FILENAME_PATTERN);
-		if (mcCabeFileName != null && mcCabeFileName.length>0) {
+		if (mcCabeFileName != null && mcCabeFileName.length > 0) {
 			ViolationReport report = new ViolationReport();
 			report.setUnits(ErlangRefactorErl.readRefactorErlReportUnits(basedir, mcCabeFileName[0]));
 			List<ViolationReportUnit> mcCabeMetrics = report.getUnitsByMetricKey(MC_CABE_KEY);
+			List<ViolationReportUnit> callsOfFun = report.getUnitsByMetricKey(CALLS_OF_FUN);
 
 			RangeDistributionBuilder fileComplexityDistribution = new RangeDistributionBuilder(
 					CoreMetrics.FILE_COMPLEXITY_DISTRIBUTION, FILES_DISTRIB_BOTTOM_LIMITS);
@@ -120,16 +125,33 @@ public class BaseMetricsSensor extends AbstractErlangSensor {
 
 			List<ViolationReportUnit> mcCabeResults = ViolationReport.filterUnitsByModuleName(mcCabeMetrics,
 					erlangFile.getName());
-			
+
+			/**
+			 * ÜRES MER NINCS FELOLVASVA A REPORT FILE A 116. sorban
+			 */
+			List<ViolationReportUnit> callsOfFunResults = ViolationReport.filterUnitsByModuleName(callsOfFun,
+					erlangFile.getName());
+
+			saveCustomMetrics(erlangFile, sensorContext, callsOfFunResults);
+
 			analyseClasses(erlangFile, mcCabeResults, fileComplexityDistribution, methodComplexityDistribution);
 			double fileComplexity = calculteFileComplexity(mcCabeResults, methodComplexityDistribution);
-			
+
 			sensorContext.saveMeasure(erlangFile, CoreMetrics.COMPLEXITY, fileComplexity);
-			sensorContext.saveMeasure(erlangFile, fileComplexityDistribution.build().setPersistenceMode(PersistenceMode.MEMORY));
-			sensorContext.saveMeasure(erlangFile, methodComplexityDistribution.build().setPersistenceMode(PersistenceMode.MEMORY));
-			
+			sensorContext.saveMeasure(erlangFile,
+					fileComplexityDistribution.build().setPersistenceMode(PersistenceMode.MEMORY));
+			sensorContext.saveMeasure(erlangFile,
+					methodComplexityDistribution.build().setPersistenceMode(PersistenceMode.MEMORY));
+
 		} else {
 			LOGGER.warn("No coverage report found: " + basedir.getAbsolutePath() + " with pattern:");
+		}
+	}
+
+	private void saveCustomMetrics(ErlangFile erlangFile, SensorContext sensorContext,
+			List<ViolationReportUnit> callsOfFun) {
+		for (ViolationReportUnit violationReportUnit : callsOfFun) {
+			sensorContext.saveMeasure(erlangFile, CustomMetrics.getMetricByKey(violationReportUnit.getMetricKey()), Double.valueOf(violationReportUnit.getMetricValue()));
 		}
 	}
 

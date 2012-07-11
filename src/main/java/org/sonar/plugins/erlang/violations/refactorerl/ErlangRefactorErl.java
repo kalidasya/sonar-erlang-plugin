@@ -28,12 +28,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rules.ActiveRule;
 import org.sonar.plugins.erlang.language.Erlang;
+import org.sonar.plugins.erlang.metrics.CustomMetrics;
 import org.sonar.plugins.erlang.testmetrics.utils.GenericFileNameRegexFilter;
 import org.sonar.plugins.erlang.violations.ActiveRuleFilter;
 import org.sonar.plugins.erlang.violations.ErlangRuleManager;
