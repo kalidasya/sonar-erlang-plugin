@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copied from dialyzer.erl -->
+<rules>
+   <rule>
+      <key>B001</key>
+      <name><![CDATA[regexSingleLine]]></name>
+      <configKey>regexSingleLine</configKey>
+      <cardinality>MULTIPLE</cardinality>
+      <description>
+      <![CDATA[ Custom regex witch match to a single line of the code. If a match happen, violation will be raised.]]>
+      </description>
+      <param key="regex" type="TEXT" default="^$">
+			<description><![CDATA[Regex pattern of the rule.]]></description>
+	  </param>
+	  <param key="ignoreCase" type="BOOLEAN" default="false">
+	  		<description><![CDATA[Controls whether to ignore case when searching. Default value is false.]]></description>
+	  </param>
+   </rule>
+</rules>

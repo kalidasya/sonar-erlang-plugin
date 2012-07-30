@@ -75,7 +75,7 @@ public class RuleHandler extends DefaultHandler {
 		} else if (StringUtils.equalsIgnoreCase("priority", element)) {
 			((ErlangRule) tmpRule).getRule().setSeverity(RulePriority.valueOf(StringUtils.trim(tmpValue)));
 		} else if (StringUtils.equalsIgnoreCase("message", element)) {
-			((ErlangRule) tmpRule).addMessage(tmpValue.replaceAll("~.", ".*?").replaceAll("([\\{\\}\\[\\]])", "\\\\$1"));
+			((ErlangRule) tmpRule).addMessage(tmpValue.replaceAll("~.", ".*?").replaceAll("([\\{\\}\\[\\]\\(\\)])", "\\\\$1"));
 		}
 	}
 

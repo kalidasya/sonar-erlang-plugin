@@ -49,6 +49,8 @@ public class ViolationSensorTest {
 	private ActiveRule activeRule;
 	private ActiveRule activeRule2;
 	private ActiveRule activeRule3;
+	private ActiveRule activeRule4;
+	private ActiveRule activeRule5;
 
 	@Before
 	public void setup() throws URISyntaxException {
@@ -56,35 +58,49 @@ public class ViolationSensorTest {
 		Configuration configuration = mock(Configuration.class);
 		ArrayList<InputFile> srcFiles = new ArrayList<InputFile>();
 		ArrayList<InputFile> otherFiles = new ArrayList<InputFile>();
-		otherFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/RE-max_depth_of_calling.txt"));
-		otherFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/RE-mcCabe.txt"));
-		otherFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/RE-cohesion.txt"));
-		otherFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/dialyzer.log"));
-		srcFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/src/refactorerl_issues.erl"));
+		otherFiles.add(ProjectUtil
+				.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/RE-max_depth_of_calling.txt"));
+		otherFiles.add(ProjectUtil
+				.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/RE-mcCabe.txt"));
+		otherFiles.add(ProjectUtil
+				.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/RE-cohesion.txt"));
+		otherFiles.add(ProjectUtil
+				.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/dialyzer.log"));
+		srcFiles.add(ProjectUtil
+				.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/src/refactorerl_issues.erl"));
 		srcFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/src/erlcount_lib.erl"));
-		
 
 		RulesProfile rp = mock(RulesProfile.class);
 		List<ActiveRule> rlz = new ArrayList<ActiveRule>();
 		activeRule = RuleUtil.generateActiveRule("mcCabe", "R001", "maximum", "10");
 		activeRule2 = RuleUtil.generateActiveRule("max_depth_of_calling", "R002", "maximum", "10");
 		activeRule3 = RuleUtil.generateActiveRule("cohesion", "R003", "maximum", "4");
+		activeRule4 = RuleUtil.generateActiveRule("unused_fun", "D019", null, null);
+		activeRule5 = RuleUtil.generateActiveRule("callback_missing", "D041", null, null);
+		
 		rlz.add(activeRule);
 		rlz.add(activeRule2);
 		rlz.add(activeRule3);
+		rlz.add(activeRule4);
+		rlz.add(activeRule5);
 		when(rp.getActiveRulesByRepository("Erlang")).thenReturn(rlz);
+		when(rp.getActiveRule("Erlang", "D019")).thenReturn(activeRule4);
+		when(rp.getActiveRule("Erlang", "D041")).thenReturn(activeRule5);
 		when(rp.getName()).thenReturn("Erlang");
 
-		new ViolationSensor(new Erlang(), rp).analyse(ProjectUtil.getProject(srcFiles, otherFiles, configuration), context);
+		new ViolationSensor(new Erlang(), rp).analyse(
+				ProjectUtil.getProject(srcFiles, otherFiles, configuration), context);
 	}
 
 	@Test
 	public void checkSensor() throws URISyntaxException {
 		ArgumentCaptor<Violation> argument = ArgumentCaptor.forClass(Violation.class);
-		verify(context, times(7)).saveViolation( argument.capture());
+		verify(context, times(7)).saveViolation(argument.capture());
 		List<Violation> capturedViolations = argument.getAllValues();
-		assertThat("violation is not R002", capturedViolations.get(0).getRule().getKey(), Matchers.equalTo("R002"));
-		assertThat("violation is not R002", capturedViolations.get(0).getMessage(), Matchers.equalTo("max_depth_of_calling is 11 (max allowed is 10)"));
+		assertThat("violation is not R002", capturedViolations.get(0).getRule().getKey(),
+				Matchers.equalTo("R002"));
+		assertThat("violation is not R002", capturedViolations.get(0).getMessage(),
+				Matchers.equalTo("max_depth_of_calling is 11 (max allowed is 10)"));
 		assertThat("violation is not R002", capturedViolations.get(0).getLineId(), Matchers.equalTo(22));
 	}
 

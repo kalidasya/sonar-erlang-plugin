@@ -27,6 +27,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.plugins.erlang.language.Erlang;
 import org.sonar.plugins.erlang.violations.ErlangRuleManager;
@@ -43,7 +44,15 @@ public class ErlangDialyzer {
 	private static final String DIALYZER_VIOLATION_ROW_REGEX = "(.*?)(:[0-9]+:)(.*)";
 	private static final String REPO_KEY = "Erlang";
 
-	public ViolationReport dialyzer(Project project, ErlangRuleManager dialyzerRuleManager) {
+	/**
+	 * We must pass the dialyzerRuleManager as well to make possible to find the rule based on
+	 * the message in the dialyzer log file
+	 * @param project
+	 * @param dialyzerRuleManager
+	 * @param rulesProfile
+	 * @return
+	 */
+	public ViolationReport dialyzer(Project project, ErlangRuleManager dialyzerRuleManager, RulesProfile rulesProfile) {
 		ViolationReport report = new ViolationReport();
 		/**
 		 * Read dialyzer results
@@ -60,13 +69,15 @@ public class ErlangDialyzer {
 			while ((strLine = breader.readLine()) != null) {
 				if (strLine.matches(DIALYZER_VIOLATION_ROW_REGEX)) {
 					String[] res = strLine.split(":");
-					ViolationReportUnit unit = report.createUnit();
-					unit.setModuleName(res[0].replaceAll("\\.erl", ""));
-					unit.setStartRow(Integer.valueOf(res[1]));
-					unit.setMetricKey(dialyzerRuleManager.getRuleKeyByMessage(res[2]
-							.trim()));
-					unit.setDescription(res[2].trim());
-					unit.setRepositoryKey(REPO_KEY);
+					String ruleKey = dialyzerRuleManager.getRuleKeyByMessage(res[2].trim());
+					if(rulesProfile.getActiveRule(REPO_KEY, ruleKey)!=null){
+						ViolationReportUnit unit = report.createUnit();
+						unit.setModuleName(res[0].replaceAll("\\.erl", ""));
+						unit.setStartRow(Integer.valueOf(res[1]));
+						unit.setMetricKey(ruleKey);
+						unit.setDescription(res[2].trim());
+						unit.setRepositoryKey(REPO_KEY);
+					}
 				}
 			}
 			breader.close();

@@ -33,29 +33,32 @@ import org.sonar.plugins.erlang.violations.ErlangRuleRepository;
 
 public class RuleUtil {
 
-	public static ErlangRule getOneRule(String key, String repoKey){
+	public static ErlangRule getOneRule(String key, String repoKey) {
 		ErlangRuleManager rm = new ErlangRuleManager(getFileUrlForRepo(repoKey));
 		return rm.getErlangRuleByKey(key);
 	}
-	
-	private static String getFileUrlForRepo(String repoKey){
-		if("dialyzer".equalsIgnoreCase(repoKey)){
-		return ErlangRuleRepository.DIALYZER_PATH;
-		} else if ("refactorerl".equalsIgnoreCase(repoKey)){
+
+	private static String getFileUrlForRepo(String repoKey) {
+		if ("dialyzer".equalsIgnoreCase(repoKey)) {
+			return ErlangRuleRepository.DIALYZER_PATH;
+		} else if ("refactorerl".equalsIgnoreCase(repoKey)) {
 			return ErlangRuleRepository.REFACTORERL_PATH;
 		}
-		
+
 		return null;
 	}
-	
-	public static ActiveRule generateActiveRule(String ruleName, String ruleKey, String paramName, String paramValue) {
-		RuleParam param = new RuleParam();
-		param.setKey(paramName);
-		param.setDefaultValue(paramValue);
+
+	public static ActiveRule generateActiveRule(String ruleName, String ruleKey, String paramName,
+			String paramValue) {
 		List<RuleParam> params = new ArrayList<RuleParam>();
-		params.add(param);
 		Rule rule = new Rule();
-		rule.setParams(params);
+		if (paramName != null) {
+			RuleParam param = new RuleParam();
+			param.setKey(paramName);
+			param.setDefaultValue(paramValue);
+			params.add(param);
+			rule.setParams(params);
+		}
 		rule.setName(ruleName);
 		rule.setKey(ruleKey);
 		rule.setConfigKey(ruleKey);
@@ -69,5 +72,5 @@ public class RuleUtil {
 		activeRule.setParameter(paramName, paramValue);
 		return activeRule;
 	}
-	
+
 }

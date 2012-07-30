@@ -49,7 +49,6 @@ import org.sonar.plugins.erlang.violations.refactorerl.ErlangRefactorErl;
 public class ViolationSensor extends AbstractErlangSensor {
 
 	private ErlangRuleManager dialyzerRuleManager = new ErlangRuleManager(ErlangRuleRepository.DIALYZER_PATH);
-	private ErlangRuleManager refactorErlRuleManager = new ErlangRuleManager(ErlangRuleRepository.REFACTORERL_PATH);
 	private RulesProfile rulesProfile;
 
 	public ViolationSensor(Erlang erlang, RulesProfile rulesProfile) {
@@ -62,8 +61,8 @@ public class ViolationSensor extends AbstractErlangSensor {
 	private ErlangRefactorErl refactorErl = new ErlangRefactorErl();
 
 	public void analyse(Project project, SensorContext context) {
-		ViolationReport report = refactorErl.refactorErl(project, refactorErlRuleManager, rulesProfile);
-		report.appendUnits(dialyzer.dialyzer(project, dialyzerRuleManager).getUnits());
+		ViolationReport report = refactorErl.refactorErl(project, rulesProfile);
+		report.appendUnits(dialyzer.dialyzer(project, dialyzerRuleManager, rulesProfile).getUnits());
 		for (InputFile inputFile : project.getFileSystem().mainFiles(getErlang().getKey())) {
 			ErlangFile erlangFile = ErlangFile.fromInputFile(inputFile);
 			try {

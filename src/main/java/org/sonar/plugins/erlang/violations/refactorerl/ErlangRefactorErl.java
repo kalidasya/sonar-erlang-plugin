@@ -59,7 +59,7 @@ public class ErlangRefactorErl {
 	 * row','starting col'-'ending row','ending col'
 	 */
 
-	public ViolationReport refactorErl(Project project, ErlangRuleManager erlangRuleManager, RulesProfile profile) {
+	public ViolationReport refactorErl(Project project, RulesProfile profile) {
 		ViolationReport report = new ViolationReport();
 		List<ActiveRule> activeRules = profile.getActiveRulesByRepository("Erlang");
 

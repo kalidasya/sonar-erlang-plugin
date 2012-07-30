@@ -21,20 +21,27 @@ package org.sonar.plugins.erlang.violation.dialyzer;
 
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.List;
+
+import javax.print.attribute.standard.MediaSize.Other;
 
 import org.apache.commons.configuration.Configuration;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
+import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.InputFile;
 import org.sonar.api.resources.InputFileUtils;
 import org.sonar.api.resources.Project;
+import org.sonar.api.rules.ActiveRule;
 import org.sonar.plugins.erlang.utils.ProjectUtil;
+import org.sonar.plugins.erlang.utils.RuleUtil;
 import org.sonar.plugins.erlang.violations.ErlangRuleManager;
 import org.sonar.plugins.erlang.violations.ErlangRuleRepository;
 import org.sonar.plugins.erlang.violations.ViolationReport;
@@ -50,19 +57,23 @@ public class ErlangDialyzerTest {
 	public void setup() throws URISyntaxException, IOException {
 		ed = new ErlangDialyzer();
 		configuration = mock(Configuration.class);
-		 
+		
+		RulesProfile rp = mock(RulesProfile.class);
+		ActiveRule activeRule = RuleUtil.generateActiveRule("unused_fun","D019",null,null);
+		when(rp.getActiveRule("Erlang","D019")).thenReturn(activeRule);
+		
 		File fileToAnalyse =  new File(getClass().getResource("/org/sonar/plugins/erlang/erlcount/src/erlcount_lib.erl")
 				.toURI());
 		InputFile inputFile = InputFileUtils.create(fileToAnalyse.getParentFile(), fileToAnalyse);
 		ArrayList<InputFile> inputFiles = new ArrayList<InputFile>();
 		inputFiles.add(inputFile);
 		Project project = ProjectUtil.getProject(inputFiles, null, configuration);
-		result = ed.dialyzer(project, new ErlangRuleManager(ErlangRuleRepository.DIALYZER_PATH));
+		result = ed.dialyzer(project, new ErlangRuleManager(ErlangRuleRepository.DIALYZER_PATH), rp);
 	}
 
 	@Test
 	public void checkDialyzer() {
-		assertThat(result.getUnits().size(), Matchers.equalTo(3));
+		assertThat(result.getUnits().size(), Matchers.equalTo(2));
 		assertThat(result.getUnits().get(0).getMetricKey(), Matchers.equalTo("D019"));
 		assertThat(result.getUnits().get(0).getStartRow(), Matchers.equalTo(54));
 	}
