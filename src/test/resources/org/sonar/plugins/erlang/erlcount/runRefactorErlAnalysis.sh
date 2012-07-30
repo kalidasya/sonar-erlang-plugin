@@ -1,11 +1,16 @@
 #!/bin/bash
-#ref=/bigdisk/jenkins/refactorerl-0.9.12.05/
 #ref=/home/tkende/dev/tools/refactorerl-0.9.12.05/
 #export REFERL_BASE=/home/tkende/dev/tools/refactorerl-0.9.12.05/
 export PATH=$REFERL_BASE/bin:$PATH
 METRICS=( "mods.funs.mcCabe:RE-mcCabe.txt"
-	"mods.funs.max_depth_of_calling:RE-max_depth_of_calling.txt"
-	"mods.cohesion:RE-cohesion.txt")
+        "mods.funs.max_depth_of_calling:RE-max_depth_of_calling.txt"
+        "mods.cohesion:RE-cohesion.txt"
+        "mods.funs.max_depth_of_cases:RE-max_depth_of_cases.txt"
+        "mods.funs.max_depth_of_structs:RE-max_depth_of_structs.txt"
+        "mods.funs.number_of_funclauses:RE-number_of_funclauses.txt"
+        "mods.funs.branches_of_recursion:RE-branches_of_recursion.txt"
+        "mods.funs.no_space_after_comma:RE-no_space_after_comma.txt"
+        "mods.funs.is_tail_recursive:RE-is_tail_recursive.txt")
 
 main() {
    if [ $# -ne 2 ]; then
@@ -30,22 +35,14 @@ get_home_dir(){
 setup_referl(){
    echo ---------------START UP SERVER
    RefactorErl start nif
-   sleep 1
+   sleep 5
    echo ---------------SET parent folder ${appbase}
    RefactorErl ri delenv appbase >> /dev/null
-   #RefactorErl ri setenv appbase
-   sleep 1 
    RefactorErl ri addenv appbase "${appbase}"
-   sleep 1
    RefactorErl ri addenv deps "${appbase}/deps"
-   #RefactorErl ri setenv appbase "${appbase}"
-   sleep 1 
    RefactorErl ri reset
-   sleep 1 
    echo ---------------Add project ${dir} ${application}
-   #RefactorErl ri add "${appbase}/${application}" 
    RefactorErl ri add ${dir} ${application}
-   sleep 1
 }
 
 get_metrics(){
