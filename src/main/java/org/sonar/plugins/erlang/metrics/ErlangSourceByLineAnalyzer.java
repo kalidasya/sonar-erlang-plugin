@@ -42,9 +42,14 @@ import org.sonar.plugins.erlang.violations.dialyzer.ErlangDialyzer;
 public class ErlangSourceByLineAnalyzer {
 	private static final String FUNCTION_ENDS_REGEX = ".*\\.$";
 	private static final String FUNCTION_START_REGEX = "(^[a-z]+[a-z0-9_@]+)( *\\()(.*?)(\\)) *->";
-	
-	public static final Pattern isCommentPatter = Pattern.compile("%+ *[^-=]+");
-	public static final Pattern isDecoratorPatter = Pattern.compile("%+ *[-=]+");
+	/**
+	 * Anything which starts with on or more %
+	 */
+	public static final Pattern isCommentPatter = Pattern.compile("%+.*");
+	/**
+	 * Anything which starts with one or more % and after optional amount of spaces only one non alphabet char is repeated till the end of the line.
+	 */
+	public static final Pattern isDecoratorPatter = Pattern.compile("%+ *([^A-Za-z])\\1+$");
 	public static final Pattern functionStartsPattern = Pattern.compile(FUNCTION_START_REGEX);
 	
 	
@@ -77,7 +82,6 @@ public class ErlangSourceByLineAnalyzer {
 		for (String line : lines) {
 			if (StringUtils.isBlank(line)) {
 				numberOfBlankLines++;
-			}
 			/**
 			 * Only count commented lines which has some text after the comment
 			 * prefix so we don't count those line which were created for
@@ -86,11 +90,11 @@ public class ErlangSourceByLineAnalyzer {
 			 * 
 			 * @return
 			 */
-			else if (isCommentPatter.matcher(line.trim()).matches()) {
-				numberOfComments++;
-			} else if (isDecoratorPatter.matcher(line.trim()).matches()) {
+			}else if (isDecoratorPatter.matcher(line.trim()).matches()) {
 				numberOfDecoratorLines++;
-			} else if (functionStartsPattern.matcher(line.trim()).matches() && !functionOpened) {
+			}else if (isCommentPatter.matcher(line.trim()).matches()) {
+				numberOfComments++;
+			}else if (functionStartsPattern.matcher(line.trim()).matches() && !functionOpened) {
 				Matcher m = functionStartsPattern.matcher(line.trim());
 				m.find();
 				String paramNumber = (m.group(3).trim().length()==0)?"0":String.valueOf(m.group(3).trim().split(",").length);
