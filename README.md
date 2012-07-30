@@ -17,11 +17,12 @@ The current metrics in nutshell:
 * code coverage
 * based on dialyzer output rule violations are marked
 * based on rebar.config all dependencies are published on the libraries page (recursive)
-* count undocumented public apis (exported APIs which has no text comment before) included published by export_all()
+* count undocumented public apis (exported APIs which has no text comment before) included published by export_all
 * number of statements (number of statements = (covered+uncovered lines))
 * fix -spec issue in undocumented public API counter, but multiline -spec still not supported
 * Two RefactorErl rules introduced (as a POC)
 * Based on RefactorErl cyclomatic complexity implemented
+* New RefacotrErl metrics as violation
 
 
 BUGS:
@@ -30,12 +31,12 @@ BUGS:
 PROBLEMS:
 * now the RuleHandler use a SAXParser because I cannot make that SMHierarchicCursor to work.. after getting the name and I tried to get the descendant text and it always thrown an exception that a child cursor is open...
 
-MISSING FEATURES to reach milestone 2:
+MISSING FEATURES to reach milestone 3:
 * publish it to the sonar dev community
 * refactor/optimize/clear
-
+* inlucde other RefactorErl metrics as Erlang specific metrics and create a widget to display it
+* add todo counter (a simple regex based violation)
 
 Areas of improvement:
 	* anonym method counter
-	* create new quantitative rules based on RefactorErl stuff
 	
