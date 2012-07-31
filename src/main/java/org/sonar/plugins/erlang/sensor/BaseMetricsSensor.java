@@ -27,11 +27,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.measures.CoreMetrics;
+import org.sonar.api.measures.Metric;
 import org.sonar.api.measures.PersistenceMode;
 import org.sonar.api.measures.RangeDistributionBuilder;
 import org.sonar.api.resources.InputFile;
@@ -59,7 +59,7 @@ public class BaseMetricsSensor extends AbstractErlangSensor {
 	private final Number[] FUNCTIONS_DISTRIB_BOTTOM_LIMITS = { 1, 2, 4, 6, 8, 10, 12, 20, 30 };
 	private final Number[] FILES_DISTRIB_BOTTOM_LIMITS = { 0, 5, 10, 20, 30, 60, 90 };
 	private static final String MC_CABE_KEY = "mcCabe";
-	private static final String CALLS_OF_FUN = "re_calls_for_function";
+	private static final String CUSTOM_METRIC_FILENAME_PATTERN = "CRE-.*.txt";
 	private static final Logger LOGGER = LoggerFactory.getLogger(BaseMetricsSensor.class);
 
 	public BaseMetricsSensor(Erlang erlang) {
@@ -93,7 +93,17 @@ public class BaseMetricsSensor extends AbstractErlangSensor {
 				 * 
 				 * @param report
 				 */
-				complexityMeasures(project, sensorContext, erlangFile);
+				try {
+					complexityMeasures(project, sensorContext, erlangFile);
+				} catch (Exception e) {
+					LOGGER.error("Could not analyze complexity for file: " + inputFile.getFile().getAbsolutePath(), e);
+				}
+
+				try {
+					customMetrics(project, sensorContext, erlangFile);
+				} catch (Exception e) {
+					LOGGER.error("Could not analyze custom metrics for file: " + inputFile.getFile().getAbsolutePath(), e);
+				}
 
 			} catch (IOException ioe) {
 				LOGGER.error("Could not read the file: " + inputFile.getFile().getAbsolutePath(), ioe);
@@ -115,7 +125,6 @@ public class BaseMetricsSensor extends AbstractErlangSensor {
 			ViolationReport report = new ViolationReport();
 			report.setUnits(ErlangRefactorErl.readRefactorErlReportUnits(basedir, mcCabeFileName[0]));
 			List<ViolationReportUnit> mcCabeMetrics = report.getUnitsByMetricKey(MC_CABE_KEY);
-			List<ViolationReportUnit> callsOfFun = report.getUnitsByMetricKey(CALLS_OF_FUN);
 
 			RangeDistributionBuilder fileComplexityDistribution = new RangeDistributionBuilder(
 					CoreMetrics.FILE_COMPLEXITY_DISTRIBUTION, FILES_DISTRIB_BOTTOM_LIMITS);
@@ -125,14 +134,6 @@ public class BaseMetricsSensor extends AbstractErlangSensor {
 
 			List<ViolationReportUnit> mcCabeResults = ViolationReport.filterUnitsByModuleName(mcCabeMetrics,
 					erlangFile.getName());
-
-			/**
-			 * ÜRES MER NINCS FELOLVASVA A REPORT FILE A 116. sorban
-			 */
-			List<ViolationReportUnit> callsOfFunResults = ViolationReport.filterUnitsByModuleName(callsOfFun,
-					erlangFile.getName());
-
-			saveCustomMetrics(erlangFile, sensorContext, callsOfFunResults);
 
 			analyseClasses(erlangFile, mcCabeResults, fileComplexityDistribution, methodComplexityDistribution);
 			double fileComplexity = calculteFileComplexity(mcCabeResults, methodComplexityDistribution);
@@ -148,11 +149,31 @@ public class BaseMetricsSensor extends AbstractErlangSensor {
 		}
 	}
 
-	private void saveCustomMetrics(ErlangFile erlangFile, SensorContext sensorContext,
-			List<ViolationReportUnit> callsOfFun) {
-		for (ViolationReportUnit violationReportUnit : callsOfFun) {
-			sensorContext.saveMeasure(erlangFile, CustomMetrics.getMetricByKey(violationReportUnit.getMetricKey()), Double.valueOf(violationReportUnit.getMetricValue()));
+	private void customMetrics(Project project, SensorContext sensorContext, ErlangFile erlangFile)
+			throws FileNotFoundException, IOException {
+
+		File basedir = new File(project.getFileSystem().getBasedir() + File.separator
+				+ ((Erlang) project.getLanguage()).getEunitFolder());
+		String[] customMetricFIles = ErlangRefactorErl.getFileNamesByPattern(basedir, CUSTOM_METRIC_FILENAME_PATTERN);
+
+		ViolationReport report = new ViolationReport();
+		for (String string : customMetricFIles) {
+			report.appendUnits(ErlangRefactorErl.readRefactorErlReportUnits(basedir, string));
+
 		}
+
+		// List<ViolationReportUnit> callsOfFun =
+		// report.getUnitsByMetricKey(CALLS_OF_FUN);
+		List<ViolationReportUnit> callsOfFunResults = ViolationReport.filterUnitsByModuleName(report.getUnits(),
+				erlangFile.getName());
+		for (ViolationReportUnit violationReportUnit : callsOfFunResults) {
+			Metric metric = CustomMetrics.getMetricByKey(violationReportUnit.getMetricKey());
+			if (metric != null) {
+				sensorContext
+						.saveMeasure(erlangFile, metric, Double.valueOf(violationReportUnit.getMetricValue()));
+			}
+		}
+
 	}
 
 	private double calculteFileComplexity(List<ViolationReportUnit> filterUnitsByModuleName,

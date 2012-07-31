@@ -1,11 +1,20 @@
-#!/bin/bash
-#ref=/bigdisk/jenkins/refactorerl-0.9.12.05/
-#ref=/home/tkende/dev/tools/refactorerl-0.9.12.05/
+!/bin/bash
+
 #export REFERL_BASE=/home/tkende/dev/tools/refactorerl-0.9.12.05/
 export PATH=$REFERL_BASE/bin:$PATH
 METRICS=( "mods.funs.mcCabe:RE-mcCabe.txt"
 	"mods.funs.max_depth_of_calling:RE-max_depth_of_calling.txt"
-	"mods.cohesion:RE-cohesion.txt")
+	"mods.cohesion:RE-cohesion.txt"
+	"mods.funs.max_depth_of_cases:RE-max_depth_of_cases.txt"
+	"mods.funs.max_depth_of_structs:RE-max_depth_of_structs.txt"
+	"mods.funs.number_of_funclauses:RE-number_of_funclauses.txt"
+	"mods.funs.branches_of_recursion:RE-branches_of_recursion.txt"
+	"mods.funs.no_space_after_comma:RE-no_space_after_comma.txt"
+	"mods.funs.is_tail_recursive:RE-is_tail_recursive.txt"
+	"mods.imported_modules:CRE-imported_modules.txt"
+	"mods.function_calls_in:CRE-function_calls_in-txt"
+	"mods.function_calls_out:CRE-function_calls_out"
+)
 
 main() {
    if [ $# -ne 2 ]; then
@@ -43,9 +52,11 @@ setup_referl(){
    RefactorErl ri reset
    sleep 1 
    echo ---------------Add project ${dir} ${application}
+
    #RefactorErl ri add "${appbase}/${application}" 
    RefactorErl ri add ${dir} ${application}
    sleep 1
+
 }
 
 get_metrics(){
@@ -69,4 +80,3 @@ clear_referl(){
    wait
 }
 main $@
-

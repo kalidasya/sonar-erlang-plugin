@@ -22,7 +22,7 @@ package org.sonar.plugins.erlang.widgets;
 import org.sonar.api.web.AbstractRubyTemplate;
 import org.sonar.api.web.RubyRailsWidget;
 
-public class CustomMetricWidget extends AbstractRubyTemplate implements RubyRailsWidget{
+public class CustomMetricWidget extends AbstractRubyTemplate implements RubyRailsWidget {
 
 	@Override
 	public String getId() {
@@ -36,7 +36,7 @@ public class CustomMetricWidget extends AbstractRubyTemplate implements RubyRail
 
 	@Override
 	protected String getTemplatePath() {
-		return "/custom_metrics_widget.html.erb";
+		return "c:/dev/spil-workspace/sonar-erlang-plugin/src/main/resources/custom_metrics_widget.html.erb";
 		
 	}
 

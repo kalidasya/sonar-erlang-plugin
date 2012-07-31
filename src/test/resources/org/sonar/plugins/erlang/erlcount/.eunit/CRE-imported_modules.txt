@@ -1,7 +1,7 @@
 erlcount.erl   /home/tkende/dev1/spil-workspace/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount.erl: 1-1
     imported_modules = 0
 erlcount_sup.erl   /home/tkende/dev1/spil-workspace/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_sup.erl: 1-1
-    imported_modules = 0
+    imported_modules = 1
 erlcount_counter.erl   /home/tkende/dev1/spil-workspace/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_counter.erl: 1-1
     imported_modules = 0
 gen_server

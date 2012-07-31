@@ -41,6 +41,7 @@ import org.sonar.api.measures.Metric;
 import org.sonar.api.resources.InputFile;
 import org.sonar.api.resources.Resource;
 import org.sonar.plugins.erlang.language.Erlang;
+import org.sonar.plugins.erlang.metrics.CustomMetrics;
 import org.sonar.plugins.erlang.utils.ProjectUtil;
 
 public class BaseMetricSensorTest {
@@ -62,35 +63,38 @@ public class BaseMetricSensorTest {
 		ArgumentCaptor<Metric> argument = ArgumentCaptor.forClass(Metric.class);
 		ArgumentCaptor<Double> argument2 = ArgumentCaptor.forClass(Double.class);
 		ArgumentCaptor<Measure> argumentMeasure = ArgumentCaptor.forClass(Measure.class);
-		verify(context, times(11)).saveMeasure((Resource) anyObject(), argument.capture(), argument2.capture());
+		verify(context, times(12)).saveMeasure((Resource) anyObject(), argument.capture(), argument2.capture());
 		verify(context, times(2)).saveMeasure((Resource) anyObject(), argumentMeasure.capture());
 
+		int i = 0;
 		List<Metric> capturedMetrics = argument.getAllValues();
 		List<Double> capturedValues = argument2.getAllValues();
-		assertThat(" violation is not files", capturedMetrics.get(0).getKey(), Matchers.equalTo(CoreMetrics.FILES_KEY));
-		assertThat(capturedValues.get(0), Matchers.equalTo(1D));
-		assertThat(" violation is not lines", capturedMetrics.get(1).getKey(), Matchers.equalTo(CoreMetrics.LINES_KEY));
-		assertThat(capturedValues.get(1), Matchers.equalTo(32D));
-		assertThat(" violation is not ncloc", capturedMetrics.get(2).getKey(), Matchers.equalTo(CoreMetrics.NCLOC_KEY));
-		assertThat(capturedValues.get(2), Matchers.equalTo(21D));
-		assertThat(" violation is not comment_lines", capturedMetrics.get(3).getKey(), Matchers.equalTo(CoreMetrics.COMMENT_LINES_KEY));
-		assertThat(capturedValues.get(3), Matchers.equalTo(4D));
-		assertThat(" violation is not classes", capturedMetrics.get(4).getKey(), Matchers.equalTo(CoreMetrics.CLASSES_KEY));
-		assertThat(capturedValues.get(4), Matchers.equalTo(1D));
-		assertThat(" violation is not functions", capturedMetrics.get(5).getKey(), Matchers.equalTo(CoreMetrics.FUNCTIONS_KEY));
-		assertThat(capturedValues.get(5), Matchers.equalTo(4D));
-		assertThat(" violation is not public_api", capturedMetrics.get(6).getKey(), Matchers.equalTo(CoreMetrics.PUBLIC_API_KEY));
-		assertThat(capturedValues.get(6), Matchers.equalTo(4D));
-		assertThat(" violation is not public_undocumented_api", capturedMetrics.get(7).getKey(),
+		assertThat(" violation is not files", capturedMetrics.get(i).getKey(), Matchers.equalTo(CoreMetrics.FILES_KEY));
+		assertThat(capturedValues.get(i), Matchers.equalTo(1D));
+		assertThat(" violation is not lines", capturedMetrics.get(++i).getKey(), Matchers.equalTo(CoreMetrics.LINES_KEY));
+		assertThat(capturedValues.get(i), Matchers.equalTo(33D));
+		assertThat(" violation is not ncloc", capturedMetrics.get(++i).getKey(), Matchers.equalTo(CoreMetrics.NCLOC_KEY));
+		assertThat(capturedValues.get(i), Matchers.equalTo(22D));
+		assertThat(" violation is not comment_lines", capturedMetrics.get(++i).getKey(), Matchers.equalTo(CoreMetrics.COMMENT_LINES_KEY));
+		assertThat(capturedValues.get(i), Matchers.equalTo(4D));
+		assertThat(" violation is not classes", capturedMetrics.get(++i).getKey(), Matchers.equalTo(CoreMetrics.CLASSES_KEY));
+		assertThat(capturedValues.get(i), Matchers.equalTo(1D));
+		assertThat(" violation is not functions", capturedMetrics.get(++i).getKey(), Matchers.equalTo(CoreMetrics.FUNCTIONS_KEY));
+		assertThat(capturedValues.get(i), Matchers.equalTo(4D));
+		assertThat(" violation is not public_api", capturedMetrics.get(++i).getKey(), Matchers.equalTo(CoreMetrics.PUBLIC_API_KEY));
+		assertThat(capturedValues.get(i), Matchers.equalTo(4D));
+		assertThat(" violation is not public_undocumented_api", capturedMetrics.get(++i).getKey(),
 				Matchers.equalTo(CoreMetrics.PUBLIC_UNDOCUMENTED_API_KEY));
-		assertThat(capturedValues.get(7), Matchers.equalTo(1D));
-		assertThat(" violation is not public_documented_api_density", capturedMetrics.get(8).getKey(),
+		assertThat(capturedValues.get(i), Matchers.equalTo(1D));
+		assertThat(" violation is not public_documented_api_density", capturedMetrics.get(++i).getKey(),
 				Matchers.equalTo(CoreMetrics.PUBLIC_DOCUMENTED_API_DENSITY_KEY));
-		assertThat(capturedValues.get(8), Matchers.equalTo(100 - ((1D / 4D) * 100)));
-		assertThat(" violation is not comlexity", capturedMetrics.get(9).getKey(), Matchers.equalTo(CoreMetrics.COMPLEXITY_KEY));
-		assertThat(capturedValues.get(9), Matchers.equalTo(4D));
-		assertThat(" violation is not packages", capturedMetrics.get(10).getKey(), Matchers.equalTo(CoreMetrics.PACKAGES_KEY));
-		assertThat(capturedValues.get(10), Matchers.equalTo(1D));
+		assertThat(capturedValues.get(i), Matchers.equalTo(100 - ((1D / 4D) * 100)));
+		assertThat(" violation is not comlexity", capturedMetrics.get(++i).getKey(), Matchers.equalTo(CoreMetrics.COMPLEXITY_KEY));
+		assertThat(capturedValues.get(i), Matchers.equalTo(4D));
+		assertThat(" violation is not custom metric", capturedMetrics.get(++i).getKey(), Matchers.equalTo(CustomMetrics.IMPORTED_MODULES_KEY));
+		assertThat(capturedValues.get(i), Matchers.equalTo(1D));
+		assertThat(" violation is not packages", capturedMetrics.get(++i).getKey(), Matchers.equalTo(CoreMetrics.PACKAGES_KEY));
+		assertThat(capturedValues.get(i), Matchers.equalTo(1D));
 
 		List<Measure> capturedMeasures = argumentMeasure.getAllValues();
 		capturedMeasures.get(0).getMetricKey();

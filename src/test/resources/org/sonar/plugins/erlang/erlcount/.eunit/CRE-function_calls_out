@@ -1,36 +1,36 @@
 erlcount.erl   /home/tkende/dev1/spil-workspace/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount.erl: 1-1
-    cohesion = 0
+    function_calls_out = 1
 erlcount_sup.erl   /home/tkende/dev1/spil-workspace/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_sup.erl: 1-1
-    cohesion = 1
+    function_calls_out = 1
 erlcount_counter.erl   /home/tkende/dev1/spil-workspace/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_counter.erl: 1-1
-    cohesion = 0
+    function_calls_out = 5
 gen_server
-    cohesion = 0
+    function_calls_out = 0
 erlang
-    cohesion = 0
+    function_calls_out = 0
 file
-    cohesion = 0
+    function_calls_out = 0
 erlcount_lib.erl   /home/tkende/dev1/spil-workspace/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_lib.erl: 1-1
-    cohesion = 8
+    function_calls_out = 11
 erlcount_dispatch.erl   /home/tkende/dev1/spil-workspace/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/erlcount_dispatch.erl: 1-1
-    cohesion = 2
+    function_calls_out = 19
 gen_fsm
-    cohesion = 0
+    function_calls_out = 0
 application
-    cohesion = 0
+    function_calls_out = 0
 ppool
-    cohesion = 0
+    function_calls_out = 0
 lists
-    cohesion = 0
+    function_calls_out = 0
 io
-    cohesion = 0
+    function_calls_out = 0
 re
-    cohesion = 0
+    function_calls_out = 0
 queue
-    cohesion = 0
+    function_calls_out = 0
 filename
-    cohesion = 0
+    function_calls_out = 0
 supervisor
-    cohesion = 0
+    function_calls_out = 0
 refactorerl_issues.erl   /home/tkende/dev1/spil-workspace/sonar-erlang-plugin/src/test/resources/org/sonar/plugins/erlang/erlcount/src/refactorerl_issues.erl: 1-1
-    cohesion = 11
+    function_calls_out = 0

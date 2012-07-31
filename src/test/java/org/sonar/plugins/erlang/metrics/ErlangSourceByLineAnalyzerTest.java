@@ -50,7 +50,7 @@ public class ErlangSourceByLineAnalyzerTest {
 	public void checkLinesAnalyzer(){
 		assertThat(la.getNumberOfFunctions(), Matchers.equalTo(4D));
 		assertThat(la.getNumberOfComments(), Matchers.equalTo(4));
-		assertThat(la.countLines(), Matchers.equalTo(32));
-		assertThat(la.getLinesOfCode(), Matchers.equalTo(21));
+		assertThat(la.countLines(), Matchers.equalTo(33));
+		assertThat(la.getLinesOfCode(), Matchers.equalTo(22));
 	}
 }
