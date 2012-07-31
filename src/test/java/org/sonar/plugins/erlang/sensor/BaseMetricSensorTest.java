@@ -24,6 +24,7 @@ import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -38,8 +39,12 @@ import org.sonar.api.batch.SensorContext;
 import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.Measure;
 import org.sonar.api.measures.Metric;
+import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.InputFile;
 import org.sonar.api.resources.Resource;
+import org.sonar.api.rules.Rule;
+import org.sonar.api.rules.RuleFinder;
+import org.sonar.api.rules.RuleQuery;
 import org.sonar.plugins.erlang.language.Erlang;
 import org.sonar.plugins.erlang.utils.ProjectUtil;
 
@@ -53,8 +58,11 @@ public class BaseMetricSensorTest {
 		Configuration configuration = mock(Configuration.class);
 		ArrayList<InputFile> inputFiles = new ArrayList<InputFile>();
 		inputFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/src/erlcount_sup.erl"));
-
-		new BaseMetricsSensor(new Erlang()).analyse(ProjectUtil.getProject(inputFiles, null, configuration), context);
+		RulesProfile rp = mock(RulesProfile.class);
+		when(rp.getActiveRule("Erlang", "B001")).thenReturn(null);
+		RuleFinder rf = mock(RuleFinder.class);
+		when(rf.findAll((RuleQuery) anyObject())).thenReturn(new ArrayList<Rule>());
+		new BaseMetricsSensor(new Erlang(), rf, rp).analyse(ProjectUtil.getProject(inputFiles, null, configuration), context);
 	}
 
 	@Test

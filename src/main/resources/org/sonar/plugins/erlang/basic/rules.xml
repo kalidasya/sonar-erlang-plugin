@@ -7,7 +7,7 @@
       <configKey>regexSingleLine</configKey>
       <cardinality>MULTIPLE</cardinality>
       <description>
-      <![CDATA[ Custom regex witch match to a single line of the code. If a match happen, violation will be raised.]]>
+      <![CDATA[ Custom regex which match to a single line of the code. If a match happens, violation will be raised.]]>
       </description>
       <param key="regex" type="TEXT" default="^$">
 			<description><![CDATA[Regex pattern of the rule.]]></description>

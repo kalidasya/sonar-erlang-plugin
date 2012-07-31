@@ -72,5 +72,10 @@ public class RuleUtil {
 		activeRule.setParameter(paramName, paramValue);
 		return activeRule;
 	}
+	
+	public static Rule generateRule(String ruleName, String ruleKey, String paramName,
+			String paramValue){
+		return generateActiveRule(ruleName, ruleKey, paramName, paramValue).getRule();
+	}
 
 }

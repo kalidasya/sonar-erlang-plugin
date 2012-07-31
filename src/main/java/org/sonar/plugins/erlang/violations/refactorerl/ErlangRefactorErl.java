@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.profiles.RulesProfile;
@@ -37,9 +36,9 @@ import org.sonar.api.rules.ActiveRule;
 import org.sonar.plugins.erlang.language.Erlang;
 import org.sonar.plugins.erlang.testmetrics.utils.GenericFileNameRegexFilter;
 import org.sonar.plugins.erlang.violations.ActiveRuleFilter;
-import org.sonar.plugins.erlang.violations.ErlangRuleManager;
 import org.sonar.plugins.erlang.violations.ViolationReport;
 import org.sonar.plugins.erlang.violations.ViolationReportUnit;
+import org.sonar.plugins.erlang.violations.ViolationUtil;
 
 /**
  * Read and parse generated dialyzer report
@@ -85,8 +84,8 @@ public class ErlangRefactorErl {
 				for (ViolationReportUnit refactorErlReportUnit : units) {
 					ActiveRule activeRule = ActiveRuleFilter.getActiveRuleByRuleName(activeRules,
 							refactorErlReportUnit.getMetricKey());
-					if (activeRule != null && checkIsValid(activeRule, refactorErlReportUnit.getMetricValue())) {
-						refactorErlReportUnit.setDescription(getMessageForMetric(activeRule,
+					if (activeRule != null && ViolationUtil.checkIsValid(activeRule, refactorErlReportUnit.getMetricValue())) {
+						refactorErlReportUnit.setDescription(ViolationUtil.getMessageForMetric(activeRule,
 								refactorErlReportUnit.getMetricValue()));
 						/**
 						 * Replace key coming from activeProfile because it contains
@@ -126,39 +125,6 @@ public class ErlangRefactorErl {
 		BufferedReader breader = new BufferedReader(RefactorErlOutput);
 		List<ViolationReportUnit> units = RefactorErlReportParser.parse(breader);
 		return units;
-	}
-
-	private String getMessageForMetric(ActiveRule activeRule, Object value) {
-		String param = activeRule.getParameter("maximum");
-		if (param != null) {
-			return activeRule.getRule().getName() + " is " + String.valueOf(value) + " (max allowed is " + param + ")";
-		}
-		param = activeRule.getParameter("minimum");
-		if (param != null) {
-			return activeRule.getRule().getName() + " is " + String.valueOf(value) + " (min allowed is " + param + ")";
-		}
-		param = activeRule.getParameter("not");
-		if (param != null) {
-			return activeRule.getRule().getName() + " is " + String.valueOf(value) + " (not allowed numbers are: " + param + ")";
-		}
-		return activeRule.getRule().getDescription();
-	}
-
-	private boolean checkIsValid(ActiveRule activeRule, String value) {
-		String param = activeRule.getParameter("maximum");
-		if (param != null) {
-			return (Integer.valueOf(value) > Integer.valueOf(param));
-		}
-		param = activeRule.getParameter("minimum");
-		if (param != null) {
-			return (Integer.valueOf(value) < Integer.valueOf(param));
-		}
-		param = activeRule.getParameter("not");
-		if (param != null) {
-			param = param.replaceAll("[ \n\r\t]", "");
-			return ArrayUtils.contains(param.split(","),value);
-		}
-		return true;
 	}
 
 }

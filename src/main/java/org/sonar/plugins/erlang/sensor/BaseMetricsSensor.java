@@ -22,6 +22,7 @@ package org.sonar.plugins.erlang.sensor;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -33,9 +34,15 @@ import org.sonar.api.batch.SensorContext;
 import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.PersistenceMode;
 import org.sonar.api.measures.RangeDistributionBuilder;
+import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.InputFile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.resources.ProjectFileSystem;
+import org.sonar.api.rules.ActiveRule;
+import org.sonar.api.rules.Rule;
+import org.sonar.api.rules.RuleFinder;
+import org.sonar.api.rules.RuleQuery;
+import org.sonar.api.rules.Violation;
 import org.sonar.plugins.erlang.ErlangPlugin;
 import org.sonar.plugins.erlang.language.Erlang;
 import org.sonar.plugins.erlang.language.ErlangFile;
@@ -56,11 +63,17 @@ import org.sonar.plugins.erlang.violations.refactorerl.ErlangRefactorErl;
 public class BaseMetricsSensor extends AbstractErlangSensor {
 	private final Number[] FUNCTIONS_DISTRIB_BOTTOM_LIMITS = { 1, 2, 4, 6, 8, 10, 12, 20, 30 };
 	private final Number[] FILES_DISTRIB_BOTTOM_LIMITS = { 0, 5, 10, 20, 30, 60, 90 };
+	private RulesProfile rulesProfile;
+	private RuleFinder ruleFinder;
 	private static final String MC_CABE_KEY = "mcCabe";
 	private static final Logger LOGGER = LoggerFactory.getLogger(BaseMetricsSensor.class);
-
-	public BaseMetricsSensor(Erlang erlang) {
+	
+	
+	
+	public BaseMetricsSensor(Erlang erlang, RuleFinder ruleFinder, RulesProfile rulesProfile) {
 		super(erlang);
+		this.rulesProfile = rulesProfile;
+		this.ruleFinder = ruleFinder;
 	}
 
 	public void analyse(Project project, SensorContext sensorContext) {
@@ -78,8 +91,11 @@ public class BaseMetricsSensor extends AbstractErlangSensor {
 			try {
 				final String source = FileUtils.readFileToString(inputFile.getFile(), charset);
 				final List<String> lines = StringUtils.convertStringToListOfLines(source);
-
-				final ErlangSourceByLineAnalyzer linesAnalyzer = new ErlangSourceByLineAnalyzer(lines);
+				/**
+				 * Get the active regex by line metric
+				 */
+				Collection<Rule> regexRules = ruleFinder.findAll(RuleQuery.create().withConfigKey("regexSingleLine").withRepositoryKey("Erlang"));
+				final ErlangSourceByLineAnalyzer linesAnalyzer = new ErlangSourceByLineAnalyzer(lines, regexRules);
 
 				addLineMetrics(sensorContext, erlangFile, linesAnalyzer);
 				addCodeMetrics(sensorContext, erlangFile, linesAnalyzer);
@@ -91,6 +107,19 @@ public class BaseMetricsSensor extends AbstractErlangSensor {
 				 * @param report
 				 */
 				complexityMeasures(project, sensorContext, erlangFile);
+				
+				/**
+				 * Add line based violations here
+				 */
+				if(linesAnalyzer.getViolationReport() != null && linesAnalyzer.getViolationReport().getUnits().size()>0){
+					for (ViolationReportUnit reportUnit : linesAnalyzer.getViolationReport().getUnits()) {
+						Rule rule = Rule.create(reportUnit.getRepositoryKey(), reportUnit.getMetricKey());
+						Violation violation = Violation.create(rule, erlangFile);
+						violation.setLineId(reportUnit.getStartRow());
+						violation.setMessage(reportUnit.getDescription());
+						sensorContext.saveViolation(violation);
+					}
+				}
 
 			} catch (IOException ioe) {
 				LOGGER.error("Could not read the file: " + inputFile.getFile().getAbsolutePath(), ioe);

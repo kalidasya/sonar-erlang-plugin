@@ -20,14 +20,23 @@
 package org.sonar.plugins.erlang.metrics;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sonar.api.rules.ActiveRule;
+import org.sonar.api.rules.Rule;
 import org.sonar.plugins.erlang.language.ErlangFunction;
+import org.sonar.plugins.erlang.violations.ViolationReport;
+import org.sonar.plugins.erlang.violations.ViolationReportUnit;
+import org.sonar.plugins.erlang.violations.ViolationUtil;
 import org.sonar.plugins.erlang.violations.dialyzer.ErlangDialyzer;
 
 /**
@@ -47,12 +56,12 @@ public class ErlangSourceByLineAnalyzer {
 	 */
 	public static final Pattern isCommentPatter = Pattern.compile("%+.*");
 	/**
-	 * Anything which starts with one or more % and after optional amount of spaces only one non alphabet char is repeated till the end of the line.
+	 * Anything which starts with one or more % and after optional amount of
+	 * spaces only one non alphabet char is repeated till the end of the line.
 	 */
 	public static final Pattern isDecoratorPatter = Pattern.compile("%+ *([^A-Za-z])\\1+$");
 	public static final Pattern functionStartsPattern = Pattern.compile(FUNCTION_START_REGEX);
-	
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(ErlangDialyzer.class);
 
 	private final List<String> lines;
@@ -60,10 +69,24 @@ public class ErlangSourceByLineAnalyzer {
 	private int numberOfComments;
 	private int numberOfBlankLines;
 	private int numberOfDecoratorLines;
+	private Map<Rule, Pattern> regexRulesMap = new HashMap<Rule, Pattern>();
+	private ViolationReport violationReport = new ViolationReport();
 
-	public ErlangSourceByLineAnalyzer(List<String> lines) {
+	public ErlangSourceByLineAnalyzer(List<String> lines, Collection<Rule> regexRules) {
 		super();
 		this.lines = lines;
+		if (regexRules != null) {
+			for (Rule rule : regexRules) {
+				if (Boolean.valueOf(rule.getParam("ignoreCase").getDefaultValue())) {
+					regexRulesMap.put(rule, Pattern.compile(rule.getParam("regex").getDefaultValue(),
+							Pattern.CASE_INSENSITIVE));
+				} else {
+					regexRulesMap.put(rule, Pattern.compile(rule.getParam("regex").getDefaultValue()));
+				}
+			}
+
+		}
+
 		analyze();
 	}
 
@@ -79,26 +102,30 @@ public class ErlangSourceByLineAnalyzer {
 
 		boolean functionOpened = false;
 		ErlangFunction latest = null;
+		int rowNum = 1;
 		for (String line : lines) {
+			String lineTrimmed = line.trim();
 			if (StringUtils.isBlank(line)) {
 				numberOfBlankLines++;
-			/**
-			 * Only count commented lines which has some text after the comment
-			 * prefix so we don't count those line which were created for
-			 * formatting reason like: %%-------------------------------------
-			 * %%=====================================
-			 * 
-			 * @return
-			 */
-			}else if (isDecoratorPatter.matcher(line.trim()).matches()) {
+				/**
+				 * Only count commented lines which has some text after the
+				 * comment prefix so we don't count those line which were
+				 * created for formatting reason like:
+				 * %%-------------------------------------
+				 * %%=====================================
+				 * 
+				 * @return
+				 */
+			} else if (isDecoratorPatter.matcher(lineTrimmed).matches()) {
 				numberOfDecoratorLines++;
-			}else if (isCommentPatter.matcher(line.trim()).matches()) {
+			} else if (isCommentPatter.matcher(lineTrimmed).matches()) {
 				numberOfComments++;
-			}else if (functionStartsPattern.matcher(line.trim()).matches() && !functionOpened) {
-				Matcher m = functionStartsPattern.matcher(line.trim());
+			} else if (functionStartsPattern.matcher(lineTrimmed).matches() && !functionOpened) {
+				Matcher m = functionStartsPattern.matcher(lineTrimmed);
 				m.find();
-				String paramNumber = (m.group(3).trim().length()==0)?"0":String.valueOf(m.group(3).trim().split(",").length);
-				functions.add(new ErlangFunction(m.group(1)+"/"+paramNumber));
+				String paramNumber = (m.group(3).trim().length() == 0) ? "0" : String.valueOf(m.group(3)
+						.trim().split(",").length);
+				functions.add(new ErlangFunction(m.group(1) + "/" + paramNumber));
 				latest = functions.get(functions.size() - 1);
 				latest.addLine(line);
 				functionOpened = true;
@@ -106,11 +133,25 @@ public class ErlangSourceByLineAnalyzer {
 				if (functionOpened) {
 					latest.addLine(line);
 				}
-				if (line.trim().matches(FUNCTION_ENDS_REGEX) && functionOpened) {
+				if (lineTrimmed.matches(FUNCTION_ENDS_REGEX) && functionOpened) {
 					latest = null;
 					functionOpened = false;
 				}
 			}
+			if (regexRulesMap.size() > 0) {
+				for (Entry<Rule, Pattern> entry : regexRulesMap.entrySet()) {
+					if (entry.getValue().matcher(lineTrimmed).find()) {
+						ViolationReportUnit unit = violationReport.createUnit();
+						unit.setStartRow(rowNum);
+						unit.setModuleName("");
+						unit.setMetricKey(entry.getKey().getKey());
+						unit.setDescription(ViolationUtil.getMessageForMetric(entry.getKey(), null));
+						unit.setRepositoryKey("Erlang");
+					}
+				}
+
+			}
+			rowNum++;
 		}
 
 	}
@@ -138,8 +179,16 @@ public class ErlangSourceByLineAnalyzer {
 	public double getNumberOfFunctions() {
 		return functions.size();
 	}
-	
+
 	public List<ErlangFunction> getFunctions() {
 		return functions;
+	}
+
+	public ViolationReport getViolationReport() {
+		return violationReport;
+	}
+
+	public void setViolationReport(ViolationReport violationReport) {
+		this.violationReport = violationReport;
 	}
 }

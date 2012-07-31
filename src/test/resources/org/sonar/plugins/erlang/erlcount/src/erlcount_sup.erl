@@ -23,10 +23,10 @@ init([]) ->
         [erlcount_dispatch]}]}}.
         
 %% Specification defined, but it is also commented
--spec erlcount_sup:minus2(integer()) -> integer().
+-spec erlcount_sup:minus2(integer()) -> integer(). %TODO
 minus2(X) ->
     X-2.
 
--spec add(integer(),integer()) -> integer().
+-spec add(integer(),integer()) -> integer(). %ToDo
 add(Q, Z) ->
    minus2(Q+Z).    

@@ -46,7 +46,7 @@ public class PublicApiCounterTest {
 		fileToAnalyse =  new File(getClass().getResource("/org/sonar/plugins/erlang/erlcount/src/erlcount_sup.erl")
 				.toURI());
 		source2 = FileUtils.readFileToString(fileToAnalyse, "UTF-8");
-		sbla = new ErlangSourceByLineAnalyzer(StringUtils.convertStringToListOfLines(source2));
+		sbla = new ErlangSourceByLineAnalyzer(StringUtils.convertStringToListOfLines(source2), null);
 	}
 	
 	@Test
