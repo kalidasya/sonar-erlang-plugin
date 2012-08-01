@@ -32,7 +32,6 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.rules.ActiveRule;
-import org.sonar.api.rules.Rule;
 import org.sonar.plugins.erlang.language.ErlangFunction;
 import org.sonar.plugins.erlang.violations.ViolationReport;
 import org.sonar.plugins.erlang.violations.ViolationReportUnit;
@@ -69,19 +68,19 @@ public class ErlangSourceByLineAnalyzer {
 	private int numberOfComments;
 	private int numberOfBlankLines;
 	private int numberOfDecoratorLines;
-	private Map<Rule, Pattern> regexRulesMap = new HashMap<Rule, Pattern>();
+	private Map<ActiveRule, Pattern> regexRulesMap = new HashMap<ActiveRule, Pattern>();
 	private ViolationReport violationReport = new ViolationReport();
 
-	public ErlangSourceByLineAnalyzer(List<String> lines, Collection<Rule> regexRules) {
+	public ErlangSourceByLineAnalyzer(List<String> lines, Collection<ActiveRule> regexRules) {
 		super();
 		this.lines = lines;
 		if (regexRules != null) {
-			for (Rule rule : regexRules) {
-				if (Boolean.valueOf(rule.getParam("ignoreCase").getDefaultValue())) {
-					regexRulesMap.put(rule, Pattern.compile(rule.getParam("regex").getDefaultValue(),
+			for (ActiveRule rule : regexRules) {
+				if (Boolean.valueOf(rule.getParameter("ignoreCase"))) {
+					regexRulesMap.put(rule, Pattern.compile(rule.getParameter("regex"),
 							Pattern.CASE_INSENSITIVE));
 				} else {
-					regexRulesMap.put(rule, Pattern.compile(rule.getParam("regex").getDefaultValue()));
+					regexRulesMap.put(rule, Pattern.compile(rule.getParameter("regex")));
 				}
 			}
 
@@ -139,12 +138,12 @@ public class ErlangSourceByLineAnalyzer {
 				}
 			}
 			if (regexRulesMap.size() > 0) {
-				for (Entry<Rule, Pattern> entry : regexRulesMap.entrySet()) {
+				for (Entry<ActiveRule, Pattern> entry : regexRulesMap.entrySet()) {
 					if (entry.getValue().matcher(lineTrimmed).find()) {
 						ViolationReportUnit unit = violationReport.createUnit();
 						unit.setStartRow(rowNum);
 						unit.setModuleName("");
-						unit.setMetricKey(entry.getKey().getKey());
+						unit.setMetricKey(entry.getKey().getRuleKey());
 						unit.setDescription(ViolationUtil.getMessageForMetric(entry.getKey(), null));
 						unit.setRepositoryKey("Erlang");
 					}

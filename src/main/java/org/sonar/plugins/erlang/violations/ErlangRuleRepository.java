@@ -33,11 +33,13 @@ public class ErlangRuleRepository extends RuleRepository {
 	public static final String REPOSITORY_KEY = "Erlang";
 	public static final String DIALYZER_PATH = "/org/sonar/plugins/erlang/dialyzer/rules.xml";
 	public static final String REFACTORERL_PATH = "/org/sonar/plugins/erlang/refactorerl/rules.xml";
+	public static final String BASICRULES_PATH = "/org/sonar/plugins/erlang/basic/rules.xml";
 	public static final List<String> RULES_FILE = new ArrayList<String>() {
 		private static final long serialVersionUID = 8245183286506333769L;
 		{
 			add(DIALYZER_PATH);
 			add(REFACTORERL_PATH);
+			add(BASICRULES_PATH);
 		}
 	};
 
@@ -65,3 +67,4 @@ public class ErlangRuleRepository extends RuleRepository {
 		return rules;
 	}
 }
+

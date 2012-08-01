@@ -27,9 +27,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.List;
-
-import javax.print.attribute.standard.MediaSize.Other;
 
 import org.apache.commons.configuration.Configuration;
 import org.hamcrest.Matchers;
@@ -57,18 +54,19 @@ public class ErlangDialyzerTest {
 	public void setup() throws URISyntaxException, IOException {
 		ed = new ErlangDialyzer();
 		configuration = mock(Configuration.class);
-		
+
 		RulesProfile rp = mock(RulesProfile.class);
-		ActiveRule activeRule = RuleUtil.generateActiveRule("unused_fun","D019",null,null);
-		when(rp.getActiveRule("Erlang","D019")).thenReturn(activeRule);
-		
-		File fileToAnalyse =  new File(getClass().getResource("/org/sonar/plugins/erlang/erlcount/src/erlcount_lib.erl")
-				.toURI());
+		ActiveRule activeRule = RuleUtil.generateActiveRule("unused_fun", "D019", null);
+		when(rp.getActiveRule("Erlang", "D019")).thenReturn(activeRule);
+
+		File fileToAnalyse = new File(getClass().getResource(
+				"/org/sonar/plugins/erlang/erlcount/src/erlcount_lib.erl").toURI());
 		InputFile inputFile = InputFileUtils.create(fileToAnalyse.getParentFile(), fileToAnalyse);
 		ArrayList<InputFile> inputFiles = new ArrayList<InputFile>();
 		inputFiles.add(inputFile);
 		Project project = ProjectUtil.getProject(inputFiles, null, configuration);
-		result = ed.dialyzer(project, new ErlangRuleManager(ErlangRuleRepository.DIALYZER_PATH), rp);
+		result = ed
+				.dialyzer(project, new ErlangRuleManager(ErlangRuleRepository.DIALYZER_PATH), rp);
 	}
 
 	@Test

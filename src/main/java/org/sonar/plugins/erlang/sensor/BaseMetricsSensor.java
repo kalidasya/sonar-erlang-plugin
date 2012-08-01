@@ -52,6 +52,7 @@ import org.sonar.plugins.erlang.metrics.PublicApiCounter;
 import org.sonar.plugins.erlang.utils.StringUtils;
 import org.sonar.plugins.erlang.violations.ViolationReport;
 import org.sonar.plugins.erlang.violations.ViolationReportUnit;
+import org.sonar.plugins.erlang.violations.ViolationUtil;
 import org.sonar.plugins.erlang.violations.refactorerl.ErlangRefactorErl;
 
 /**
@@ -94,7 +95,7 @@ public class BaseMetricsSensor extends AbstractErlangSensor {
 				/**
 				 * Get the active regex by line metric
 				 */
-				Collection<Rule> regexRules = ruleFinder.findAll(RuleQuery.create().withConfigKey("regexSingleLine").withRepositoryKey("Erlang"));
+				Collection<ActiveRule> regexRules = ViolationUtil.getActiveRulesFromRules(ruleFinder.findAll(RuleQuery.create().withConfigKey("regexSingleLine").withRepositoryKey("Erlang")),rulesProfile);
 				final ErlangSourceByLineAnalyzer linesAnalyzer = new ErlangSourceByLineAnalyzer(lines, regexRules);
 
 				addLineMetrics(sensorContext, erlangFile, linesAnalyzer);

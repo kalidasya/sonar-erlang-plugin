@@ -78,8 +78,6 @@ public class ErlangPlugin extends SonarPlugin {
 		extensions.add(ErlangSourceImporterSensor.class);
 		extensions.add(ErlangColorizerFormat.class);
 		extensions.add(BaseMetricsSensor.class);
-//		extensions.add(DialyzerRuleRepository.class);
-//		extensions.add(RefactorErlRuleRepository.class);
 		extensions.add(ErlangRuleRepository.class);
 		extensions.add(ErlangDefaultProfile.class);
 		extensions.add(ViolationSensor.class);

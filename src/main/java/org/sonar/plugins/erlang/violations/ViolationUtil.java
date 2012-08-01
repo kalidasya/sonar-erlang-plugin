@@ -19,39 +19,39 @@
  */
 package org.sonar.plugins.erlang.violations;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.apache.commons.lang.ArrayUtils;
+import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.rules.Rule;
 
 public class ViolationUtil {
 
-	public static String getMessageForMetric(ActiveRule activeRule, Object value) {
-		return getMessageForMetric(activeRule.getRule(), value);
-	}
-
-	public static String getMessageForMetric(Rule rule, Object value) {
-		String param = (rule.getParam("maximum") != null) ? rule.getParam("maximum").getDefaultValue() : null;
+	public static String getMessageForMetric(ActiveRule rule, Object value) {
+		String param = (rule.getParameter("maximum") != null) ? rule.getParameter("maximum") : null;
 		if (param != null) {
-			return rule.getName() + " is " + String.valueOf(value) + " (max allowed is " + param + ")";
+			return rule.getRule().getName() + " is " + String.valueOf(value) + " (max allowed is " + param + ")";
 		}
-		param = (rule.getParam("minimum") != null) ? rule.getParam("minimum").getDefaultValue() : null;
+		param = (rule.getParameter("minimum") != null) ? rule.getParameter("minimum") : null;
 		if (param != null) {
-			return rule.getName() + " is " + String.valueOf(value) + " (min allowed is " + param + ")";
+			return rule.getRule().getName() + " is " + String.valueOf(value) + " (min allowed is " + param + ")";
 		}
-		param = (rule.getParam("not") != null) ? rule.getParam("not").getDefaultValue() : null;
+		param = (rule.getParameter("not") != null) ? rule.getParameter("not") : null;
 		if (param != null) {
-			return rule.getName() + " is " + String.valueOf(value) + " (not allowed numbers are: " + param
+			return rule.getRule().getName() + " is " + String.valueOf(value) + " (not allowed numbers are: " + param
 					+ ")";
 		}
-		param = (rule.getParam("regex") != null) ? rule.getParam("regex").getDefaultValue() : null;
+		param = (rule.getParameter("regex") != null) ? rule.getParameter("regex") : null;
 		if (param != null) {
 			return "Regex match found. (regex is: /"
 					+ param
 					+ "/"
-					+ ((rule.getParam("ignoreCase") != null && rule.getParam("ignoreCase").getDefaultValue()
+					+ ((rule.getParameter("ignoreCase") != null && rule.getParameter("ignoreCase")
 							.equals("true")) ? "i" : "") + ")";
 		}
-		return rule.getDescription();
+		return rule.getRule().getDescription();
 	}
 
 	public static boolean checkIsValid(ActiveRule activeRule, String value) {
@@ -69,6 +69,17 @@ public class ViolationUtil {
 			return ArrayUtils.contains(param.split(","), value);
 		}
 		return true;
+	}
+	
+	public static Collection<ActiveRule> getActiveRulesFromRules(Collection<Rule> rules, RulesProfile profile){
+		Collection<ActiveRule> ret = new ArrayList<ActiveRule>();
+		for (Rule rule : rules) {
+			ActiveRule r = profile.getActiveRule(rule);
+			if(r!=null){
+				ret.add(r);
+			}
+		}
+		return ret;
 	}
 
 }

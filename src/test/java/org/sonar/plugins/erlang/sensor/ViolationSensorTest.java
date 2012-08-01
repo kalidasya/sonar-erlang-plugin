@@ -27,6 +27,7 @@ import static org.mockito.Mockito.when;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.configuration.Configuration;
@@ -58,8 +59,9 @@ public class ViolationSensorTest {
 		Configuration configuration = mock(Configuration.class);
 		ArrayList<InputFile> srcFiles = new ArrayList<InputFile>();
 		ArrayList<InputFile> otherFiles = new ArrayList<InputFile>();
-		otherFiles.add(ProjectUtil
-				.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/RE-max_depth_of_calling.txt"));
+		otherFiles
+				.add(ProjectUtil
+						.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/RE-max_depth_of_calling.txt"));
 		otherFiles.add(ProjectUtil
 				.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/RE-mcCabe.txt"));
 		otherFiles.add(ProjectUtil
@@ -68,16 +70,31 @@ public class ViolationSensorTest {
 				.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/.eunit/dialyzer.log"));
 		srcFiles.add(ProjectUtil
 				.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/src/refactorerl_issues.erl"));
-		srcFiles.add(ProjectUtil.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/src/erlcount_lib.erl"));
+		srcFiles.add(ProjectUtil
+				.getInputFileByPath("/org/sonar/plugins/erlang/erlcount/src/erlcount_lib.erl"));
 
 		RulesProfile rp = mock(RulesProfile.class);
 		List<ActiveRule> rlz = new ArrayList<ActiveRule>();
-		activeRule = RuleUtil.generateActiveRule("mcCabe", "R001", "maximum", "10");
-		activeRule2 = RuleUtil.generateActiveRule("max_depth_of_calling", "R002", "maximum", "10");
-		activeRule3 = RuleUtil.generateActiveRule("cohesion", "R003", "maximum", "4");
-		activeRule4 = RuleUtil.generateActiveRule("unused_fun", "D019", null, null);
-		activeRule5 = RuleUtil.generateActiveRule("callback_missing", "D041", null, null);
-		
+		activeRule = RuleUtil.generateActiveRule("mcCabe", "R001", new HashMap<String, String>() {
+			{
+				put("maximum", "10");
+			}
+		});
+		activeRule2 = RuleUtil.generateActiveRule("max_depth_of_calling", "R002",
+				new HashMap<String, String>() {
+					{
+						put("maximum", "10");
+					}
+				});
+		activeRule3 = RuleUtil.generateActiveRule("cohesion", "R003",
+				new HashMap<String, String>() {
+					{
+						put("maximum", "4");
+					}
+				});
+		activeRule4 = RuleUtil.generateActiveRule("unused_fun", "D019", null);
+		activeRule5 = RuleUtil.generateActiveRule("callback_missing", "D041", null);
+
 		rlz.add(activeRule);
 		rlz.add(activeRule2);
 		rlz.add(activeRule3);
@@ -97,11 +114,12 @@ public class ViolationSensorTest {
 		ArgumentCaptor<Violation> argument = ArgumentCaptor.forClass(Violation.class);
 		verify(context, times(7)).saveViolation(argument.capture());
 		List<Violation> capturedViolations = argument.getAllValues();
-		assertThat("violation is not R002", capturedViolations.get(0).getRule().getKey(),
+		assertThat("violation is not R002", capturedViolations.get(1).getRule().getKey(),
 				Matchers.equalTo("R002"));
-		assertThat("violation is not R002", capturedViolations.get(0).getMessage(),
+		assertThat("violation is not R002", capturedViolations.get(1).getMessage(),
 				Matchers.equalTo("max_depth_of_calling is 11 (max allowed is 10)"));
-		assertThat("violation is not R002", capturedViolations.get(0).getLineId(), Matchers.equalTo(22));
+		assertThat("violation is not R002", capturedViolations.get(1).getLineId(),
+				Matchers.equalTo(22));
 	}
 
 }

@@ -21,6 +21,8 @@ package org.sonar.plugins.erlang.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.rules.Rule;
@@ -48,15 +50,17 @@ public class RuleUtil {
 		return null;
 	}
 
-	public static ActiveRule generateActiveRule(String ruleName, String ruleKey, String paramName,
-			String paramValue) {
+	public static ActiveRule generateActiveRule(String ruleName, String ruleKey, Map<String, String> parameters) {
 		List<RuleParam> params = new ArrayList<RuleParam>();
 		Rule rule = new Rule();
-		if (paramName != null) {
-			RuleParam param = new RuleParam();
-			param.setKey(paramName);
-			param.setDefaultValue(paramValue);
-			params.add(param);
+		if (parameters != null && parameters.size()>0) {
+			for (Entry<String, String> p : parameters.entrySet()) {
+				RuleParam param = new RuleParam();
+				param.setKey(p.getKey());
+				param.setDefaultValue(p.getValue());
+				params.add(param);
+	
+			}
 			rule.setParams(params);
 		}
 		rule.setName(ruleName);
@@ -69,13 +73,16 @@ public class RuleUtil {
 		ActiveRule activeRule = new ActiveRule();
 		activeRule.setPriority(RulePriority.MAJOR);
 		activeRule.setRule(rule);
-		activeRule.setParameter(paramName, paramValue);
+		if (parameters != null && parameters.size()>0) {
+			for (Entry<String, String> p : parameters.entrySet()) {
+				activeRule.setParameter(p.getKey(), p.getValue());		
+			}
+		}
 		return activeRule;
 	}
 	
-	public static Rule generateRule(String ruleName, String ruleKey, String paramName,
-			String paramValue){
-		return generateActiveRule(ruleName, ruleKey, paramName, paramValue).getRule();
+	public static Rule generateRule(String ruleName, String ruleKey,  Map<String, String> parameters){
+		return generateActiveRule(ruleName, ruleKey, parameters).getRule();
 	}
 
 }

@@ -21,53 +21,63 @@ package org.sonar.plugins.erlang.metrics;
 
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Matchers.anyObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.Matchers;
-import org.hamcrest.core.AnyOf;
 import org.junit.Before;
 import org.junit.Test;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.rules.ActiveRule;
-import org.sonar.api.rules.Rule;
-import org.sonar.api.rules.RuleFinder;
-import org.sonar.api.rules.RuleQuery;
 import org.sonar.plugins.erlang.utils.RuleUtil;
 import org.sonar.plugins.erlang.utils.StringUtils;
 
 public class ErlangSourceByLineAnalyzerTest {
 
 	private ErlangSourceByLineAnalyzer la;
-	private Rule activeRule;
-	private Rule activeRule2;
-	private Rule activeRule3;
+	private ActiveRule activeRule;
+	private ActiveRule activeRule2;
+	private ActiveRule activeRule3;
 
 	@Before
 	public void setup() throws IOException, URISyntaxException {
 		File fileToAnalyse = new File(getClass().getResource(
 				"/org/sonar/plugins/erlang/erlcount/src/erlcount_sup.erl").toURI());
 		RulesProfile rp = mock(RulesProfile.class);
-		Collection<Rule> rlz = new ArrayList<Rule>();
-		activeRule = RuleUtil.generateRule("regexSingleLine", "B001", "regex", ".*% *TODO.*");
-		activeRule2 = RuleUtil.generateRule("regexSingleLine", "B001_1", "regex", ".*% *todo.*");
-		activeRule2.createParameter("ignoreCase").setDefaultValue("true");
-		activeRule.createParameter("ignoreCase").setDefaultValue("false");
-		activeRule3 = RuleUtil.generateRule("regexSingleLine", "B001_2", "regex", "% *TODO");
-		activeRule3.createParameter("ignoreCase").setDefaultValue("false");
+		Collection<ActiveRule> rlz = new ArrayList<ActiveRule>();
+
+		activeRule = RuleUtil.generateActiveRule("regexSingleLine", "B001",
+				new HashMap<String, String>() {
+					{
+						put("regex", ".*% *TODO.*");
+						put("ignoreCase", "false");
+					}
+				});
+		activeRule2 = RuleUtil.generateActiveRule("regexSingleLine", "B001_1",
+				new HashMap<String, String>() {
+					{
+						put("regex", ".*% *todo.*");
+						put("ignoreCase", "true");
+					}
+				});
+		activeRule3 = RuleUtil.generateActiveRule("regexSingleLine", "B001_2",
+				new HashMap<String, String>() {
+					{
+						put("regex", "% *TODO");
+						put("ignoreCase", "false");
+
+					}
+				});
 		rlz.add(activeRule);
 		rlz.add(activeRule2);
 		rlz.add(activeRule3);
-		RuleFinder rf = mock(RuleFinder.class);
-		when(rf.findAll((RuleQuery) anyObject())).thenReturn(rlz);
 
 		String source = FileUtils.readFileToString(fileToAnalyse, "UTF-8");
 		List<String> lines = StringUtils.convertStringToListOfLines(source);
