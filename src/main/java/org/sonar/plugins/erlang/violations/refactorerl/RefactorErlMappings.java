@@ -24,6 +24,8 @@ import java.util.Map;
 
 public final class RefactorErlMappings {
 	
+	private RefactorErlMappings(){}
+	
 	public final static Map<String,String> map = new HashMap<String, String>();
 	
 	static{

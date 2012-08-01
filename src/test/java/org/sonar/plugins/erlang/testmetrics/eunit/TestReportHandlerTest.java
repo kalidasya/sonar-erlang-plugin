@@ -63,17 +63,17 @@ public class TestReportHandlerTest {
 
 	@Test
 	public void checkRuleHandler() {
-		assertThat(testReportHandler.testSuite.errors, Matchers.equalTo(0));
-		assertThat(testReportHandler.testSuite.failures, Matchers.equalTo(1));
-		assertThat(testReportHandler.testSuite.tests, Matchers.equalTo(7));
-		assertThat(testReportHandler.testSuite.name, Matchers.equalTo("module 'erlcount_eunit'"));
-		assertThat(testReportHandler.testSuite.time, Matchers.equalTo(0.057D));
-		assertThat(testReportHandler.testSuite.testCases.size(), Matchers.equalTo(7));
-		assertThat(testReportHandler.testSuite.testCases.get(0).getName(),
+		assertThat(testReportHandler.getTestSuite().getErrors(), Matchers.equalTo(0));
+		assertThat(testReportHandler.getTestSuite().getFailures(), Matchers.equalTo(1));
+		assertThat(testReportHandler.getTestSuite().getTests(), Matchers.equalTo(7));
+		assertThat(testReportHandler.getTestSuite().getName(), Matchers.equalTo("module 'erlcount_eunit'"));
+		assertThat(testReportHandler.getTestSuite().getTime(), Matchers.equalTo(0.057D));
+		assertThat(testReportHandler.getTestSuite().getTestCases().size(), Matchers.equalTo(7));
+		assertThat(testReportHandler.getTestSuite().getTestCases().get(0).getName(),
 				Matchers.equalTo("erlcount_eunit:find_erl_test_/0_20"));
-		assertThat(testReportHandler.testSuite.testCases.get(0).getFailure().getReason(),
+		assertThat(testReportHandler.getTestSuite().getTestCases().get(0).getFailure().getReason(),
 				Matchers.containsString("-D help|tree|search|stat|rates|opt|exec]"));
-		assertThat(testReportHandler.testSuite.testCases.get(0).getFailure().getType(),
+		assertThat(testReportHandler.getTestSuite().getTestCases().get(0).getFailure().getType(),
 				Matchers.equalTo("assertEqual_failed"));
 	}
 
@@ -100,7 +100,7 @@ public class TestReportHandlerTest {
 		XMLReader reader = parser.getXMLReader();
 		MyDefaultHandler eHandler = new MyDefaultHandler();
 		reader.setErrorHandler(eHandler);
-		reader.parse(new InputSource(new StringReader(testReportHandler.testSuite.toXml())));
+		reader.parse(new InputSource(new StringReader(testReportHandler.getTestSuite().toXml())));
 		assertThat("Invalid Xml "+eHandler.errMessage, eHandler.valid, Matchers.is(true));
 	}
 }

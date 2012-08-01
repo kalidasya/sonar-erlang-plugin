@@ -96,9 +96,7 @@ public class ErlangRefactorErl {
 					}
 				}
 			} catch (FileNotFoundException e) {
-				e.printStackTrace();
 			} catch (IOException e) {
-				e.printStackTrace();
 			}
 		}
 		return report;
@@ -107,24 +105,21 @@ public class ErlangRefactorErl {
 	public static String[] getFileNamesByPattern(File basedir, String refactorErlPattern) {
 		GenericFileNameRegexFilter filter = new GenericFileNameRegexFilter(refactorErlPattern);
 
-		if (basedir.isDirectory() == false) {
+		if (!basedir.isDirectory()) {
 			LOG.warn("Folder does not exist {}", basedir);
 			return new String[0];
 		}
 
-		String[] list = basedir.list(filter);
-		return list;
+		return basedir.list(filter);
 	}
 
-	public static List<ViolationReportUnit> readRefactorErlReportUnits(File basedir, String file) throws FileNotFoundException,
-			IOException {
+	public static List<ViolationReportUnit> readRefactorErlReportUnits(File basedir, String file) throws IOException {
 		File oneReportFile = new File(basedir, file);
 		FileInputStream fstream = new FileInputStream(oneReportFile);
 		DataInputStream in = new DataInputStream(fstream);
-		BufferedReader RefactorErlOutput = new BufferedReader(new InputStreamReader(in));
-		BufferedReader breader = new BufferedReader(RefactorErlOutput);
-		List<ViolationReportUnit> units = RefactorErlReportParser.parse(breader);
-		return units;
+		BufferedReader refactorErlOutput = new BufferedReader(new InputStreamReader(in));
+		BufferedReader breader = new BufferedReader(refactorErlOutput);
+		return RefactorErlReportParser.parse(breader);
 	}
 
 }

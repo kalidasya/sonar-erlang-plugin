@@ -24,7 +24,9 @@ import java.util.List;
 import org.jfree.util.Log;
 import org.sonar.api.resources.InputFile;
 
-public class TestSensorUtils {
+public final class TestSensorUtils {
+	
+	private TestSensorUtils(){}
 
 	public static InputFile findFileForReport(List<InputFile> files, String name) {
 		for (InputFile inputFile : files) {

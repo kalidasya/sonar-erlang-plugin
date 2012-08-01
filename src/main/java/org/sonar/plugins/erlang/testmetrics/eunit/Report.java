@@ -21,11 +21,11 @@ package org.sonar.plugins.erlang.testmetrics.eunit;
 
 public class Report {
 	
-	Double tests;
-	Double skipped;
-	Double errors;
-	Double failures;
-	Double durationMilliseconds;
+	private Double tests;
+	private Double skipped;
+	private Double errors;
+	private Double failures;
+	private Double durationMilliseconds;
 	private TestSuite testSuite;
 	public Report() {
 		super();

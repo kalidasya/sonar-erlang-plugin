@@ -25,8 +25,8 @@ import java.util.List;
 import org.sonar.api.rules.Rule;
 
 public class ErlangRule{
-	List<String> messages = new ArrayList<String>();
-	Rule sonarRule = new Rule();
+	private List<String> messages = new ArrayList<String>();
+	private Rule sonarRule = new Rule();
 
 	public ErlangRule(){
 		super();

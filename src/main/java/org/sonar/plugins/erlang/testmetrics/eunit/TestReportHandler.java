@@ -25,8 +25,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class TestReportHandler extends DefaultHandler {
-	TestSuite testSuite = new TestSuite();
-	String tmpValue = "";
+	private TestSuite testSuite = new TestSuite();
+	private String tmpValue = "";
 	private TestCase tmpTestCase;
 	private TestFailure tmpTestFailure;
 
@@ -73,4 +73,9 @@ public class TestReportHandler extends DefaultHandler {
 	public void characters(char[] ac, int i, int j) throws SAXException {
 		tmpValue = tmpValue + new String(ac, i, j);
 	}
+	
+	public TestSuite getTestSuite() {
+		return testSuite;
+	}
+
 }

@@ -61,7 +61,7 @@ public class ErlangSourceByLineAnalyzer {
 	public static final Pattern isDecoratorPatter = Pattern.compile("%+ *([^A-Za-z])\\1+$");
 	public static final Pattern functionStartsPattern = Pattern.compile(FUNCTION_START_REGEX);
 
-	private static final Logger LOG = LoggerFactory.getLogger(ErlangDialyzer.class);
+	//private static final Logger LOG = LoggerFactory.getLogger(ErlangDialyzer.class);
 
 	private final List<String> lines;
 	private List<ErlangFunction> functions = new ArrayList<ErlangFunction>();

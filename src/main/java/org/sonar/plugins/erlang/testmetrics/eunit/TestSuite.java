@@ -29,14 +29,14 @@ public class TestSuite {
 	public static final String ISO8601_DATETIME_PATTERN
    = "yyyy-MM-dd'T'HH:mm:ss";
 	
-	Integer tests;
-	Integer failures;
-	Integer errors;
-	Integer skipped;
-	Double time;
-	String name;
+	private Integer tests;
+	private Integer failures;
+	private Integer errors;
+	private Integer skipped;
+	private Double time;
+	private String name;
 	
-	List<TestCase> testCases = new ArrayList<TestCase>();
+	private List<TestCase> testCases = new ArrayList<TestCase>();
 
 	public TestSuite() {
 		super();

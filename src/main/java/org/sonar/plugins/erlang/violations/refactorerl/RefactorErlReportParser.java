@@ -28,7 +28,9 @@ import java.util.regex.Pattern;
 import org.sonar.plugins.erlang.violations.ViolationReport;
 import org.sonar.plugins.erlang.violations.ViolationReportUnit;
 
-public class RefactorErlReportParser {
+public final class RefactorErlReportParser {
+	
+	private RefactorErlReportParser(){}
 
 	private static final Pattern REFACTORERL_UNIT_LEVEL_LINE = Pattern
 			.compile("([\'@_a-zA-z0-9]*?:[\'@_a-zA-z0-9]*?/[0-9]+)( *)([^ ]+)(: *)([0-9]+,[0-9]+-[0-9]+,[0-9]+)");

@@ -51,23 +51,19 @@ public class ErlangLibrarySensor extends AbstractErlangSensor {
 	private static final Pattern depsGetDirPattern = Pattern.compile("(\\{deps_dir, ?\\[\\\")(.*?)(\\\"\\]\\}\\.)",
 			Pattern.DOTALL + Pattern.MULTILINE);
 	
-	DatabaseSession session;
-
-	public ErlangLibrarySensor(Erlang erlang, DatabaseSession session) {
+	public ErlangLibrarySensor(Erlang erlang) {
 		super(erlang);
-		this.session = session;
 	}
 
 	private final static Logger LOG = LoggerFactory.getLogger(ErlangLibrarySensor.class);
 
 	@Override
 	public void analyse(Project project, SensorContext context) {
-		analyzeRebarConfigFile(project, context, project.getFileSystem().getBasedir(), null);
+		analyzeRebarConfigFile(project, context, project.getFileSystem().getBasedir());
 	}
 
-	private void analyzeRebarConfigFile(Resource projectResource, SensorContext context, File rebarConfigUrl,
-			Dependency parentDep) {
-		File rebarConfigFile = new File(rebarConfigUrl, erlang.getRebarConfigUrl());
+	private void analyzeRebarConfigFile(Resource projectResource, SensorContext context, File rebarConfigUrl) {
+		File rebarConfigFile = new File(rebarConfigUrl, getErlang().getRebarConfigUrl());
 		try {
 			String rebarConfigContent = FileUtils.readFileToString(rebarConfigFile, "UTF-8");
 
@@ -100,7 +96,7 @@ public class ErlangLibrarySensor extends AbstractErlangSensor {
 					context.saveDependency(dependency);
 					File depRebarConfig = new File(rebarConfigUrl.getPath().concat(File.separator + depsDir)
 							.concat(File.separator + name));
-					analyzeRebarConfigFile(to, context, depRebarConfig, dependency);
+					analyzeRebarConfigFile(to, context, depRebarConfig);
 				}
 			}
 		} catch (FileNotFoundException e) {

@@ -48,7 +48,7 @@ public final class ErlangEunitSensor extends AbstractErlangSensor {
 	private final static Logger LOG = LoggerFactory.getLogger(ErlangEunitSensor.class);
 
 	public void analyse(Project project, SensorContext context) {
-		collect(project, context, new File(project.getFileSystem().getBasedir(), erlang.getEunitFolder()));
+		collect(project, context, new File(project.getFileSystem().getBasedir(), getErlang().getEunitFolder()));
 	}
 
 	protected void collect(final Project project, final SensorContext context, File reportsDir) {
@@ -56,7 +56,7 @@ public final class ErlangEunitSensor extends AbstractErlangSensor {
 
 		GenericExtFilter filter = new GenericExtFilter(".xml");
 
-		if (reportsDir.isDirectory() == false) {
+		if (!reportsDir.isDirectory()) {
 			LOG.warn("Folder does not exist {}", reportsDir);
 			return;
 		}
@@ -80,9 +80,9 @@ public final class ErlangEunitSensor extends AbstractErlangSensor {
 			 */
 			String eunitTestName = file.replaceAll("(TEST-)(.*?)(\\.xml)", "$2").concat(ErlangPlugin.EXTENSION);
 			
-			InputFile eunitFile = TestSensorUtils.findFileForReport(project.getFileSystem().testFiles(erlang.getKey()),eunitTestName);
+			InputFile eunitFile = TestSensorUtils.findFileForReport(project.getFileSystem().testFiles(getErlang().getKey()),eunitTestName);
 			ErlangFile unitTestFileResource = ErlangFile.fromInputFile(eunitFile, true);
-			LOG.debug("Adding unittest resource: {}", eunitTestName.toString());
+			LOG.debug("Adding unittest resource: {}", eunitTestName);
 
 			String source = "";
 			File eunitReport = new File(reportsDir, file);

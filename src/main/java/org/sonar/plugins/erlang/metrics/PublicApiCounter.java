@@ -31,7 +31,10 @@ import org.slf4j.LoggerFactory;
 import org.sonar.plugins.erlang.language.ErlangFunction;
 import org.sonar.plugins.erlang.utils.StringUtils;
 
-public class PublicApiCounter {
+public final class PublicApiCounter {
+	
+	private PublicApiCounter(){}
+	
 	private static final Logger LOG = LoggerFactory.getLogger(PublicApiCounter.class);
 	private static final Pattern exportPattern = Pattern.compile("(-export\\(\\[)(.*?)(\\]\\))\\.", Pattern.DOTALL
 			+ Pattern.MULTILINE);
@@ -72,7 +75,8 @@ public class PublicApiCounter {
 					LOG.debug("Processing: " + method);
 					String methodName = method.split("\\/")[0].trim();
 					Integer numOfVariables = Integer.valueOf(method.split("\\/")[1].trim());
-					StringBuilder regEx = new StringBuilder(methodName + "\\(.*?");
+					StringBuilder regEx = new StringBuilder(methodName);
+					regEx.append("\\(.*?");
 					for (int i = 1; i < numOfVariables; i++) {
 						regEx.append(",.*?");
 					}
@@ -95,15 +99,14 @@ public class PublicApiCounter {
 		List<String> linesBefore = getSourceBefore(source, start);
 		boolean isComment = isDocumented(linesBefore);
 		if (!isComment) {
-			numOfUndocPublicMethods++;
+			return (numOfUndocPublicMethods+1);
 		}
 		return numOfUndocPublicMethods;
 	}
 
 	private static List<String> getSourceBefore(String source, int start) throws IOException {
 		String beforeMethod = source.substring(0, start);
-		List<String> linesBefore = StringUtils.convertStringToListOfLines(beforeMethod);
-		return linesBefore;
+		return StringUtils.convertStringToListOfLines(beforeMethod);
 	}
 
 	private static boolean isDocumented(List<String> linesBefore) {

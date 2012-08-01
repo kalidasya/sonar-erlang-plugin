@@ -82,9 +82,7 @@ public class ErlangDialyzer {
 			}
 			breader.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		return report;
 	}

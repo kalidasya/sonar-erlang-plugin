@@ -52,14 +52,11 @@ public final class ErlangXmlRuleParser implements ServerComponent {
 			saxParser = factory.newSAXParser();
 			saxParser.parse(input, a);
 		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
 		} catch (SAXException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		
-		rules = a.rules;
+		rules = a.getRules();
 		return rules;
 
 	}

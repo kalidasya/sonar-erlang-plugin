@@ -30,7 +30,7 @@ import org.sonar.plugins.erlang.language.Erlang;
  */
 public abstract class AbstractErlangSensor implements Sensor {
 
-  protected final Erlang erlang;
+  private final Erlang erlang;
 
   protected AbstractErlangSensor(Erlang erlang) {
     this.erlang = erlang;

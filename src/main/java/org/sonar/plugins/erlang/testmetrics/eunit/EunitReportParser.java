@@ -28,7 +28,9 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.SAXException;
 
-public class EunitReportParser {
+public final class EunitReportParser {
+	
+	private EunitReportParser(){}
 
 	public static Report parse(File unitTestFile) {
 		SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -38,19 +40,16 @@ public class EunitReportParser {
 			saxParser = factory.newSAXParser();
 			saxParser.parse(unitTestFile, a);
 		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
 		} catch (SAXException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		Report report = new Report();
-		report.setErrors(a.testSuite.getErrors().doubleValue());
-		report.setTests(a.testSuite.getTests().doubleValue());
-		report.setDurationMilliseconds(a.testSuite.getTime().doubleValue());
-		report.setFailures(a.testSuite.getFailures().doubleValue());
-		report.setSkipped(a.testSuite.getSkipped().doubleValue());
-		report.setTestSuite(a.testSuite);
+		report.setErrors(a.getTestSuite().getErrors().doubleValue());
+		report.setTests(a.getTestSuite().getTests().doubleValue());
+		report.setDurationMilliseconds(a.getTestSuite().getTime().doubleValue());
+		report.setFailures(a.getTestSuite().getFailures().doubleValue());
+		report.setSkipped(a.getTestSuite().getSkipped().doubleValue());
+		report.setTestSuite(a.getTestSuite());
 		return report;
 	}
 

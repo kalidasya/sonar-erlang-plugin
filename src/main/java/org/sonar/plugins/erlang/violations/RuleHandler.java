@@ -30,7 +30,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class RuleHandler extends DefaultHandler {
-	List<ErlangRule> rules = new ArrayList<ErlangRule>();
+	private List<ErlangRule> rules = new ArrayList<ErlangRule>();
 	private String tmpValue = "";
 	private Object tmpRule;
 	private RuleParam param;

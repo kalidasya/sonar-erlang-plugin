@@ -41,7 +41,7 @@ public class ErlangFile extends Resource<ErlangPackage> {
   private final String filename;
   private final String longName;
   private final ErlangPackage parent;
-  List<ErlangFunction> functions = new ArrayList<ErlangFunction>(); 
+  //private List<ErlangFunction> functions = new ArrayList<ErlangFunction>(); 
 
   public ErlangFile(String packageKey, String className, boolean isUnitTest) {
     super();
@@ -49,16 +49,17 @@ public class ErlangFile extends Resource<ErlangPackage> {
     filename = className.trim();
 
     String key;
+    String pKey;
     if (StringUtils.isBlank(packageKey)) {
-      packageKey = ErlangPackage.DEFAULT_PACKAGE_NAME;
-      key = new StringBuilder().append(packageKey).append(".").append(this.filename).toString();
+      pKey = ErlangPackage.DEFAULT_PACKAGE_NAME;
+      key = new StringBuilder().append(pKey).append(".").append(this.filename).toString();
       longName = filename;
     } else {
-      packageKey = packageKey.trim();
-      key = new StringBuilder().append(packageKey).append(".").append(this.filename).toString();
+      pKey = packageKey.trim();
+      key = new StringBuilder().append(pKey).append(".").append(this.filename).toString();
       longName = key;
     }
-    parent = new ErlangPackage(packageKey);
+    parent = new ErlangPackage(pKey);
     setKey(key);
   }
 

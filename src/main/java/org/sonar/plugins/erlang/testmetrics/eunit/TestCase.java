@@ -23,9 +23,9 @@ import org.apache.commons.lang.StringEscapeUtils;
 
 public class TestCase {
 
-	Double time;
-	String name;
-	TestFailure failure;
+	private Double time;
+	private String name;
+	private TestFailure failure;
 
 	public TestCase(Double time, String name, TestFailure failure) {
 		super();
@@ -80,9 +80,9 @@ public class TestCase {
 	          .append(isError() ? "<error type=\"" : "<failure type=\"")
 	          .append(failure.getType())
 	          .append("\" message=\"")
-	          .append(StringEscapeUtils.escapeXml(failure.reason))
+	          .append(StringEscapeUtils.escapeXml(failure.getReason()))
 	          .append("\">")
-	          .append(StringEscapeUtils.escapeXml(failure.reason))
+	          .append(StringEscapeUtils.escapeXml(failure.getReason()))
 	          .append(isError() ? "</error>" : "</failure>")
 	          .append("</testcase>");
 	    } else {
@@ -103,7 +103,7 @@ public class TestCase {
 	}
 
 	private boolean isError() {
-		return !failure.type.contains("failed");
+		return !failure.getType().contains("failed");
 	}
 
 	private boolean isErrorOrFailure() {

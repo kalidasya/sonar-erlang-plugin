@@ -23,8 +23,10 @@ import java.util.List;
 
 import org.sonar.api.rules.ActiveRule;
 
-public class ActiveRuleFilter {
+public final class ActiveRuleFilter {
 
+	private ActiveRuleFilter(){}
+	
 	public static ActiveRule getActiveRuleByRuleName(List<ActiveRule> activeRules, String name){
 		for (ActiveRule activeRule : activeRules) {
 			if(activeRule.getRule().getName().equals(name)){

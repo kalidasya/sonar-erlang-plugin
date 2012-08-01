@@ -65,14 +65,14 @@ public class ViolationSensor extends AbstractErlangSensor {
 		for (InputFile inputFile : project.getFileSystem().mainFiles(getErlang().getKey())) {
 			ErlangFile erlangFile = ErlangFile.fromInputFile(inputFile);
 			try {
-				analyzeFile(erlangFile, project, context, report);
+				analyzeFile(erlangFile, context, report);
 			} catch (Exception e) {
 				LOG.error("Can not analyze the file " + inputFile.getFileBaseDir() + "\\" + inputFile.getRelativePath(), e);
 			}
 		}
 	}
 
-	private void analyzeFile(ErlangFile erlangFile, Project project, SensorContext context, ViolationReport report)
+	private void analyzeFile(ErlangFile erlangFile, SensorContext context, ViolationReport report)
 			throws IOException {
 		String actModuleName = erlangFile.getName();
 		for (ViolationReportUnit reportUnit : report.getUnitsByModuleName(actModuleName)) {

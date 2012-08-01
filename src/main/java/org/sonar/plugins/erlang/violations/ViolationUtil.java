@@ -29,6 +29,8 @@ import org.sonar.api.rules.Rule;
 
 public class ViolationUtil {
 
+	protected ViolationUtil(){}
+	
 	public static String getMessageForMetric(ActiveRule rule, Object value) {
 		String param = (rule.getParameter("maximum") != null) ? rule.getParameter("maximum") : null;
 		if (param != null) {

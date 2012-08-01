@@ -62,8 +62,8 @@ import org.sonar.plugins.erlang.violations.refactorerl.ErlangRefactorErl;
  * @since 0.1
  */
 public class BaseMetricsSensor extends AbstractErlangSensor {
-	private final Number[] FUNCTIONS_DISTRIB_BOTTOM_LIMITS = { 1, 2, 4, 6, 8, 10, 12, 20, 30 };
-	private final Number[] FILES_DISTRIB_BOTTOM_LIMITS = { 0, 5, 10, 20, 30, 60, 90 };
+	private static final Number[] FUNCTIONS_DISTRIB_BOTTOM_LIMITS = { 1, 2, 4, 6, 8, 10, 12, 20, 30 };
+	private static final Number[] FILES_DISTRIB_BOTTOM_LIMITS = { 0, 5, 10, 20, 30, 60, 90 };
 	private RulesProfile rulesProfile;
 	private RuleFinder ruleFinder;
 	private static final String MC_CABE_KEY = "mcCabe";
@@ -132,7 +132,7 @@ public class BaseMetricsSensor extends AbstractErlangSensor {
 		computePackagesMetric(sensorContext, packages);
 	}
 	
-	private void complexityMeasures(Project project, SensorContext sensorContext, ErlangFile erlangFile) throws FileNotFoundException, IOException{
+	private void complexityMeasures(Project project, SensorContext sensorContext, ErlangFile erlangFile) throws IOException{
 		File basedir = new File(project.getFileSystem().getBasedir() + File.separator
 				+ ((Erlang) project.getLanguage()).getEunitFolder());
 		String[] mcCabeFileName = ErlangRefactorErl.getFileNamesByPattern(basedir,
@@ -151,7 +151,7 @@ public class BaseMetricsSensor extends AbstractErlangSensor {
 			List<ViolationReportUnit> mcCabeResults = ViolationReport.filterUnitsByModuleName(mcCabeMetrics,
 					erlangFile.getName());
 			
-			analyseClasses(erlangFile, mcCabeResults, fileComplexityDistribution, methodComplexityDistribution);
+			analyseClasses(mcCabeResults, fileComplexityDistribution, methodComplexityDistribution);
 			double fileComplexity = calculteFileComplexity(mcCabeResults, methodComplexityDistribution);
 			
 			sensorContext.saveMeasure(erlangFile, CoreMetrics.COMPLEXITY, fileComplexity);
@@ -173,7 +173,7 @@ public class BaseMetricsSensor extends AbstractErlangSensor {
 		return i;
 	}
 
-	private void analyseClasses(ErlangFile erlangFile, List<ViolationReportUnit> mcCabeResults,
+	private void analyseClasses(List<ViolationReportUnit> mcCabeResults,
 			RangeDistributionBuilder fileComplexityDistribution, RangeDistributionBuilder methodComplexityDistribution) {
 		double classResult = calculteFileComplexity(mcCabeResults, methodComplexityDistribution);
 		fileComplexityDistribution.add(classResult);

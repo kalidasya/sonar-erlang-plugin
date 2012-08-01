@@ -21,8 +21,8 @@ package org.sonar.plugins.erlang.testmetrics.eunit;
 
 public class TestFailure {
 
-	String reason;
-	String type;
+	private String reason;
+	private String type;
 	public TestFailure(String reason, String type) {
 		super();
 		this.reason = reason;

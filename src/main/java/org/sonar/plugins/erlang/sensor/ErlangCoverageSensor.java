@@ -50,10 +50,10 @@ public final class ErlangCoverageSensor extends AbstractErlangSensor {
 
 	public void analyse(Project project, SensorContext sensorContext) {
 
-		File reportsDir = new File(project.getFileSystem().getBasedir(), erlang.getEunitFolder());
+		File reportsDir = new File(project.getFileSystem().getBasedir(), getErlang().getEunitFolder());
 		GenericExtFilter filter = new GenericExtFilter(".html");
 
-		if (reportsDir.isDirectory() == false) {
+		if (!reportsDir.isDirectory()) {
 			LOG.warn("Folder does not exist {}", reportsDir);
 			/**
 			 * Make 0 coverage to those source files what are missing from the list
@@ -81,7 +81,7 @@ public final class ErlangCoverageSensor extends AbstractErlangSensor {
 			 * The Path could contain other source files (the sources of the dependencies) what will have 
 			 * code coverage so we have to exclude everything which is not in the source folder of the project
 			 */
-			if (TestSensorUtils.findFileForReport(project.getFileSystem().mainFiles(erlang.getKey()),
+			if (TestSensorUtils.findFileForReport(project.getFileSystem().mainFiles(getErlang().getKey()),
 					sourceName.concat(ErlangPlugin.EXTENSION)) != null) {
 				coveredFiles.add(sourceName.concat(ErlangPlugin.EXTENSION));
 				CoverCoverageParser parser = new CoverCoverageParser();
@@ -100,7 +100,7 @@ public final class ErlangCoverageSensor extends AbstractErlangSensor {
 
 	private void setZeroCoverageIfNoFilesArePresented(Project project, SensorContext sensorContext,
 			List<String> coveredFiles) {
-		for (InputFile source : project.getFileSystem().mainFiles(erlang.getKey())) {
+		for (InputFile source : project.getFileSystem().mainFiles(getErlang().getKey())) {
 			if (!coveredFiles.contains(source.getFile().getName())) {
 				ErlangFile sourceResource = ErlangFile.fromInputFile(source, true);
 				PropertiesBuilder<Integer, Integer> lineHitsData = new PropertiesBuilder<Integer, Integer>(
@@ -119,7 +119,7 @@ public final class ErlangCoverageSensor extends AbstractErlangSensor {
 
 	protected void analyseCoveredFile(Project project, SensorContext sensorContext, CoverFileCoverage coveredFile,
 			String sourceName) {
-		InputFile sourceFile = TestSensorUtils.findFileForReport(project.getFileSystem().mainFiles(erlang.getKey()),
+		InputFile sourceFile = TestSensorUtils.findFileForReport(project.getFileSystem().mainFiles(getErlang().getKey()),
 				sourceName.concat(ErlangPlugin.EXTENSION));
 		ErlangFile sourceResource = ErlangFile.fromInputFile(sourceFile, true);
 
@@ -134,7 +134,6 @@ public final class ErlangCoverageSensor extends AbstractErlangSensor {
 			try {
 				sensorContext.saveMeasure(sourceResource, lineHitsData.build());
 			} catch (Exception e) {
-				e.printStackTrace();
 			}
 			sensorContext.saveMeasure(sourceResource, CoreMetrics.LINES_TO_COVER, (double) coveredFile.getLinesToCover());
 			sensorContext.saveMeasure(sourceResource, CoreMetrics.UNCOVERED_LINES,
