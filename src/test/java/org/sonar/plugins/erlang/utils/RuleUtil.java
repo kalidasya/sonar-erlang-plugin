@@ -24,10 +24,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import junit.framework.AssertionFailedError;
+
 import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RuleParam;
 import org.sonar.api.rules.RulePriority;
+import org.sonar.api.rules.Violation;
 import org.sonar.check.Cardinality;
 import org.sonar.plugins.erlang.violations.ErlangRule;
 import org.sonar.plugins.erlang.violations.ErlangRuleManager;
@@ -83,6 +86,15 @@ public class RuleUtil {
 	
 	public static Rule generateRule(String ruleName, String ruleKey,  Map<String, String> parameters){
 		return generateActiveRule(ruleName, ruleKey, parameters).getRule();
+	}
+	
+	public static Violation getViolationByKey(List<Violation> capturedViolations, String key) {
+		for (Violation violation : capturedViolations) {
+			if(violation.getRule().getKey().equals(key)){
+				return violation; 
+			}
+		}
+		throw new AssertionFailedError("Violation with key "+key+" was not in the list");
 	}
 
 }

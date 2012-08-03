@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copied from dialyzer.erl -->
 <rules>
    <rule>
       <key>B001</key>
@@ -9,10 +8,10 @@
       <description>
       <![CDATA[ Custom regex which match to a single line of the code. If a match happens, violation will be raised.]]>
       </description>
-      <param key="regex" type="TEXT" default="^$">
+      <param key="regex" type="r" default="^$">
 			<description><![CDATA[Regex pattern of the rule.]]></description>
 	  </param>
-	  <param key="ignoreCase" type="BOOLEAN" default="false">
+	  <param key="ignoreCase" type="b" default="false">
 	  		<description><![CDATA[Controls whether to ignore case when searching. Default value is false.]]></description>
 	  </param>
    </rule>

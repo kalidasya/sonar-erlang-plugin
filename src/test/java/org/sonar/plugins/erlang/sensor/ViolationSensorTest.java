@@ -114,11 +114,12 @@ public class ViolationSensorTest {
 		ArgumentCaptor<Violation> argument = ArgumentCaptor.forClass(Violation.class);
 		verify(context, times(7)).saveViolation(argument.capture());
 		List<Violation> capturedViolations = argument.getAllValues();
-		assertThat("violation is not R002", capturedViolations.get(1).getRule().getKey(),
+		Violation v = RuleUtil.getViolationByKey(capturedViolations, "R002");
+		assertThat("violation is not R002", v.getRule().getKey(),
 				Matchers.equalTo("R002"));
-		assertThat("violation is not R002", capturedViolations.get(1).getMessage(),
+		assertThat("violation is not R002", v.getMessage(),
 				Matchers.equalTo("max_depth_of_calling is 11 (max allowed is 10)"));
-		assertThat("violation is not R002", capturedViolations.get(1).getLineId(),
+		assertThat("violation is not R002", v.getLineId(),
 				Matchers.equalTo(22));
 	}
 
