@@ -79,6 +79,13 @@ public class ErlangLibrarySensor extends AbstractErlangSensor {
 					String version = depVersionInTagPattern.matcher(dep).replaceFirst("$2");
 					if (version.length() == dep.length()) {
 						version = depVersionInBranchPattern.matcher(dep).replaceFirst("$2");
+						if (version.length() == dep.length()) {
+							if(dep.contains("HEAD")){
+								version = "HEAD";
+							} else {
+								version = "UNKOWN";	
+							}
+						}
 					}
 					String[] parts = dep.split(",");
 					String key = parts[3].replaceFirst("(.*:)(.*?)(\\\")", "$2").replaceAll("[\\\\/]", ":")
