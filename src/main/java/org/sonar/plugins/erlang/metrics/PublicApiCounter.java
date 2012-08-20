@@ -55,10 +55,7 @@ public final class PublicApiCounter {
 		int numOfPublicMethods = 0;
 		int numOfUndocPublicMethods = 0;
 		List<Double> ret = new ArrayList<Double>();
-		/**
-		 * TODO handle the export_all function
-		 */
-
+		String sourceWithoutComment = source.replaceAll("%[^\n]*", "");
 		if (exportAllPattern.matcher(source).find()) {
 			for (ErlangFunction function : linesnAlyzer.getFunctions()) {
 				int start = source.indexOf(function.getFirstLine());
@@ -66,13 +63,14 @@ public final class PublicApiCounter {
 				numOfPublicMethods++;
 			}
 		} else {
-			Matcher m = exportPattern.matcher(source);
+			Matcher m = exportPattern.matcher(sourceWithoutComment);
 			while (m.find()) {
 				String exportedMethods = m.group(2);
-				String[] publicMethods = exportedMethods.split(",");
+				String[] publicMethods = exportedMethods.replaceAll("[\n\r\t]", "").split(",");
 				numOfPublicMethods += publicMethods.length;
 				for (String method : publicMethods) {
 					LOG.debug("Processing: " + method);
+					method = method.trim();
 					String methodName = method.split("\\/")[0].trim();
 					Integer numOfVariables = Integer.valueOf(method.split("\\/")[1].trim());
 					StringBuilder regEx = new StringBuilder(methodName);

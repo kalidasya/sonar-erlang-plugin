@@ -6,8 +6,7 @@
    <parent>
       <groupId>org.codehaus.sonar-plugins</groupId>
       <artifactId>parent</artifactId>
-      <version>12</version>
-      <relativePath>../parent-12</relativePath>
+      <version>14</version>
    </parent>
    <licenses>
       <license>
@@ -29,8 +28,8 @@
       <name>Tamás Kende</name>
    </organization>
    <properties>
-      <sonar.version>3.0</sonar.version>
-      <sonar.runtimeVersion>3.0</sonar.runtimeVersion>
+      <sonar.version>3.2</sonar.version>
+      <sonar.runtimeVersion>3.2</sonar.runtimeVersion>
       <sonar.pluginKey>erl</sonar.pluginKey>
       <sonar.pluginName>Erlang</sonar.pluginName>
       <sonar.pluginClass>org.sonar.plugins.erlang.ErlangPlugin</sonar.pluginClass>
