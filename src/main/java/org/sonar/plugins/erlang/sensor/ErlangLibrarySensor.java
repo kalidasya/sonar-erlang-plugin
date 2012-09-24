@@ -109,9 +109,9 @@ public class ErlangLibrarySensor extends AbstractErlangSensor {
 				}
 			}
 		} catch (FileNotFoundException e) {
-			LOG.error("Cannot open file: " + rebarConfigUrl + e);
+			LOG.warn("Cannot open file: " + rebarConfigUrl + e);
 		} catch (IOException e) {
-			LOG.error("Cannot open file: " + rebarConfigUrl + e);
+			LOG.warn("Cannot open file: " + rebarConfigUrl + e);
 		}
 		LOG.debug("Libraries added: " + context);
 	}
