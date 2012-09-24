@@ -55,7 +55,7 @@ public class ErlangLibrarySensor extends AbstractErlangSensor {
 		super(erlang);
 	}
 
-	private final static Logger LOG = LoggerFactory.getLogger(ErlangLibrarySensor.class);
+	private final static Logger LOG = LoggerFactory.getLogger(ErlangLibrarySensorTest.class);
 
 	@Override
 	public void analyse(Project project, SensorContext context) {
@@ -71,7 +71,7 @@ public class ErlangLibrarySensor extends AbstractErlangSensor {
 			Matcher allDepMatcher = allDepPattern.matcher(rebarConfigContent);
 
 			while (allDepMatcher.find()) {
-				String dependencies = rebarConfigContent.substring(allDepMatcher.start(), allDepMatcher.end() - 1).replaceAll("[\\n\\r\\t ]","");
+				String dependencies = rebarConfigContent.substring(allDepMatcher.start(), allDepMatcher.end() - 1).replaceAll("[\\n\\r\\t ]","").replaceAll("\\[\\]", "");
 				Matcher deps = oneDepPattern.matcher(dependencies.trim());
 				while (deps.find()) {
 					String dep = dependencies.substring(deps.start(), deps.end());
@@ -91,9 +91,11 @@ public class ErlangLibrarySensor extends AbstractErlangSensor {
 					String key = parts[3].replaceFirst("(.*:)(.*?)(\\\")", "$2").replaceAll("[\\\\/]", ":")
 							.replaceAll("\\.git", "");
 					Library dependencyProject = new Library(key, version);
+					dependencyProject.setName(name);
 					Resource to = context.getResource(dependencyProject);
 					if (to == null) {
 						Library lib = new Library(dependencyProject.getKey(), version);
+						lib.setName(name);
 						context.index(lib);
 						to = context.getResource(lib);
 					}
