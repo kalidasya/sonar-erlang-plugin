@@ -29,7 +29,6 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.SensorContext;
-import org.sonar.api.database.DatabaseSession;
 import org.sonar.api.design.Dependency;
 import org.sonar.api.resources.Library;
 import org.sonar.api.resources.Project;
@@ -55,7 +54,7 @@ public class ErlangLibrarySensor extends AbstractErlangSensor {
 		super(erlang);
 	}
 
-	private final static Logger LOG = LoggerFactory.getLogger(ErlangLibrarySensorTest.class);
+	private final static Logger LOG = LoggerFactory.getLogger(ErlangLibrarySensor.class);
 
 	@Override
 	public void analyse(Project project, SensorContext context) {
