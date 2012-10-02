@@ -20,18 +20,15 @@
 package org.sonar.plugins.erlang.sensor;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.meta.When;
 
 import org.apache.commons.configuration.Configuration;
 import org.hamcrest.Matchers;
@@ -44,7 +41,6 @@ import org.sonar.api.batch.SensorContext;
 import org.sonar.api.design.Dependency;
 import org.sonar.api.resources.InputFile;
 import org.sonar.api.resources.Library;
-import org.sonar.api.rules.Violation;
 import org.sonar.plugins.erlang.language.Erlang;
 import org.sonar.plugins.erlang.utils.ProjectUtil;
 
@@ -71,7 +67,7 @@ public class ErlangLibrarySensorTest {
 	@Test
 	public void erlangLibrariesTest() throws URISyntaxException {
 		ArgumentCaptor<Dependency> argument = ArgumentCaptor.forClass(Dependency.class);
-		verify(context, times(5)).saveDependency(argument.capture());
+		verify(context, times(7)).saveDependency(argument.capture());
 		List<Dependency> capturedDependencies = argument.getAllValues();
 		assertThat(((Library)capturedDependencies.get(0).getTo()).getKey(),
 				Matchers.equalTo("fake:elibs"));
@@ -83,6 +79,10 @@ public class ErlangLibrarySensorTest {
 				Matchers.equalTo("hola:moke_ads"));
 		assertThat(((Library)capturedDependencies.get(4).getTo()).getKey(),
 				Matchers.equalTo("malna:eper"));
+		assertThat(((Library)capturedDependencies.get(5).getTo()).getKey(),
+				Matchers.equalTo("should:meck"));
+		assertThat(((Library)capturedDependencies.get(6).getTo()).getKey(),
+				Matchers.equalTo("should:meck"));
 		
 		assertThat(((Library)capturedDependencies.get(0).getTo()).getName(),
 				Matchers.equalTo("elibs"));
@@ -94,6 +94,10 @@ public class ErlangLibrarySensorTest {
 				Matchers.equalTo("moke_ads"));
 		assertThat(((Library)capturedDependencies.get(4).getTo()).getName(),
 				Matchers.equalTo("eper"));
+		assertThat(((Library)capturedDependencies.get(5).getTo()).getName(),
+				Matchers.equalTo("meck"));
+		assertThat(((Library)capturedDependencies.get(6).getTo()).getName(),
+				Matchers.equalTo("meck"));
 		
 		assertThat(((Library)capturedDependencies.get(0).getTo()).getVersion(),
 				Matchers.equalTo("1.1.0"));
@@ -105,6 +109,10 @@ public class ErlangLibrarySensorTest {
 				Matchers.equalTo("19840221-3"));
 		assertThat(((Library)capturedDependencies.get(4).getTo()).getVersion(),
 				Matchers.equalTo("HEAD"));
+		assertThat(((Library)capturedDependencies.get(5).getTo()).getVersion(),
+				Matchers.equalTo("0.7.2-0"));
+		assertThat(((Library)capturedDependencies.get(6).getTo()).getVersion(),
+				Matchers.equalTo("0.7.2-0"));
 	}
 
 }

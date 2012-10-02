@@ -63,6 +63,7 @@ public class ErlangLibrarySensor extends AbstractErlangSensor {
 
 	private void analyzeRebarConfigFile(Resource projectResource, SensorContext context, File rebarConfigUrl) {
 		File rebarConfigFile = new File(rebarConfigUrl, getErlang().getRebarConfigUrl());
+		LOG.warn("Try get libraries from: " + rebarConfigFile.getAbsolutePath());
 		try {
 			String rebarConfigContent = FileUtils.readFileToString(rebarConfigFile, "UTF-8");
 
