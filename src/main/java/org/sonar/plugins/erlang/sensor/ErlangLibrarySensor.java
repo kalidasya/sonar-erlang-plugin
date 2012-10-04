@@ -40,6 +40,8 @@ public class ErlangLibrarySensor extends AbstractErlangSensor {
 			+ Pattern.MULTILINE);
 	private static final Pattern allDepPattern = Pattern.compile("\\{deps, ?\\[.*?\\]\\}\\.", Pattern.DOTALL
 			+ Pattern.MULTILINE);
+	private static final Pattern emptyDepPattern = Pattern.compile("\\{deps, *\\[ *?\\]\\}\\.", Pattern.DOTALL
+			+ Pattern.MULTILINE);
 	private static final Pattern oneDepPattern = Pattern.compile("\\{[^\\[]+?\\}", Pattern.DOTALL + Pattern.MULTILINE);
 	private static final Pattern depNamePattern = Pattern.compile("(^\\{)([A-Za-z_0-9]*?)(\\,.*)", Pattern.DOTALL
 			+ Pattern.MULTILINE);
@@ -69,7 +71,9 @@ public class ErlangLibrarySensor extends AbstractErlangSensor {
 
 			String depsDir = getDepsDir(rebarConfigContent);
 			Matcher allDepMatcher = allDepPattern.matcher(rebarConfigContent);
-
+			if(emptyDepPattern.matcher(rebarConfigContent).find()){
+				return;
+			}
 			while (allDepMatcher.find()) {
 				String dependencies = rebarConfigContent.substring(allDepMatcher.start(), allDepMatcher.end() - 1).replaceAll("[\\n\\r\\t ]","").replaceAll("\\[\\]", "");
 				Matcher deps = oneDepPattern.matcher(dependencies.trim());
