@@ -1,7 +1,7 @@
 -module(erlcount_counter).
 -behaviour(gen_server).
 -export([start_link/4]).
--export([init/1, handle_call/3, handle_cast/2, handle_info/2,
+-export([init/1, handle_call/3, 'handle/cast'/2, handle_info/2,
         terminate/2, code_change/3]).
 
 -record(state, {dispatcher, ref, file, re}).
@@ -23,7 +23,7 @@ init([DispatcherPid, Ref, FileName, Regex]) ->
 handle_call(_Msg, _From, State) ->
     {noreply, State}.
 %%======================================
-handle_cast(_Msg, State) ->
+'handle/cast'(_Msg, State) ->
     {noreply, State}.
 
 %%======================================

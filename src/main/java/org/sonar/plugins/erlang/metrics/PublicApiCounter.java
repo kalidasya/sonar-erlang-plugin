@@ -71,8 +71,9 @@ public final class PublicApiCounter {
 				for (String method : publicMethods) {
 					LOG.debug("Processing: " + method);
 					method = method.trim();
-					String methodName = method.split("\\/")[0].trim();
-					Integer numOfVariables = Integer.valueOf(method.split("\\/")[1].trim());
+					int separator = org.apache.commons.lang.StringUtils.lastIndexOf(method, "/");
+					String methodName = method.substring(0, separator).trim();
+					Integer numOfVariables = Integer.valueOf(method.substring(separator+1));
 					StringBuilder regEx = new StringBuilder(methodName);
 					regEx.append("\\(.*?");
 					for (int i = 1; i < numOfVariables; i++) {
