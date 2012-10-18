@@ -32,34 +32,45 @@ import org.sonar.plugins.erlang.language.ErlangFunction;
 import org.sonar.plugins.erlang.utils.StringUtils;
 
 public final class PublicApiCounter {
-	
-	private PublicApiCounter(){}
-	
+
+	private PublicApiCounter() {
+	}
+
 	private static final Logger LOG = LoggerFactory.getLogger(PublicApiCounter.class);
-	private static final Pattern exportPattern = Pattern.compile("(-export\\(\\[)(.*?)(\\]\\))\\.", Pattern.DOTALL
-			+ Pattern.MULTILINE);
-	private static final Pattern exportAllPattern = Pattern.compile("-compile\\(.*?export_all.*?\\)\\.", Pattern.DOTALL
-			+ Pattern.MULTILINE);
+	private static final Pattern exportPattern = Pattern.compile("(-export\\(\\[)(.*?)(\\]\\))\\.",
+			Pattern.DOTALL + Pattern.MULTILINE);
+	private static final Pattern ifdefPattern = Pattern.compile(
+			"(-ifn?def\\(.*?\\)\\.)(.*?)(-endif\\.)", Pattern.DOTALL + Pattern.MULTILINE);
+
+	private static final Pattern exportAllPattern = Pattern.compile(
+			"-compile\\(.*?export_all.*?\\)\\.", Pattern.DOTALL + Pattern.MULTILINE);
 	private static final Pattern specPattern = Pattern.compile("^-spec.*");
-	
+
 	/**
-	 * Return with a list of doubles first value is the number of public APIs the
-	 * second is the number of undocumented APIs
+	 * Return with a list of doubles first value is the number of public APIs
+	 * the second is the number of undocumented APIs
 	 * 
 	 * @param source
 	 * @param linesnAlyzer
 	 * @return
 	 * @throws IOException
 	 */
-	public static List<Double> countPublicApi(String source, ErlangSourceByLineAnalyzer linesnAlyzer) throws IOException {
+	public static List<Double> countPublicApi(String source, ErlangSourceByLineAnalyzer linesnAlyzer)
+			throws IOException {
 		int numOfPublicMethods = 0;
 		int numOfUndocPublicMethods = 0;
 		List<Double> ret = new ArrayList<Double>();
+		List<String> ifdefContents = new ArrayList<String>();
 		String sourceWithoutComment = source.replaceAll("%[^\n]*", "");
+		Matcher ifdef = ifdefPattern.matcher(sourceWithoutComment);
+		while (ifdef.find()) {
+			ifdefContents.add(ifdef.group(2));
+		}
 		if (exportAllPattern.matcher(source).find()) {
 			for (ErlangFunction function : linesnAlyzer.getFunctions()) {
 				int start = source.indexOf(function.getFirstLine());
-				numOfUndocPublicMethods = increaseIfNecessary(source, numOfUndocPublicMethods, start);
+				numOfUndocPublicMethods = increaseIfNecessary(source, numOfUndocPublicMethods,
+						start);
 				numOfPublicMethods++;
 			}
 		} else {
@@ -67,24 +78,33 @@ public final class PublicApiCounter {
 			while (m.find()) {
 				String exportedMethods = m.group(2);
 				String[] publicMethods = exportedMethods.replaceAll("[\n\r\t]", "").split(",");
-				numOfPublicMethods += publicMethods.length;
 				for (String method : publicMethods) {
-					LOG.debug("Processing: " + method);
 					method = method.trim();
-					int separator = org.apache.commons.lang.StringUtils.lastIndexOf(method, "/");
-					String methodName = method.substring(0, separator).trim();
-					Integer numOfVariables = Integer.valueOf(method.substring(separator+1));
-					StringBuilder regEx = new StringBuilder(methodName);
-					regEx.append("\\(.*?");
-					for (int i = 1; i < numOfVariables; i++) {
-						regEx.append(",.*?");
+					LOG.debug("Processing: " + method);
+					if (existsInIfdef(ifdefContents, method)) {
+						LOG.debug("method defined in if");
+					} else {
+						if (method.length() >= 3) {
+							numOfPublicMethods++;
+							int separator = org.apache.commons.lang.StringUtils.lastIndexOf(method,
+									"/");
+							String methodName = method.substring(0, separator).trim();
+							Integer numOfVariables = Integer.valueOf(method
+									.substring(separator + 1));
+							StringBuilder regEx = new StringBuilder(methodName);
+							regEx.append("\\(.*?");
+							for (int i = 1; i < numOfVariables; i++) {
+								regEx.append(",.*?");
+							}
+							regEx.append("\\).*");
+							Matcher findMethodMatcher = Pattern.compile(regEx.toString(),
+									Pattern.DOTALL + Pattern.MULTILINE).matcher(source);
+							findMethodMatcher.find();
+							int start = findMethodMatcher.start();
+							numOfUndocPublicMethods = increaseIfNecessary(source,
+									numOfUndocPublicMethods, start);
+						}
 					}
-					regEx.append("\\).*");
-					Matcher findMethodMatcher = Pattern.compile(regEx.toString(), Pattern.DOTALL + Pattern.MULTILINE)
-							.matcher(source);
-					findMethodMatcher.find();
-					int start = findMethodMatcher.start();
-					numOfUndocPublicMethods = increaseIfNecessary(source, numOfUndocPublicMethods, start);
 				}
 
 			}
@@ -94,11 +114,21 @@ public final class PublicApiCounter {
 		return ret;
 	}
 
-	private static int increaseIfNecessary(String source, int numOfUndocPublicMethods, int start) throws IOException {
+	private static boolean existsInIfdef(List<String> ifdefContents, String method) {
+		for (String string : ifdefContents) {
+			if(string.contains(method)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static int increaseIfNecessary(String source, int numOfUndocPublicMethods, int start)
+			throws IOException {
 		List<String> linesBefore = getSourceBefore(source, start);
 		boolean isComment = isDocumented(linesBefore);
 		if (!isComment) {
-			return (numOfUndocPublicMethods+1);
+			return (numOfUndocPublicMethods + 1);
 		}
 		return numOfUndocPublicMethods;
 	}
@@ -109,9 +139,12 @@ public final class PublicApiCounter {
 	}
 
 	private static boolean isDocumented(List<String> linesBefore) {
-		for (ListIterator<String> iterator = linesBefore.listIterator(linesBefore.size()); iterator.hasPrevious();) {
+		for (ListIterator<String> iterator = linesBefore.listIterator(linesBefore.size()); iterator
+				.hasPrevious();) {
 			String line = iterator.previous();
-			if (StringUtils.isBlank(line) || ErlangSourceByLineAnalyzer.isDecoratorPatter.matcher(line).matches() || specPattern.matcher(line).matches()) {
+			if (StringUtils.isBlank(line)
+					|| ErlangSourceByLineAnalyzer.isDecoratorPatter.matcher(line).matches()
+					|| specPattern.matcher(line).matches()) {
 				continue;
 			}
 			if (ErlangSourceByLineAnalyzer.isCommentPatter.matcher(line).matches()) {

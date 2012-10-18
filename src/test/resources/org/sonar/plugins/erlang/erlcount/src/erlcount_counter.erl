@@ -1,8 +1,18 @@
 -module(erlcount_counter).
 -behaviour(gen_server).
 -export([start_link/4]).
--export([init/1, handle_call/3, 'handle/cast'/2, handle_info/2,
-        terminate/2, code_change/3]).
+-export([init/1, handle_call/3, 'handle/cast'/2, handle_info/2]).
+-export([terminate/2, 
+	code_change/3]).
+-ifdef('TEST').
+-export([
+	test_1/2,
+	test_2/0
+	]).
+-endif.
+
+-ifndef('WER'). -export([test_3/0]). -endif.
+-export([]).
 
 -record(state, {dispatcher, ref, file, re}).
 
@@ -42,3 +52,12 @@ terminate(_Reason, _State) ->
 %%Comment3
 code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
+
+test_1(_A, _B) ->
+    {test, 1}.
+
+test_2() ->
+    {test, 1}.
+
+test_3() ->
+    {test, 1}.

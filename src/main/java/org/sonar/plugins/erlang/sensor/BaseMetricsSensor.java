@@ -88,7 +88,7 @@ public class BaseMetricsSensor extends AbstractErlangSensor {
 			final ErlangFile erlangFile = ErlangFile.fromInputFile(inputFile);
 			packages.add(erlangFile.getParent());
 			sensorContext.saveMeasure(erlangFile, CoreMetrics.FILES, 1.0);
-
+			LOGGER.debug("Processing file: " + inputFile.getFile().getAbsolutePath());
 			try {
 				final String source = FileUtils.readFileToString(inputFile.getFile(), charset);
 				final List<String> lines = StringUtils.convertStringToListOfLines(source);
