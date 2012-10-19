@@ -97,7 +97,8 @@ public final class PublicApiCounter {
 								regEx.append(",.*?");
 							}
 							regEx.append("\\).*");
-							Matcher findMethodMatcher = Pattern.compile(regEx.toString(),
+							Matcher findMethodMatcher = Pattern.compile(
+									regEx.toString().replaceAll("'", "'?"),
 									Pattern.DOTALL + Pattern.MULTILINE).matcher(source);
 							findMethodMatcher.find();
 							int start = findMethodMatcher.start();
@@ -115,8 +116,8 @@ public final class PublicApiCounter {
 	}
 
 	private static boolean existsInIfdef(List<String> ifdefContents, String method) {
-		for (String string : ifdefContents) {
-			if(string.contains(method)){
+		for(String string : ifdefContents) {
+			if(string.contains(method)) {
 				return true;
 			}
 		}

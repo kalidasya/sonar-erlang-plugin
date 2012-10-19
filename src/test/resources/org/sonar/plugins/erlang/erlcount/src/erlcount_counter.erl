@@ -2,7 +2,7 @@
 -behaviour(gen_server).
 -export([start_link/4]).
 -export([init/1, handle_call/3, 'handle/cast'/2, handle_info/2]).
--export([terminate/2, 
+-export(['terminate'/2, 
 	code_change/3]).
 -ifdef('TEST').
 -export([
