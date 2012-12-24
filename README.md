@@ -1,6 +1,9 @@
 sonar-erlang-plugin
 ===================
 
+This is the first beta version of the sonar erlang plugin. For the official one pls check out: https://github.com/SonarCommunity/sonar-erlang
+---------------------------------------------------------------------------------------------------------------------------------------------
+
 An Erlang plugin for sonar to make it possible to analyse Erlang projects as well
 
 It is based on other plugins like scala, javascript, python.
